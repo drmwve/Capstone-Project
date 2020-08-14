@@ -4,8 +4,8 @@ Code for touchscreen and program logic
 
 ## Project libraries
 
-## GUI library
+### GUI library
 https://pypi.org/project/PyQt5/#description
 
-## Temperature sensor library
+### Temperature sensor library
 https://github.com/timofurrer/w1thermsensor
