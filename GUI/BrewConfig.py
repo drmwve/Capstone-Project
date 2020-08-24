@@ -1,7 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 ## Global Variables
-## Default display values
+## Default display values and settings.
+## These need to be imported to the brewing program.
 HopCartridges = 5
 MashTunTemperature = 160
 Hop1Timing = 5
@@ -9,6 +10,15 @@ Hop2Timing = 10
 Hop3Timing = 20
 Hop4Timing = 30
 Hop5Timing = 50
+
+## These variables set if a given hop dispenser should be used.
+## i.e. if == 0 then that hop dispenser is not loaded or selected by the user.
+## These should be imported to the brewing program to use or not use specific hop cups.
+## Hop 1 is always used (How can you brew without hops???)
+UseHop2 = 1
+UseHop3 = 1
+UseHop4 = 1
+UseHop5 = 1
 
 class Ui_BrewConfigWindow(object):
     def setupUi(self, BrewConfigWindow):
@@ -29,13 +39,53 @@ class Ui_BrewConfigWindow(object):
             if HopCartridges < 5:
                 HopCartridges += 1
                 self.HopCartridgeSelectEntry.setText(str(HopCartridges))
+            if HopCartridges == 5:
+                self.Hop5Entry.setHidden(False)
+                self.Hop5Increase.setHidden(False)
+                self.Hop5Decrease.setHidden(False)
+                UseHop5 = 1
+            if HopCartridges == 4:
+                self.Hop4Entry.setHidden(False)
+                self.Hop4Increase.setHidden(False)
+                self.Hop4Decrease.setHidden(False)
+                UseHop4 = 1
+            if HopCartridges == 3:
+                self.Hop3Entry.setHidden(False)
+                self.Hop3Increase.setHidden(False)
+                self.Hop3Decrease.setHidden(False)
+                UseHop3 = 1
+            if HopCartridges == 2:
+                self.Hop2Entry.setHidden(False)
+                self.Hop2Increase.setHidden(False)
+                self.Hop2Decrease.setHidden(False)
+                UseHop2 = 1
 
         def DecreaseCartridgeSelect():
             global HopCartridges
             if HopCartridges > 1:
                 HopCartridges -= 1
                 self.HopCartridgeSelectEntry.setText(str(HopCartridges))
-
+            if HopCartridges == 4:
+                self.Hop5Entry.setHidden(True)
+                self.Hop5Increase.setHidden(True)
+                self.Hop5Decrease.setHidden(True)
+                UseHop5 = 0
+            if HopCartridges == 3:
+                self.Hop4Entry.setHidden(True)
+                self.Hop4Increase.setHidden(True)
+                self.Hop4Decrease.setHidden(True)
+                UseHop4 = 0
+            if HopCartridges == 2:
+                self.Hop3Entry.setHidden(True)
+                self.Hop3Increase.setHidden(True)
+                self.Hop3Decrease.setHidden(True)
+                UseHop3 = 0
+            if HopCartridges == 1:
+                self.Hop2Entry.setHidden(True)
+                self.Hop2Increase.setHidden(True)
+                self.Hop2Decrease.setHidden(True)
+                UseHop2 = 0
+                
         def IncreaseHop1():
             global Hop1Timing
             if Hop1Timing < 60:
@@ -107,6 +157,8 @@ class Ui_BrewConfigWindow(object):
         BrewConfigWindow.setMinimumSize(QtCore.QSize(1024, 600))
         BrewConfigWindow.setMaximumSize(QtCore.QSize(1024, 600))
         BrewConfigWindow.setWindowTitle("Brew Configuration")
+        ## Uncomment next line to enable fullscreen, disabled for when testing on bigger screens.
+        #BrewConfigWindow.showFullScreen()
         self.centralwidget = QtWidgets.QWidget(BrewConfigWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.GUILayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -201,8 +253,8 @@ class Ui_BrewConfigWindow(object):
         ## Layout
         self.HopTimingLayout = QtWidgets.QGridLayout()
         self.HopTimingLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
-        self.HopTimingLayout.setContentsMargins(-1, 0, -1, -1)
-        self.HopTimingLayout.setVerticalSpacing(10)
+        self.HopTimingLayout.setContentsMargins(-1, 50, -1, 0)
+        self.HopTimingLayout.setVerticalSpacing(20)
         self.HopTimingLayout.setObjectName("HopTimingLayout")
         ## Text label
         self.HopLabel = QtWidgets.QLabel(self.centralwidget)
@@ -230,6 +282,7 @@ class Ui_BrewConfigWindow(object):
         self.Hop1Entry.setObjectName("Hop1Entry")
         self.HopTimingLayout.addWidget(self.Hop1Entry, 1, 2, 1, 1)
         self.Hop1Entry.setText(str(Hop1Timing))
+        self.Hop1Entry.setMinimumSize(0, 30)
         ## Increase button
         self.Hop1Increase = QtWidgets.QPushButton(self.centralwidget)
         self.Hop1Increase.setFont(font)
@@ -237,6 +290,7 @@ class Ui_BrewConfigWindow(object):
         self.HopTimingLayout.addWidget(self.Hop1Increase, 1, 3, 1, 1)
         self.Hop1Increase.setText("+")
         self.Hop1Increase.clicked.connect(IncreaseHop1)
+        self.Hop1Increase.setMinimumSize(0, 30)
         ## Decrease button
         self.Hop1Decrease = QtWidgets.QPushButton(self.centralwidget)
         self.Hop1Decrease.setFont(font)
@@ -244,6 +298,7 @@ class Ui_BrewConfigWindow(object):
         self.HopTimingLayout.addWidget(self.Hop1Decrease, 1, 1, 1, 1)
         self.Hop1Decrease.setText("-")
         self.Hop1Decrease.clicked.connect(DecreaseHop1)
+        self.Hop1Decrease.setMinimumSize(0, 30)
 
         ## Hop 2 Settings ##
         ## Text label
@@ -261,6 +316,7 @@ class Ui_BrewConfigWindow(object):
         self.Hop2Entry.setObjectName("Hop2Entry")
         self.HopTimingLayout.addWidget(self.Hop2Entry, 2, 2, 1, 1)
         self.Hop2Entry.setText(str(Hop2Timing))
+        self.Hop2Entry.setMinimumSize(0, 30)
         ## Increase button
         self.Hop2Increase = QtWidgets.QPushButton(self.centralwidget)
         self.Hop2Increase.setFont(font)
@@ -268,6 +324,7 @@ class Ui_BrewConfigWindow(object):
         self.HopTimingLayout.addWidget(self.Hop2Increase, 2, 3, 1, 1)
         self.Hop2Increase.setText("+")
         self.Hop2Increase.clicked.connect(IncreaseHop2)
+        self.Hop2Increase.setMinimumSize(0, 30)
         ## Decrease button
         self.Hop2Decrease = QtWidgets.QPushButton(self.centralwidget)
         self.Hop2Decrease.setFont(font)
@@ -275,6 +332,7 @@ class Ui_BrewConfigWindow(object):
         self.HopTimingLayout.addWidget(self.Hop2Decrease, 2, 1, 1, 1)
         self.Hop2Decrease.setText("-")
         self.Hop2Decrease.clicked.connect(DecreaseHop2)
+        self.Hop2Decrease.setMinimumSize(0, 30)
 
         ## Hop 3 Settings ##
         ## Text label
@@ -292,6 +350,7 @@ class Ui_BrewConfigWindow(object):
         self.Hop3Entry.setObjectName("Hop3Entry")
         self.HopTimingLayout.addWidget(self.Hop3Entry, 3, 2, 1, 1)
         self.Hop3Entry.setText(str(Hop3Timing))
+        self.Hop3Entry.setMinimumSize(0, 30)
         ## Increase button
         self.Hop3Increase = QtWidgets.QPushButton(self.centralwidget)
         self.Hop3Increase.setFont(font)
@@ -299,6 +358,7 @@ class Ui_BrewConfigWindow(object):
         self.HopTimingLayout.addWidget(self.Hop3Increase, 3, 3, 1, 1)
         self.Hop3Increase.setText("+")
         self.Hop3Increase.clicked.connect(IncreaseHop3)
+        self.Hop3Increase.setMinimumSize(0, 30)
         ## Decrease button
         self.Hop3Decrease = QtWidgets.QPushButton(self.centralwidget)
         self.Hop3Decrease.setFont(font)
@@ -306,6 +366,7 @@ class Ui_BrewConfigWindow(object):
         self.HopTimingLayout.addWidget(self.Hop3Decrease, 3, 1, 1, 1)
         self.Hop3Decrease.setText("-")
         self.Hop3Decrease.clicked.connect(DecreaseHop3)
+        self.Hop3Decrease.setMinimumSize(0, 30)
 
         ## Hop 4 Settings ##
         ## Text label
@@ -323,6 +384,7 @@ class Ui_BrewConfigWindow(object):
         self.Hop4Entry.setObjectName("Hop4Entry")
         self.HopTimingLayout.addWidget(self.Hop4Entry, 4, 2, 1, 1)
         self.Hop4Entry.setText(str(Hop4Timing))
+        self.Hop4Entry.setMinimumSize(0, 30)
         ## Increase button
         self.Hop4Increase = QtWidgets.QPushButton(self.centralwidget)
         self.Hop4Increase.setFont(font)
@@ -330,6 +392,7 @@ class Ui_BrewConfigWindow(object):
         self.HopTimingLayout.addWidget(self.Hop4Increase, 4, 3, 1, 1)
         self.Hop4Increase.setText("+")
         self.Hop4Increase.clicked.connect(IncreaseHop4)
+        self.Hop4Increase.setMinimumSize(0, 30)
         ## Decrease button
         self.Hop4Decrease = QtWidgets.QPushButton(self.centralwidget)
         self.Hop4Decrease.setFont(font)
@@ -337,6 +400,7 @@ class Ui_BrewConfigWindow(object):
         self.HopTimingLayout.addWidget(self.Hop4Decrease, 4, 1, 1, 1)
         self.Hop4Decrease.setText("-")
         self.Hop4Decrease.clicked.connect(DecreaseHop4)
+        self.Hop4Decrease.setMinimumSize(0, 30)
 
         ## Hop 5 Settings ##
         ## Text label
@@ -354,6 +418,7 @@ class Ui_BrewConfigWindow(object):
         self.Hop5Entry.setObjectName("Hop5Entry")
         self.HopTimingLayout.addWidget(self.Hop5Entry, 5, 2, 1, 1)
         self.Hop5Entry.setText(str(Hop5Timing))
+        self.Hop5Entry.setMinimumSize(0, 30)
         ## Increase button
         self.Hop5Increase = QtWidgets.QPushButton(self.centralwidget)
         self.Hop5Increase.setFont(font)
@@ -361,6 +426,7 @@ class Ui_BrewConfigWindow(object):
         self.HopTimingLayout.addWidget(self.Hop5Increase, 5, 3, 1, 1)
         self.Hop5Increase.setText("+")
         self.Hop5Increase.clicked.connect(IncreaseHop5)
+        self.Hop5Increase.setMinimumSize(0, 30)
         ## Decrease button
         self.Hop5Decrease = QtWidgets.QPushButton(self.centralwidget)
         self.Hop5Decrease.setFont(font)
@@ -368,6 +434,7 @@ class Ui_BrewConfigWindow(object):
         self.HopTimingLayout.addWidget(self.Hop5Decrease, 5, 1, 1, 1)
         self.Hop5Decrease.setText("-")
         self.Hop5Decrease.clicked.connect(DecreaseHop5)
+        self.Hop5Decrease.setMinimumSize(0, 30)
 
         ## Start Brewing Button
         self.BreweButtonLayout = QtWidgets.QGridLayout()
