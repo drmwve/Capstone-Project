@@ -150,6 +150,10 @@ class Ui_BrewConfigWindow(object):
             ## This function should connect to Husam's brewing program
             print("I don't work yet!")
 
+        def ReturnToMenu():
+            ## This will take the user back to the main menu, aborting the brew.
+            print("I don't work yet either!")
+
         ## GUI Setup
         ## Define and set main window
         BrewConfigWindow.setObjectName("BrewConfigWindow")
@@ -441,23 +445,31 @@ class Ui_BrewConfigWindow(object):
         self.Hop5Decrease.clicked.connect(DecreaseHop5)
         self.Hop5Decrease.setMinimumSize(0, 30)
 
+        ## Navigation button settings ##
+        ## Layout
+        self.NavigationButtonLayout = QtWidgets.QGridLayout()
+        self.NavigationButtonLayout.setContentsMargins(150, 100, 150, 100)
+        self.NavigationButtonLayout.setVerticalSpacing(80)
+        self.NavigationButtonLayout.setObjectName("NavigationButtonLayout")
         ## Start Brewing Button
-        self.BreweButtonLayout = QtWidgets.QGridLayout()
-        self.BreweButtonLayout.setContentsMargins(150, 100, 150, 100)
-        self.BreweButtonLayout.setVerticalSpacing(6)
-        self.BreweButtonLayout.setObjectName("BreweButtonLayout")
         self.StartBrewButton = QtWidgets.QPushButton(self.centralwidget)
         self.StartBrewButton.setMinimumSize(QtCore.QSize(0, 50))
         self.StartBrewButton.setMaximumSize(QtCore.QSize(1000, 50))
         self.StartBrewButton.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.StartBrewButton.setDefault(False)
-        self.StartBrewButton.setFlat(False)
         self.StartBrewButton.setObjectName("StartBrewButton")
-        self.BreweButtonLayout.addWidget(self.StartBrewButton, 0, 0, 1, 1)
-        self.GUILayout.addLayout(self.BreweButtonLayout, 3, 0, 1, 2)
+        self.NavigationButtonLayout.addWidget(self.StartBrewButton, 0, 0, 1, 1)
+        self.GUILayout.addLayout(self.NavigationButtonLayout, 3, 0, 1, 2)
         self.StartBrewButton.setFont(font)
         self.StartBrewButton.setText("Start brewing!")
         self.StartBrewButton.clicked.connect(StartBrewing)
+        ## Return to main menu button
+        self.BackButton = QtWidgets.QPushButton(self.centralwidget)
+        self.BackButton.setMinimumSize(QtCore.QSize(0, 50))
+        self.BackButton.setObjectName("BackButton")
+        self.BackButton.setFont(font)
+        self.NavigationButtonLayout.addWidget(self.BackButton, 1, 0, 1, 1)
+        self.BackButton.setText("Back to Main Menu")
+        self.BackButton.clicked.connect(ReturnToMenu)
         
         ## Finalize layout
         BrewConfigWindow.setCentralWidget(self.centralwidget)
