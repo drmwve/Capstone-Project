@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from MainMenu import *
 
 ## Global Variables
 ## Default display values and settings.
@@ -151,8 +152,14 @@ class Ui_BrewConfigWindow(object):
             print("I don't work yet!")
 
         def ReturnToMenu():
-            ## This will take the user back to the main menu, aborting the brew.
-            print("I don't work yet either!")
+            ## Work in progress, takes you back to the main menu.
+            ## Doesn't allow you to go back and forth more than once.
+            self.MainMenu=QtWidgets.QMainWindow()
+            self.ui=Ui_MainMenu()
+            self.ui.setupUi(self.MainMenu)
+            self.MainMenu.show()
+            #BrewConfigWindow.hide()
+            BrewConfigWindow.close()
 
         ## GUI Setup
         ## Define and set main window

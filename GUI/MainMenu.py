@@ -1,77 +1,77 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'MainMenu.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.2
-#
-# WARNING! All changes made in this file will be lost!
-
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from BrewConfig import *
 
 class Ui_MainMenu(object):
     def setupUi(self, MainMenu):
+        
+        ## Defining button functions
+        def EnterBrewScreen(BrewScreen):
+            ## Work in progress, takes you to the brew screen.
+            ## Doesn't allow you to go back and forth more than once.
+            self.BrewScreen = BrewScreen
+            self.BrewScreen=QtWidgets.QMainWindow()
+            self.ui=Ui_BrewConfigWindow()
+            self.ui.setupUi(self.BrewScreen)
+            self.BrewScreen.show()
+            MainMenu.close()
+
+        def EnterCleanScreen():
+            print("I don't go anywhere yet...")
+
+        def EnterStatusScreen():
+            print("Same.")
+
+        ## GUI Setup
+        ## Define main window
         MainMenu.setObjectName("MainMenu")
         MainMenu.setWindowModality(QtCore.Qt.WindowModal)
         MainMenu.setEnabled(True)
         MainMenu.resize(1024, 600)
         MainMenu.setMinimumSize(QtCore.QSize(1024, 600))
         MainMenu.setMaximumSize(QtCore.QSize(1024, 600))
+        ## Uncomment next line to enable fullscreen, disabled for when testing on bigger screens.
+        #BrewConfigWindow.showFullScreen()
         self.centralwidget = QtWidgets.QWidget(MainMenu)
         self.centralwidget.setObjectName("centralwidget")
-        self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
-        self.gridLayout.setObjectName("gridLayout")
+        self.MainMenuLayout = QtWidgets.QGridLayout(self.centralwidget)
+        self.MainMenuLayout.setObjectName("MainMenuLayout")
+
+        ## Font Settings
+        font = QtGui.QFont()
+        font.setPointSize(12)
+
+        ## Start a brew button
         self.EnterBrewConfigButton = QtWidgets.QPushButton(self.centralwidget)
         self.EnterBrewConfigButton.setMinimumSize(QtCore.QSize(0, 60))
-        self.EnterBrewConfigButton.setMaximumSize(QtCore.QSize(800, 16777215))
-        font = QtGui.QFont()
-        font.setPointSize(12)
+        self.EnterBrewConfigButton.setMaximumSize(QtCore.QSize(800, 60))
         self.EnterBrewConfigButton.setFont(font)
-        self.EnterBrewConfigButton.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.EnterBrewConfigButton.setFlat(False)
         self.EnterBrewConfigButton.setObjectName("EnterBrewConfigButton")
-        self.gridLayout.addWidget(self.EnterBrewConfigButton, 0, 0, 1, 1)
+        self.MainMenuLayout.addWidget(self.EnterBrewConfigButton, 0, 0, 1, 1)
+        self.EnterBrewConfigButton.setText("Start a new brew")
+        self.EnterBrewConfigButton.clicked.connect(EnterBrewScreen)
+
+        ## Cleaning cycle button
         self.EnterSanitationCycleButton = QtWidgets.QPushButton(self.centralwidget)
         self.EnterSanitationCycleButton.setMinimumSize(QtCore.QSize(0, 60))
-        self.EnterSanitationCycleButton.setMaximumSize(QtCore.QSize(800, 16777215))
-        font = QtGui.QFont()
-        font.setPointSize(12)
+        self.EnterSanitationCycleButton.setMaximumSize(QtCore.QSize(800, 60))
         self.EnterSanitationCycleButton.setFont(font)
-        self.EnterSanitationCycleButton.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.EnterSanitationCycleButton.setFlat(False)
         self.EnterSanitationCycleButton.setObjectName("EnterSanitationCycleButton")
-        self.gridLayout.addWidget(self.EnterSanitationCycleButton, 1, 0, 1, 1)
-        self.EnterStatusScreen = QtWidgets.QPushButton(self.centralwidget)
-        self.EnterStatusScreen.setEnabled(True)
-        self.EnterStatusScreen.setMinimumSize(QtCore.QSize(0, 60))
-        self.EnterStatusScreen.setMaximumSize(QtCore.QSize(800, 16777215))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.EnterStatusScreen.setFont(font)
-        self.EnterStatusScreen.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.EnterStatusScreen.setFlat(False)
-        self.EnterStatusScreen.setObjectName("EnterStatusScreen")
-        self.gridLayout.addWidget(self.EnterStatusScreen, 2, 0, 1, 1)
+        self.MainMenuLayout.addWidget(self.EnterSanitationCycleButton, 1, 0, 1, 1)
+        self.EnterSanitationCycleButton.setText("Run sanitation cycle")
+        self.EnterSanitationCycleButton.clicked.connect(EnterCleanScreen)
+
+        ## Status screen button
+        self.EnterStatusScreenButton = QtWidgets.QPushButton(self.centralwidget)
+        self.EnterStatusScreenButton.setMinimumSize(QtCore.QSize(0, 60))
+        self.EnterStatusScreenButton.setMaximumSize(QtCore.QSize(800, 60))
+        self.EnterStatusScreenButton.setFont(font)
+        self.EnterStatusScreenButton.setObjectName("EnterStatusScreenButton")
+        self.MainMenuLayout.addWidget(self.EnterStatusScreenButton, 2, 0, 1, 1)
+        self.EnterStatusScreenButton.setText("Device status")
+        self.EnterStatusScreenButton.clicked.connect(EnterStatusScreen)
+
+        ## Finalize layout
         MainMenu.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainMenu)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1024, 21))
-        self.menubar.setObjectName("menubar")
-        MainMenu.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainMenu)
-        self.statusbar.setObjectName("statusbar")
-        MainMenu.setStatusBar(self.statusbar)
-
-        self.retranslateUi(MainMenu)
-        QtCore.QMetaObject.connectSlotsByName(MainMenu)
-
-    def retranslateUi(self, MainMenu):
-        _translate = QtCore.QCoreApplication.translate
-        MainMenu.setWindowTitle(_translate("MainMenu", "MainMenu"))
-        self.EnterBrewConfigButton.setText(_translate("MainMenu", "Start a new brew"))
-        self.EnterSanitationCycleButton.setText(_translate("MainMenu", "Run sanitation cycle"))
-        self.EnterStatusScreen.setText(_translate("MainMenu", "Device status"))
-
 
 if __name__ == "__main__":
     import sys
