@@ -253,7 +253,7 @@ class Ui_BrewConfigWindow(object):
         ## Layout
         self.HopTimingLayout = QtWidgets.QGridLayout()
         self.HopTimingLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
-        self.HopTimingLayout.setContentsMargins(-1, 50, -1, 0)
+        self.HopTimingLayout.setContentsMargins(-1, 40, -1, 0)
         self.HopTimingLayout.setVerticalSpacing(20)
         self.HopTimingLayout.setObjectName("HopTimingLayout")
         ## Text label
@@ -273,6 +273,7 @@ class Ui_BrewConfigWindow(object):
         self.Hop1Label.setObjectName("Hop1Label")
         self.HopTimingLayout.addWidget(self.Hop1Label, 1, 0, 1, 1)
         self.Hop1Label.setText("Hop #1")
+        self.Hop1Label.setMinimumSize(0, 30)
         ## Text entry field
         self.Hop1Entry = QtWidgets.QLineEdit(self.centralwidget)
         self.Hop1Entry.setFont(font)
@@ -307,6 +308,7 @@ class Ui_BrewConfigWindow(object):
         self.Hop2Label.setObjectName("Hop2Label")
         self.HopTimingLayout.addWidget(self.Hop2Label, 2, 0, 1, 1)
         self.Hop2Label.setText("Hop #2")
+        self.Hop2Label.setMinimumSize(0, 30)
         ## Text entry field
         self.Hop2Entry = QtWidgets.QLineEdit(self.centralwidget)
         self.Hop2Entry.setFont(font)
@@ -341,6 +343,7 @@ class Ui_BrewConfigWindow(object):
         self.Hop3Label.setObjectName("Hop3Label")
         self.HopTimingLayout.addWidget(self.Hop3Label, 3, 0, 1, 1)
         self.Hop3Label.setText("Hop #3")
+        self.Hop3Label.setMinimumSize(0, 30)
         ## Text entry field
         self.Hop3Entry = QtWidgets.QLineEdit(self.centralwidget)
         self.Hop3Entry.setFont(font)
@@ -375,6 +378,7 @@ class Ui_BrewConfigWindow(object):
         self.Hop4Label.setObjectName("Hop4Label")
         self.HopTimingLayout.addWidget(self.Hop4Label, 4, 0, 1, 1)
         self.Hop4Label.setText("Hop #4")
+        self.Hop4Label.setMinimumSize(0, 30)
         ## Text entry field
         self.Hop4Entry = QtWidgets.QLineEdit(self.centralwidget)
         self.Hop4Entry.setFont(font)
@@ -409,6 +413,7 @@ class Ui_BrewConfigWindow(object):
         self.Hop5Label.setObjectName("Hop5Label")
         self.HopTimingLayout.addWidget(self.Hop5Label, 5, 0, 1, 1)
         self.Hop5Label.setText("Hop #5")
+        self.Hop5Label.setMinimumSize(0, 30)
         ## Text entry field
         self.Hop5Entry = QtWidgets.QLineEdit(self.centralwidget)
         self.Hop5Entry.setFont(font)
