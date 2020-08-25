@@ -3,13 +3,13 @@ from BrewConfigGUI import Ui_BrewConfigWindow
 
 class BrewConfig(Ui_BrewConfigWindow):
 
-    ## Global Variables
-    ## Default display values and settings.
-    ## These need to be imported to the brewing program.
-
 
     def __init__(self, MainWindow):
         self.setupUi(MainWindow)
+
+        #global variables aren't great, especially in a multithreaded application.
+        #These are local variables which will be transmitted to the logic code using a signal or by initiation of the logic code class
+
         self.HopCartridges = 5
         self.MashTunTemperature = 160
         self.Hop1Timing = 5
