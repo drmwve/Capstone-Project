@@ -12,15 +12,9 @@ UseHop4 = 1
 UseHop5 = 1
 
 class Ui_BrewConfigWindow(object):
-    def __init__(self, BrewConfigWindow):
+    def setupUi(self, BrewConfigWindow):
 
-        ## GUI Setup
-        ## Define and set main window
-        BrewConfigWindow.setObjectName("BrewConfigWindow")
-        BrewConfigWindow.resize(1024, 600)
-        BrewConfigWindow.setMinimumSize(QtCore.QSize(1024, 600))
-        BrewConfigWindow.setMaximumSize(QtCore.QSize(1024, 600))
-        BrewConfigWindow.setWindowTitle("Brew Configuration")
+
         ## Uncomment next line to enable fullscreen, disabled for when testing on bigger screens.
         #BrewConfigWindow.showFullScreen()
         self.centralwidget = QtWidgets.QWidget(BrewConfigWindow)
