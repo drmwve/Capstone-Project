@@ -13,9 +13,6 @@ UseHop5 = 1
 
 class Ui_BrewConfigWindow(object):
     def setupUi(self, BrewConfigWindow):
-
-        ## Uncomment next line to enable fullscreen, disabled for when testing on bigger screens.
-        #BrewConfigWindow.showFullScreen()
         self.centralwidget = QtWidgets.QWidget(BrewConfigWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.GUILayout = QtWidgets.QGridLayout(BrewConfigWindow)

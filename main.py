@@ -1,7 +1,7 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from GUI.BrewConfig import BrewConfig
-from GUI.examplePair.example import example
+from GUI.MainMenu import MainMenu
 
 
 class Main(QtWidgets.QMainWindow):
@@ -16,6 +16,8 @@ class Main(QtWidgets.QMainWindow):
         self.setObjectName("MainWindow")
         self.setFixedSize(1024,600)
         self.setWindowTitle("Auto Brewser System")
+        ## Uncomment next line to enable fullscreen, disabled for when testing on bigger screens.
+        #self.showFullScreen()
 
     #create stacked layout for different pages, add them to central widget
     def createStackedLayout(self):
@@ -25,7 +27,7 @@ class Main(QtWidgets.QMainWindow):
         self.setCentralWidget(self.bigContainerWidget)
 
         #create instances of the screens and add them to the stacked layout here
-        self.mainMenu = example()
+        self.mainMenu = MainMenu()
         self.screenStack.addWidget(self.mainMenu)
 
         self.brewConfigScreen = BrewConfig()
@@ -38,7 +40,7 @@ class Main(QtWidgets.QMainWindow):
         #see "goToMenu" function below. the 'lambda: ' statement is required for arcane reasons when calling a function that takes arguments
         #in a signal-slot connection like this
         self.brewConfigScreen.BackButton.clicked.connect(lambda: self.goToMenu(self.mainMenu))
-        self.mainMenu.pushButton_2.clicked.connect(lambda: self.goToMenu(self.brewConfigScreen))
+        self.mainMenu.EnterBrewConfigButton.clicked.connect(lambda: self.goToMenu(self.brewConfigScreen))
 
     #this just avoids having a million "switch to menu" functions. the menu passed to this function MUST already be in the stacked layout
     def goToMenu(self, menu):
