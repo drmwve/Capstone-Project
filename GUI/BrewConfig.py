@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from BrewConfigGUI import Ui_BrewConfigWindow
+from GUI.BrewConfigGUI import Ui_BrewConfigWindow
 
 class BrewConfig(Ui_BrewConfigWindow):
 
