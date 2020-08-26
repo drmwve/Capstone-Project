@@ -1,11 +1,12 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from GUI.BrewConfigGUI import Ui_BrewConfigWindow
 
-class BrewConfig(Ui_BrewConfigWindow):
+class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
 
 
-    def __init__(self, MainWindow):
-        self.setupUi(MainWindow)
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
 
         #global variables aren't great, especially in a multithreaded application.
         #These are local variables which will be transmitted to the logic code using a signal or by initiation of the logic code class
@@ -179,6 +180,6 @@ if __name__ == "__main__":
     MainWindow.setMaximumSize(QtCore.QSize(1024, 600))
     MainWindow.setWindowTitle("Brew Configuration")
 
-    actualUI = BrewConfig(MainWindow)
+    actualUI = BrewConfig()
     MainWindow.show()
     sys.exit(app.exec_())

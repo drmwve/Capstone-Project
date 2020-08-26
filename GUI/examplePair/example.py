@@ -3,7 +3,6 @@ from GUI.examplePair.example_GUI import Ui_Form
 
 class example(QtWidgets.QWidget, Ui_Form):
 
-
     def __init__(self):
         super().__init__()
         self.setupUi(self)

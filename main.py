@@ -25,12 +25,12 @@ class Main(QtWidgets.QMainWindow):
         self.setCentralWidget(self.bigContainerWidget)
 
         #create instances of the screens and add them to the stacked layout here
-        self.exampleWidget = example()
+        self.exampleWidget = BrewConfig()
         self.screenStack.addWidget(self.exampleWidget)
 
     def connections(self):
         #define button events which move between screens here
-        self.exampleWidget.pushButton_2.clicked.connect(self.exampleExternalAction)
+        print("global connections made")
 
     def exampleExternalAction(self):
         print("You can tell the stacked layout to switch to another screen here, or perform an action that is external to the signaling widget")
