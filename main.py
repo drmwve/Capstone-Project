@@ -1,5 +1,7 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
+from GUI.BrewConfig import BrewConfig
+
 
 class Main(QtWidgets.QMainWindow):
     def __init__(self):
