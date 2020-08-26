@@ -14,9 +14,7 @@ class Main(QtWidgets.QMainWindow):
     #define size of whole screen
     def defineMainScreenUI(self):
         self.setObjectName("MainWindow")
-        self.resize(1024, 600)
-        self.setMinimumSize(QtCore.QSize(1024, 600))
-        self.setMaximumSize(QtCore.QSize(1024, 600))
+        self.setFixedSize(1024,600)
         self.setWindowTitle("Auto Brewser System")
 
     #create stacked layout for different pages, add them to central widget
