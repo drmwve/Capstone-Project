@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from GUI.examplePair.example_GUI import Ui_Form
 
+#copy this and adjust 'Ui_Form' to inherit whatever the class Designer created
 class example(QtWidgets.QWidget, Ui_Form):
 
     def __init__(self):
