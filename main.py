@@ -25,12 +25,26 @@ class Main(QtWidgets.QMainWindow):
         self.setCentralWidget(self.bigContainerWidget)
 
         #create instances of the screens and add them to the stacked layout here
-        self.exampleWidget = BrewConfig()
-        self.screenStack.addWidget(self.exampleWidget)
+        self.mainMenu = example()
+        self.screenStack.addWidget(self.mainMenu)
+
+        self.brewConfigScreen = BrewConfig()
+        self.screenStack.addWidget(self.brewConfigScreen)
 
     def connections(self):
         #define button events which move between screens here
         print("global connections made")
+
+        #see "goToMenu" function below. the 'lambda: ' statement is required for arcane reasons when calling a function that takes arguments
+        #in a signal-slot connection like this
+        self.brewConfigScreen.BackButton.clicked.connect(lambda: self.goToMenu(self.mainMenu))
+        self.mainMenu.pushButton_2.clicked.connect(lambda: self.goToMenu(self.brewConfigScreen))
+
+    #this just avoids having a million "switch to menu" functions. the menu passed to this function MUST already be in the stacked layout
+    def goToMenu(self, menu):
+        self.screenStack.setCurrentWidget(menu)
+
+
 
     def exampleExternalAction(self):
         print("You can tell the stacked layout to switch to another screen here, or perform an action that is external to the signaling widget")

@@ -15,7 +15,7 @@ class example(QtWidgets.QWidget, Ui_Form):
 
     def adjustUI(self):
         self.pushButton.setText("Internal Function")
-        self.pushButton_2.setText("Some External Thing")
+        self.pushButton_2.setText("Brew Config")
 
     def buttonPushed(self):
         print("I handle something internal to this widget")

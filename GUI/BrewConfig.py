@@ -45,7 +45,6 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
         self.Hop5Decrease.clicked.connect(self.DecreaseHop5)
 
         self.StartBrewButton.clicked.connect(self.StartBrewing)
-        self.BackButton.clicked.connect(self.ReturnToMenu)
 
     ## Defining button functions
     def IncreaseMashTemp(self):
@@ -162,11 +161,6 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
     def StartBrewing(self):
         ## This function should connect to Husam's brewing program
         print("I don't work yet!")
-
-    def ReturnToMenu(self):
-        ## This will take the user back to the main menu, aborting the brew.
-        print("I don't work yet either!")
-
 
 if __name__ == "__main__":
     import sys
