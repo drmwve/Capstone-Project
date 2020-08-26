@@ -7,28 +7,26 @@ from GUI.examplePair.example import example
 class Main(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.defineUI()
-        self.bigContainerWidget = QtWidgets.QWidget()
-        self.screenStack = QtWidgets.QStackedLayout()
-        self.addStacks(self.screenStack)
+        self.defineMainScreenUI()
+        self.createStackedLayout()
         self.connections()
 
-        self.bigContainerWidget.setLayout(self.screenStack)
-        self.setCentralWidget(self.bigContainerWidget)
-
-    def defineUI(self):
+    def defineMainScreenUI(self):
         self.setObjectName("MainWindow")
         self.resize(1024, 600)
         self.setMinimumSize(QtCore.QSize(1024, 600))
         self.setMaximumSize(QtCore.QSize(1024, 600))
         self.setWindowTitle("Auto Brewser System")
 
-    def addStacks(self, layout):
+    def createStackedLayout(self):
+        self.bigContainerWidget = QtWidgets.QWidget()
+        self.screenStack = QtWidgets.QStackedLayout()
+        self.bigContainerWidget.setLayout(self.screenStack)
+        self.setCentralWidget(self.bigContainerWidget)
+
         #create instances of the screens and add them to the stacked layout here
         self.exampleWidget = example()
-        layout.addWidget(self.exampleWidget)
-
-
+        self.screenStack.addWidget(self.exampleWidget)
 
     def connections(self):
         #define button events which move between screens here
