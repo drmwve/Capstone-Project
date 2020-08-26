@@ -11,6 +11,7 @@ class Main(QtWidgets.QMainWindow):
         self.createStackedLayout()
         self.connections()
 
+    #define size of whole screen
     def defineMainScreenUI(self):
         self.setObjectName("MainWindow")
         self.resize(1024, 600)
@@ -18,6 +19,7 @@ class Main(QtWidgets.QMainWindow):
         self.setMaximumSize(QtCore.QSize(1024, 600))
         self.setWindowTitle("Auto Brewser System")
 
+    #create stacked layout for different pages, add them to central widget
     def createStackedLayout(self):
         self.bigContainerWidget = QtWidgets.QWidget()
         self.screenStack = QtWidgets.QStackedLayout()
@@ -44,10 +46,6 @@ class Main(QtWidgets.QMainWindow):
     def goToMenu(self, menu):
         self.screenStack.setCurrentWidget(menu)
 
-
-
-    def exampleExternalAction(self):
-        print("You can tell the stacked layout to switch to another screen here, or perform an action that is external to the signaling widget")
 
 if __name__ == "__main__":
     import sys
