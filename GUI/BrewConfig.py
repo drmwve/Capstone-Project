@@ -1,26 +1,14 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from GUI.BrewConfigGUI import Ui_BrewConfigWindow
-## These variables set if a given hop dispenser should be used.
-## i.e. if == 0 then that hop dispenser is not loaded or selected by the user.
-## These should be imported to the brewing program to use or not use specific hop cups.
-## Hop 1 is always used (How can you brew without hops???)
-UseHop2 = 1
-UseHop3 = 1
-UseHop4 = 1
-UseHop5 = 1
+
 class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
-
-
     def __init__(self):
         super().__init__()
         self.setupUi(self)
 
-        #global variables aren't great, especially in a multithreaded application.
-        #These are local variables which will be transmitted to the logic code using a signal or by initiation of the logic code class
-
         self.HopCartridges = 5
         self.MashTunTemperature = 160
-        self.hopTiming = [5,10,20,30,50]
+        self.hopTiming = [0,0,0,0,0]
         self.hopEntry = [self.Hop1Entry, self.Hop2Entry, self.Hop3Entry, self.Hop4Entry, self.Hop5Entry]
         self.hopIncrease = [self.Hop1Increase, self.Hop2Increase, self.Hop3Increase, self.Hop4Increase, self.Hop5Increase]
         self.hopDecrease = [self.Hop1Decrease, self.Hop2Decrease, self.Hop3Decrease, self.Hop4Decrease, self.Hop5Decrease]
@@ -60,7 +48,6 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
 
     ## Defining button functions
     def IncreaseMashTemp(self):
-
         self.MashTunTemperature += 1
         self.MashTempEntry.setText(str(self.MashTunTemperature))
 
@@ -69,60 +56,22 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
         self.MashTempEntry.setText(str(self.MashTunTemperature))
 
     def IncreaseCartridgeSelect(self):
-
         if self.HopCartridges < 5:
             self.HopCartridges += 1
             self.HopCartridgeSelectEntry.setText(str(self.HopCartridges))
-
-        for index in range(self.HopCartridges):
-            pass
-
-
-        if self.HopCartridges == 5:
-            self.Hop5Entry.setHidden(False)
-            self.Hop5Increase.setHidden(False)
-            self.Hop5Decrease.setHidden(False)
-            UseHop5 = 1
-        if self.HopCartridges == 4:
-            self.Hop4Entry.setHidden(False)
-            self.Hop4Increase.setHidden(False)
-            self.Hop4Decrease.setHidden(False)
-            UseHop4 = 1
-        if self.HopCartridges == 3:
-            self.Hop3Entry.setHidden(False)
-            self.Hop3Increase.setHidden(False)
-            self.Hop3Decrease.setHidden(False)
-            UseHop3 = 1
-        if self.HopCartridges == 2:
-            self.Hop2Entry.setHidden(False)
-            self.Hop2Increase.setHidden(False)
-            self.Hop2Decrease.setHidden(False)
-            UseHop2 = 1
+            self.hopEntry[self.HopCartridges - 1].setHidden(False)
+            self.hopIncrease[self.HopCartridges - 1].setHidden(False)
+            self.hopDecrease[self.HopCartridges - 1].setHidden(False)
+            self.hopTiming[self.HopCartridges - 1] = 0
 
     def DecreaseCartridgeSelect(self):
         if self.HopCartridges > 1:
             self.HopCartridges -= 1
             self.HopCartridgeSelectEntry.setText(str(self.HopCartridges))
-        if self.HopCartridges == 4:
-            self.Hop5Entry.setHidden(True)
-            self.Hop5Increase.setHidden(True)
-            self.Hop5Decrease.setHidden(True)
-            UseHop5 = 0
-        if self.HopCartridges == 3:
-            self.Hop4Entry.setHidden(True)
-            self.Hop4Increase.setHidden(True)
-            self.Hop4Decrease.setHidden(True)
-            UseHop4 = 0
-        if self.HopCartridges == 2:
-            self.Hop3Entry.setHidden(True)
-            self.Hop3Increase.setHidden(True)
-            self.Hop3Decrease.setHidden(True)
-            UseHop3 = 0
-        if self.HopCartridges == 1:
-            self.Hop2Entry.setHidden(True)
-            self.Hop2Increase.setHidden(True)
-            self.Hop2Decrease.setHidden(True)
-            UseHop2 = 0
+            self.hopEntry[self.HopCartridges].setHidden(True)
+            self.hopIncrease[self.HopCartridges].setHidden(True)
+            self.hopDecrease[self.HopCartridges].setHidden(True)
+            self.hopTiming[self.HopCartridges] = -1
 
     def increaseHop(self, index):
         if self.hopTiming[index] < 60:
@@ -136,7 +85,7 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
 
     def StartBrewing(self):
         ## This function should connect to Husam's brewing program
-        print("I don't work yet!")
+        print("I need connected to the brewing program")
 
 if __name__ == "__main__":
     import sys
