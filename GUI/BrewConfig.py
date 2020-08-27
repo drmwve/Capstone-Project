@@ -63,6 +63,7 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
             self.hopIncrease[self.HopCartridges - 1].setHidden(False)
             self.hopDecrease[self.HopCartridges - 1].setHidden(False)
             self.hopTiming[self.HopCartridges - 1] = 0
+            self.hopEntry[self.HopCartridges - 1].setText("0")
 
     def DecreaseCartridgeSelect(self):
         if self.HopCartridges > 1:
