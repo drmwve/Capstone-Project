@@ -2,14 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 
-## These variables set if a given hop dispenser should be used.
-## i.e. if == 0 then that hop dispenser is not loaded or selected by the user.
-## These should be imported to the brewing program to use or not use specific hop cups.
-## Hop 1 is always used (How can you brew without hops???)
-UseHop2 = 1
-UseHop3 = 1
-UseHop4 = 1
-UseHop5 = 1
+
 
 class Ui_BrewConfigWindow(object):
     def setupUi(self, BrewConfigWindow):

@@ -1,6 +1,13 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from GUI.BrewConfigGUI import Ui_BrewConfigWindow
-
+## These variables set if a given hop dispenser should be used.
+## i.e. if == 0 then that hop dispenser is not loaded or selected by the user.
+## These should be imported to the brewing program to use or not use specific hop cups.
+## Hop 1 is always used (How can you brew without hops???)
+UseHop2 = 1
+UseHop3 = 1
+UseHop4 = 1
+UseHop5 = 1
 class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
 
 
@@ -13,6 +20,9 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
 
         self.HopCartridges = 5
         self.MashTunTemperature = 160
+        self.hopTiming = [5,10,20,30,50]
+        self.hopEntry = [self.Hop1Entry, self.Hop2Entry, self.Hop3Entry, self.Hop4Entry, self.Hop5Entry]
+
         self.Hop1Timing = 5
         self.Hop2Timing = 10
         self.Hop3Timing = 20
@@ -61,6 +71,11 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
         if self.HopCartridges < 5:
             self.HopCartridges += 1
             self.HopCartridgeSelectEntry.setText(str(self.HopCartridges))
+
+        for index in range(self.HopCartridges):
+            pass
+
+
         if self.HopCartridges == 5:
             self.Hop5Entry.setHidden(False)
             self.Hop5Increase.setHidden(False)
@@ -107,6 +122,11 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
             self.Hop2Increase.setHidden(True)
             self.Hop2Decrease.setHidden(True)
             UseHop2 = 0
+
+    def increaseHop(self, index):
+        if self.hopTiming[index] < 60:
+            self.hopTiming[index] +=5
+            self.hopEntry[index].setText(str(self.hopTiming[index]))
 
     def IncreaseHop1(self):
         if self.Hop1Timing < 60:
