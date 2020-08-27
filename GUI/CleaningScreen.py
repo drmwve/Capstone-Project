@@ -6,6 +6,7 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.cleanRunningElements = [self.PauseResumeCleanButton, self.AbortCleanButton, self.CurrentCleanTaskLabel, self.CleanETALabel, self.CurrentCleanTaskProgressBar]
         self.connections()
         self.adjustUI()
 
@@ -13,10 +14,14 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         #add any connections that are internal to the functioning of this widget only
         self.AbortCleanButton.clicked.connect(self.abortClean)
         self.PauseResumeCleanButton.clicked.connect(self.pauseResumeClean)
+        self.StartCleaningButton.clicked.connect(self.startClean)
 
     def adjustUI(self):
         self.PauseResumeCleanButton.setCheckable(True)
         self.PauseResumeCleanButton.setText("Pause")
+        ## Hide UI elements that don't have a purpose until cleaning starts.
+        for i in range(len(self.cleanRunningElements)):
+            self.cleanRunningElements[i].setHidden(True)
 
     def abortClean(self):
         ## This function should stop the machine, return it to a neutral state with no liquid.
@@ -31,3 +36,10 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
             self.PauseResumeCleanButton.setText("Resume")
         else:
             self.PauseResumeCleanButton.setText("Pause")
+
+    def startClean(self):
+
+        ## Reshow hidden elements that are now relevent and hide start button
+        for i in range(len(self.cleanRunningElements)):
+            self.cleanRunningElements[i].setHidden(False)
+        self.StartCleaningButton.setHidden(True)
