@@ -146,7 +146,7 @@
    <item row="1" column="0">
     <layout class="QHBoxLayout" name="StartCleaningButtonLayout">
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="StartCleaningButton">
        <property name="maximumSize">
         <size>
          <width>250</width>
