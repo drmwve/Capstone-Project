@@ -1,5 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from GUI.CleaningScreenGUI import Ui_CleaningScreen
+from datetime import timedelta
+
 
 class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
 
@@ -70,6 +72,6 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
 
     def updateETA(self):
         if self.abortTimer.isActive() == True:
-            self.CleanETALabel.setText(str(int(self.abortTimer.remainingTime()/1000)))
+            self.CleanETALabel.setText("ETA: "+str(timedelta(seconds=int(self.abortTimer.remainingTime()/1000))))
             self.CurrentCleanTaskProgressBar.setValue(-self.abortTimer.remainingTime())
             self.updateTimer.start(1000)
