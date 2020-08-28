@@ -7,7 +7,6 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         super().__init__()
         self.setupUi(self)
         self.cleanRunningElements = [self.PauseResumeCleanButton, self.AbortCleanButton, self.CurrentCleanTaskLabel, self.CleanETALabel, self.CurrentCleanTaskProgressBar]
-        self.timerCount = 0
         self.adjustUI()
         self.connections()
 
@@ -35,8 +34,7 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         self.PauseResumeCleanButton.setEnabled(False)
         self.AbortCleanButton.setEnabled(False)
         self.abortTimer.start(15000)
-        self.CurrentCleanTaskProgressBar.setRange(0, 15000)
-        self.CurrentCleanTaskProgressBar.setValue(self.timerCount)
+        self.CurrentCleanTaskProgressBar.setRange(-15000, 0)
         self.updateETA()
         
 
@@ -69,11 +67,9 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         self.AbortCleanButton.setEnabled(True)
         self.CleanETALabel.setText("ETA: 84 Years")
         self.abortTimer.stop()
-        self.timerCount = 0
 
     def updateETA(self):
         if self.abortTimer.isActive() == True:
             self.CleanETALabel.setText(str(int(self.abortTimer.remainingTime()/1000)))
-            self.timerCount += 1000
-            self.CurrentCleanTaskProgressBar.setValue(self.timerCount)
+            self.CurrentCleanTaskProgressBar.setValue(-self.abortTimer.remainingTime())
             self.updateTimer.start(1000)
