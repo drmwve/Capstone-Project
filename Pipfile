@@ -5,12 +5,12 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
+black = {git = "git://github.com/psf/black"}
 
 [packages]
 pyside2 = "*"
 adafruit-circuitpython-ads1x15 = "*"
 w1thermsensor = "*"
-black = {git = "git://github.com/psf/black"}
 
 [requires]
 python_version = "3.8"
