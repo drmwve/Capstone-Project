@@ -1,4 +1,4 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 from GUI.CleaningScreenGUI import Ui_CleaningScreen
 from datetime import timedelta
 
@@ -38,13 +38,13 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         self.abortTimer.start(15000)
         self.CurrentCleanTaskProgressBar.setRange(-15000, 0)
         self.updateETA()
-        
+
 
     def pauseResumeClean(self):
         ## This should pause the current brewing process.
         ## For the cleaning cycle it should be safe to disable all functions.
         ## (Pumps, heaters, etc.)
-        
+
         if self.PauseResumeCleanButton.isChecked():
             self.PauseResumeCleanButton.setText("Resume")
         else:

@@ -1,4 +1,4 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 from GUI.BrewProgressGUI import Ui_BrewStatus
 
 class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
