@@ -1,4 +1,4 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 from GUI.BrewConfigGUI import Ui_BrewConfigWindow
 ## These variables set if a given hop dispenser should be used.
 ## i.e. if == 0 then that hop dispenser is not loaded or selected by the user.

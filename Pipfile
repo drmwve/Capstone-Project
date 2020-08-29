@@ -1,0 +1,15 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pylint = "*"
+
+[packages]
+pyside2 = "*"
+adafruit-circuitpython-ads1x15 = "*"
+w1thermsensor = "*"
+
+[requires]
+python_version = "3.8"

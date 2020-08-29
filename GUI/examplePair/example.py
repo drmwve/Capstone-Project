@@ -1,4 +1,4 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 from GUI.examplePair.example_GUI import Ui_Form
 
 #copy this and adjust 'Ui_Form' to inherit whatever the class Designer created

@@ -1,5 +1,5 @@
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 from GUI.BrewConfig import BrewConfig
 from GUI.MainMenu import MainMenu
 
