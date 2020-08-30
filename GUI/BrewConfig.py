@@ -87,19 +87,3 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
     def StartBrewing(self):
         ## This function should connect to Husam's brewing program
         print("I need connected to the brewing program")
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ## GUI Setup
-    ## Define and set main window
-    MainWindow.setObjectName("BrewConfigWindow")
-    MainWindow.resize(1024, 600)
-    MainWindow.setMinimumSize(QtCore.QSize(1024, 600))
-    MainWindow.setMaximumSize(QtCore.QSize(1024, 600))
-    MainWindow.setWindowTitle("Brew Configuration")
-
-    actualUI = BrewConfig()
-    MainWindow.show()
-    sys.exit(app.exec_())
