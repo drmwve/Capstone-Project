@@ -1,4 +1,4 @@
-from Process import Process
+from ExecutionCode.Process import Process
 
 class ProcessHandler():
     #I wrap the thread handling up in a neat package. The UI code creates a process and passes it to me with my startProcess(process)

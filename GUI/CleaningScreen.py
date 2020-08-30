@@ -64,7 +64,7 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         for i in range(len(self.cleanRunningElements)):
             self.cleanRunningElements[i].setHidden(False)
         self.StartCleaningButton.setHidden(True)
-        
+
         self.CurrentCleanTaskLabel.setText("This should update the user on what's happening . . .")
         self.cleaningTimer.start(3.6e+6)
         self.CurrentCleanTaskProgressBar.setRange(-3.6e+6, 0)

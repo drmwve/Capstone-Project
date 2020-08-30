@@ -4,4 +4,4 @@ The process knows what steps to do in what order.
 
 The process handler knows how to start and stop processes.
 
-The UI knows how to command the process handler, how to read the control wrapper's state, and how to send individual component/step commands to the wrapper.
+The UI knows how to command the process handler, including starting processes and controlling individual components, and how to ask it for the control wrapper's state.

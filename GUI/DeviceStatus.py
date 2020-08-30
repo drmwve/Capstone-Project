@@ -43,9 +43,9 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
 
     def adjustUI(self):
         pass
-    
+
     ## Defining button functions
-    def toggleBallValve(self, index):
+    def toggleBallValve(self, index): 
         if self.ballValveButton[index].isChecked():
             ## Open ball valve
             self.ballValveButton[index].setText("Close")
@@ -62,7 +62,7 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
         else:
             ## Change to direction 1
             self.threeWayValveState[index].setText("State: Direction 1")
-        
+
     def toggleHeater(self, index):
         if self.heaterButton[index].isChecked():
             ## Turn heater on
