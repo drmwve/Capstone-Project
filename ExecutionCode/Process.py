@@ -1,4 +1,6 @@
-class Process():
+from PySide2 import QtCore
+
+class Process(QtCore.QObject):
     # I have an array of steps and an index value. Each step, I emit signals which call process functions like
     # move liquid from tank to tank, heat to certain temperature, drain boil kettle, etc. For now, I receive
     # a "step completed" signal from the brew controller which calls the increment function.
@@ -34,7 +36,7 @@ class BrewProcess(Process):
     def __init__(self, brewRecipe):
         super().__init__()
         self.brewRecipe = brewRecipe
-        #emit signal which sets target mash temp 
+        #emit signal which sets target mash temp
         self.processSteps = ["brewing process step functions"]
 
 class CleaningProcess(Process):
