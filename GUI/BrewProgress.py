@@ -22,6 +22,8 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         ## This function should stop the machine, return it to a neutral state with no liquid.
         ## Then take the user back to the main menu when finished.
         self.CurrentTaskLabel.setText("Aborting Brew Cycle . . .")
+        self.PauseResumeButton.setEnabled(False)
+        self.AbortBrewButton.setEnabled(False)
 
     def pauseResumeBrew(self):
         ## This should pause the current brewing process.
@@ -31,3 +33,10 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
             self.PauseResumeButton.setText("Resume")
         else:
             self.PauseResumeButton.setText("Pause")
+
+    def resetBrewScreen(self):
+        ## This will reset the screen to the default layout.
+        self.PauseResumeButton.setText("Pause")
+        self.PauseResumeButton.setChecked(False)
+        self.PauseResumeButton.setEnabled(True)
+        self.AbortBrewButton.setEnabled(True)
