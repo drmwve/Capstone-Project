@@ -51,9 +51,12 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         if self.PauseResumeCleanButton.isChecked():
             ## Pauses process
             self.PauseResumeCleanButton.setText("Resume")
+            self.cleaningTimer.setInterval(self.cleaningTimer.remainingTime())
+            self.cleaningTimer.stop()
         else:
             ## Restarts process
             self.PauseResumeCleanButton.setText("Pause")
+            self.cleaningTimer.start()
 
     def startClean(self):
 
