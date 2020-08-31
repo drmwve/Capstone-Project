@@ -7,16 +7,11 @@ class MainMenu(QtWidgets.QWidget, Ui_MainMenu):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        #self.connections()
-        #self.adjustUI()
+        self.connections()
+        self.adjustUI()
 
-    #def connections(self):
-        #add any connections that are internal to the functioning of this widget only
-        #self.pushButton.clicked.connect(self.buttonPushed)
+    def connections(self):
+        pass
 
-    #def adjustUI(self):
-        #self.pushButton.setText("Internal Function")
-        #self.pushButton_2.setText("Brew Config")
-
-    #def buttonPushed(self):
-        #print("I handle something internal to this widget")
+    def adjustUI(self):
+        pass
