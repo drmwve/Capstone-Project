@@ -23,7 +23,7 @@ class ProcessHandler():
 
     def stopProcess(self):
         if self.processRunning:
-            self.processThread.quit()
+            self.process.stop()
             self.processRunning = False
 
     def addProcessToThread(self, process, thread):
