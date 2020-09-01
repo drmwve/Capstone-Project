@@ -1,5 +1,6 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from GUI.BrewConfigGUI import Ui_BrewConfigWindow
+from functools import partial
 
 class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
     def __init__(self):
@@ -23,26 +24,12 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
         self.HopCartridgeSelectEntry.setText(str(self.HopCartridges))
         self.HopCartridgeSelectDecrease.clicked.connect(self.DecreaseCartridgeSelect)
         self.HopCartridgeSelectIncrease.clicked.connect(self.IncreaseCartridgeSelect)
-        
-        self.Hop1Entry.setText(str(self.hopTiming[0]))
-        self.Hop1Decrease.clicked.connect(lambda:self.decreaseHop(0))
-        self.Hop1Increase.clicked.connect(lambda:self.increaseHop(0))
 
-        self.Hop2Entry.setText(str(self.hopTiming[1]))
-        self.Hop2Increase.clicked.connect(lambda:self.increaseHop(1))
-        self.Hop2Decrease.clicked.connect(lambda:self.decreaseHop(1))
-
-        self.Hop3Entry.setText(str(self.hopTiming[2]))
-        self.Hop3Increase.clicked.connect(lambda:self.increaseHop(2))
-        self.Hop3Decrease.clicked.connect(lambda:self.decreaseHop(2))
-
-        self.Hop4Entry.setText(str(self.hopTiming[3]))
-        self.Hop4Increase.clicked.connect(lambda:self.increaseHop(3))
-        self.Hop4Decrease.clicked.connect(lambda:self.decreaseHop(3))
-
-        self.Hop5Entry.setText(str(self.hopTiming[4]))
-        self.Hop5Increase.clicked.connect(lambda:self.increaseHop(4))
-        self.Hop5Decrease.clicked.connect(lambda:self.decreaseHop(4))
+        for index in range(len(self.hopEntry)):
+            print(index)
+            self.hopEntry[index].setText(str(self.hopTiming[index]))
+            self.hopIncrease[index].clicked.connect(partial(self.increaseHop, index))
+            self.hopDecrease[index].clicked.connect(partial(self.decreaseHop, index))
 
         self.StartBrewButton.clicked.connect(self.StartBrewing)
 
