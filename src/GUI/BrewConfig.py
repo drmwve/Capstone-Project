@@ -25,7 +25,7 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
         self.HopCartridgeSelectDecrease.clicked.connect(self.DecreaseCartridgeSelect)
         self.HopCartridgeSelectIncrease.clicked.connect(self.IncreaseCartridgeSelect)
 
-        for index in range(len(self.hopEntry)):
+        for index, hopRow in enumerate(self.hopEntry):
             print(index)
             self.hopEntry[index].setText(str(self.hopTiming[index]))
             self.hopIncrease[index].clicked.connect(partial(self.increaseHop, index))
