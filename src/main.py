@@ -1,10 +1,13 @@
 import sys
+
 from PySide2 import QtCore, QtGui, QtWidgets
+
+from ExecutionCode.ProcessHandler import ProcessHandler
 from GUI.BrewConfig import BrewConfig
-from GUI.MainMenu import MainMenu
 from GUI.BrewProgress import BrewStatus
 from GUI.CleaningScreen import CleaningScreen
 from GUI.DeviceStatus import DeviceStatus
+from GUI.MainMenu import MainMenu
 
 
 class Main(QtWidgets.QMainWindow):
@@ -63,7 +66,7 @@ class Main(QtWidgets.QMainWindow):
         self.mainMenu.EnterBrewConfigButton.clicked.connect(lambda: self.goToMenu(self.brewConfigScreen))
         self.mainMenu.EnterCleanScreenButton.clicked.connect(lambda: self.goToMenu(self.CleaningScreen))
         self.mainMenu.EnterDeviceStatusScreen.clicked.connect(lambda: self.goToMenu(self.DeviceStatusScreen))
-        
+
 
     #this just avoids having a million "switch to menu" functions. the menu passed to this function MUST already be in the stacked layout
     def goToMenu(self, menu):
@@ -74,6 +77,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
 
+    processHandler = ProcessHandler()
     mainScreen = Main()
     mainScreen.show()
 

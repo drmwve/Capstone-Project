@@ -1,5 +1,5 @@
 from ExecutionCode.Process import Process
-from PySide2 import QtCore
+from PySide2 import QtCore, QtGui
 from ExecutionCode.ControlWrapper import ControlHandler
 
 class ProcessHandler():
@@ -14,13 +14,22 @@ class ProcessHandler():
         self.addProcessToThread(self.brewControls, self.controllerThread)
         self.controllerThread.start()
 
+    # Starts a new process on a new thread. If a thread is already running, show an error.
     def startProcess(self, process):
-        self.processRunning = True
-        self.processThread = QtCore.QThread()
-        self.process = process
-        self.addProcessToThread(self.process, self.processThread)
-        self.processThread.start()
+        if not self.processRunning:
+            self.processRunning = True
+            self.processThread = QtCore.QThread()
+            self.process = process
+            self.addProcessToThread(self.process, self.processThread)
+            self.processThread.start()
+        else:
+            error = QtGui.QMessageBox()
+            error.setText("A process is already running.")
+            error.exec()
 
+    # Stops the process. The process's stop function is called, which is connected to the thread's.
+    # This saves the trouble of figuring out what you can do before a thread exits when you call its
+    # quit() function.
     def stopProcess(self):
         if self.processRunning:
             self.process.stop()
