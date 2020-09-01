@@ -1,6 +1,6 @@
 from ExecutionCode.Process import Process
 from PySide2 import QtCore, QtGui
-from ExecutionCode.ControlWrapper import ControlHandler
+#from ExecutionCode.ControlWrapper import ControlHandler
 
 class ProcessHandler():
     #I wrap the thread handling up in a neat package. The UI code creates a process and passes it to me with my startProcess(process)
@@ -9,10 +9,10 @@ class ProcessHandler():
         self.processRunning = False
 
         #the brew controller lives in its own thread to make constantly updating sensors and changing things easier
-        self.brewControls = ControlHandler()
-        self.controllerThread = QtCore.QThread()
-        self.addProcessToThread(self.brewControls, self.controllerThread)
-        self.controllerThread.start()
+        #self.brewControls = ControlHandler()
+        #self.controllerThread = QtCore.QThread()
+        #self.addProcessToThread(self.brewControls, self.controllerThread)
+        #self.controllerThread.start()
 
     # Starts a new process on a new thread. If a thread is already running, show an error.
     def startProcess(self, process):
