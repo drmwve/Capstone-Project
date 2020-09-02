@@ -1,4 +1,5 @@
 from PySide2 import QtCore, QtGui, QtWidgets
+from loguru import logger
 from GUI.BrewConfigGUI import Ui_BrewConfigWindow
 from functools import partial
 import linecache
@@ -84,6 +85,8 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
     def StartBrewing(self):
         ## This function should connect to Husam's brewing program
         print("I need connected to the brewing program")
+        logger.info("Starting brew cycle with parameters: ""MTT:"+str(self.MashTunTemperature)+" HC:"+str(self.HopCartridges)+" HT:"+str(self.hopTiming))
+
 
     def toggleLoad(self):
         if self.QBSaveButton.isChecked():
@@ -96,14 +99,16 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
     def quickBrew(self, index):
         ## Load a brew
         if self.QBLoadButton.isChecked():
-            print("I just read a QuickBrew file")
+            logger.info("Read QuickBrew file "+str(index+1))
+            ## Linecache has to be cleared before loading or recently edited files will remain unchanged
+            linecache.clearcache()
             ## Retrieve settings from file and store them in the usual variables
             self.MashTunTemperature = int(linecache.getline('src\GUI\QuickBrewSaves\QuickBrew%d.txt'%(index,), 1))
             self.HopCartridges = int(linecache.getline('src\GUI\QuickBrewSaves\QuickBrew%d.txt'%(index,), 2))
             for i in range(0, 5):
                 self.hopTiming[i] = int(linecache.getline('src\GUI\QuickBrewSaves\QuickBrew%d.txt'%(index,), 3+i))
             ## Print retrieved settings
-            print("MTT:"+str(self.MashTunTemperature)+" HC:"+str(self.HopCartridges)+" HT:"+str(self.hopTiming))
+            logger.info("Brew parameters set to: ""MTT:"+str(self.MashTunTemperature)+" HC:"+str(self.HopCartridges)+" HT:"+str(self.hopTiming))
             ## Reset text field displays
             for i in range(0,5):
                 self.hopEntry[i].setText(str(self.hopTiming[i]))
@@ -124,7 +129,9 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
         if self.QBSaveButton.isChecked():
             ## Open or create file in writing mode
             self.qbFile = open('src\GUI\QuickBrewSaves\QuickBrew%d.txt'%(index,), 'w')
-            print("I just saved a QuickBrew file")
+            ## Logging
+            logger.info("Saved QuickBrew file "+str(index+1))
+            logger.info("Brew parameters saved: ""MTT:"+str(self.MashTunTemperature)+" HC:"+str(self.HopCartridges)+" HT:"+str(self.hopTiming))
             ## Write Mash temp
             self.qbFile.write(str(self.MashTunTemperature)) 
             ## Write hop cartridges to new line
