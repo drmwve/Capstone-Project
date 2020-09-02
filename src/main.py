@@ -27,42 +27,28 @@ class Main(QtWidgets.QMainWindow):
 
     #create stacked layout for different pages, add them to central widget
     def createStackedLayout(self):
-        self.bigContainerWidget = QtWidgets.QWidget()
-        self.screenStack = QtWidgets.QStackedLayout()
-        self.bigContainerWidget.setLayout(self.screenStack)
-        self.setCentralWidget(self.bigContainerWidget)
+        self.setCentralWidget(QtWidgets.QStackedWidget())
 
-        #create instances of the screens and add them to the stacked layout here
         self.mainMenu = MainMenu()
-        self.screenStack.addWidget(self.mainMenu)
-
         self.brewConfigScreen = BrewConfig()
-        self.screenStack.addWidget(self.brewConfigScreen)
-
         self.BrewStatusScreen = BrewStatus()
-        self.screenStack.addWidget(self.BrewStatusScreen)
-
         self.CleaningScreen = CleaningScreen()
-        self.screenStack.addWidget(self.CleaningScreen)
-
         self.DeviceStatusScreen = DeviceStatus()
-        self.screenStack.addWidget(self.DeviceStatusScreen)
+        menus = [self.mainMenu, self.brewConfigScreen, self.BrewStatusScreen, self.CleaningScreen, self.DeviceStatusScreen]
+        for menu in menus:
+            self.centralWidget().addWidget(menu)
+        #create instances of the screens and add them to the stacked layout here
+
 
     def connections(self):
-        #define button events which move between screens here
-        print("global connections made")
-
         #see "goToMenu" function below. the 'lambda: ' statement is required for arcane reasons when calling a function that takes arguments
         #in a signal-slot connection like this
         self.brewConfigScreen.BackButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
-        self.brewConfigScreen.StartBrewButton.clicked.connect(partial(self.goToMenu, self.BrewStatusScreen))
-
         self.BrewStatusScreen.ReturnToMenuButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
-
         self.DeviceStatusScreen.ReturnToMenuButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
-
         self.CleaningScreen.ReturnToMenuButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
 
+        self.brewConfigScreen.StartBrewButton.clicked.connect(partial(self.goToMenu, self.BrewStatusScreen))
         self.mainMenu.EnterBrewConfigButton.clicked.connect(partial(self.goToMenu, self.brewConfigScreen))
         self.mainMenu.EnterCleanScreenButton.clicked.connect(partial(self.goToMenu, self.CleaningScreen))
         self.mainMenu.EnterDeviceStatusScreen.clicked.connect(partial(self.goToMenu, self.DeviceStatusScreen))
@@ -70,7 +56,7 @@ class Main(QtWidgets.QMainWindow):
 
     #this just avoids having a million "switch to menu" functions. the menu passed to this function MUST already be in the stacked layout
     def goToMenu(self, menu):
-        self.screenStack.setCurrentWidget(menu)
+        self.centralWidget().setCurrentWidget(menu)
 
 
 if __name__ == "__main__":
