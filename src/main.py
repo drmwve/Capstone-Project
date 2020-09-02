@@ -1,6 +1,7 @@
 import sys
 
 from PySide2 import QtCore, QtGui, QtWidgets
+from loguru import logger
 from functools import partial
 from ExecutionCode.ProcessHandler import ProcessHandler
 from GUI.BrewConfig import BrewConfig
@@ -52,19 +53,23 @@ class Main(QtWidgets.QMainWindow):
         self.mainMenu.EnterBrewConfigButton.clicked.connect(partial(self.goToMenu, self.brewConfigScreen))
         self.mainMenu.EnterCleanScreenButton.clicked.connect(partial(self.goToMenu, self.CleaningScreen))
         self.mainMenu.EnterDeviceStatusScreen.clicked.connect(partial(self.goToMenu, self.DeviceStatusScreen))
+        logger.info("Menu navigation buttons connected")
 
 
     #this just avoids having a million "switch to menu" functions. the menu passed to this function MUST already be in the stacked layout
     def goToMenu(self, menu):
+        logger.info("UI switched to screen " + str(menu))
         self.centralWidget().setCurrentWidget(menu)
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
+    logger.add(sys.stderr, format="{time} {level} {message}", filter="my_module", level="DEBUG")
 
     processHandler = ProcessHandler()
     mainScreen = Main()
     mainScreen.show()
+    logger.info("Created main screen " + str(mainScreen))
 
     sys.exit(app.exec_())
