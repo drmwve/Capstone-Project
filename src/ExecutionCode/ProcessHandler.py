@@ -1,5 +1,6 @@
 from ExecutionCode.Process import Process
 from PySide2 import QtCore, QtGui
+from loguru import logger
 #from ExecutionCode.ControlWrapper import ControlHandler
 
 class ProcessHandler():
@@ -22,6 +23,7 @@ class ProcessHandler():
             self.process = process
             self.addProcessToThread(self.process, self.processThread)
             self.processThread.start()
+            logger.info("Started process " + str(self.process) + " on thread " + str(self.processThread))
         else:
             error = QtGui.QMessageBox()
             error.setText("A process is already running.")
@@ -34,6 +36,7 @@ class ProcessHandler():
         if self.processRunning:
             self.process.stop()
             self.processRunning = False
+            logger.info("Stopped process " + self.process)
 
     def addProcessToThread(self, process, thread):
         process.moveToThread(thread)

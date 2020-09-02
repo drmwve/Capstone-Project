@@ -1,7 +1,8 @@
 import sys
 
 from PySide2 import QtCore, QtGui, QtWidgets
-
+from loguru import logger
+from functools import partial
 from ExecutionCode.ProcessHandler import ProcessHandler
 from GUI.BrewConfig import BrewConfig
 from GUI.BrewProgress import BrewStatus
@@ -27,58 +28,48 @@ class Main(QtWidgets.QMainWindow):
 
     #create stacked layout for different pages, add them to central widget
     def createStackedLayout(self):
-        self.bigContainerWidget = QtWidgets.QWidget()
-        self.screenStack = QtWidgets.QStackedLayout()
-        self.bigContainerWidget.setLayout(self.screenStack)
-        self.setCentralWidget(self.bigContainerWidget)
+        self.setCentralWidget(QtWidgets.QStackedWidget())
 
-        #create instances of the screens and add them to the stacked layout here
         self.mainMenu = MainMenu()
-        self.screenStack.addWidget(self.mainMenu)
-
         self.brewConfigScreen = BrewConfig()
-        self.screenStack.addWidget(self.brewConfigScreen)
-
         self.BrewStatusScreen = BrewStatus()
-        self.screenStack.addWidget(self.BrewStatusScreen)
-
         self.CleaningScreen = CleaningScreen()
-        self.screenStack.addWidget(self.CleaningScreen)
-
         self.DeviceStatusScreen = DeviceStatus()
-        self.screenStack.addWidget(self.DeviceStatusScreen)
+        menus = [self.mainMenu, self.brewConfigScreen, self.BrewStatusScreen, self.CleaningScreen, self.DeviceStatusScreen]
+        for menu in menus:
+            self.centralWidget().addWidget(menu)
+        #create instances of the screens and add them to the stacked layout here
+
 
     def connections(self):
-        #define button events which move between screens here
-        print("global connections made")
-
         #see "goToMenu" function below. the 'lambda: ' statement is required for arcane reasons when calling a function that takes arguments
         #in a signal-slot connection like this
-        self.brewConfigScreen.BackButton.clicked.connect(lambda: self.goToMenu(self.mainMenu))
-        self.brewConfigScreen.StartBrewButton.clicked.connect(lambda: self.goToMenu(self.BrewStatusScreen))
+        self.brewConfigScreen.BackButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
+        self.BrewStatusScreen.ReturnToMenuButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
+        self.DeviceStatusScreen.ReturnToMenuButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
+        self.CleaningScreen.ReturnToMenuButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
 
-        self.BrewStatusScreen.ReturnToMenuButton.clicked.connect(lambda: self.goToMenu(self.mainMenu))
-
-        self.DeviceStatusScreen.ReturnToMenuButton.clicked.connect(lambda: self.goToMenu(self.mainMenu))
-
-        self.CleaningScreen.ReturnToMenuButton.clicked.connect(lambda: self.goToMenu(self.mainMenu))
-
-        self.mainMenu.EnterBrewConfigButton.clicked.connect(lambda: self.goToMenu(self.brewConfigScreen))
-        self.mainMenu.EnterCleanScreenButton.clicked.connect(lambda: self.goToMenu(self.CleaningScreen))
-        self.mainMenu.EnterDeviceStatusScreen.clicked.connect(lambda: self.goToMenu(self.DeviceStatusScreen))
+        self.brewConfigScreen.StartBrewButton.clicked.connect(partial(self.goToMenu, self.BrewStatusScreen))
+        self.mainMenu.EnterBrewConfigButton.clicked.connect(partial(self.goToMenu, self.brewConfigScreen))
+        self.mainMenu.EnterCleanScreenButton.clicked.connect(partial(self.goToMenu, self.CleaningScreen))
+        self.mainMenu.EnterDeviceStatusScreen.clicked.connect(partial(self.goToMenu, self.DeviceStatusScreen))
+        logger.info("Menu navigation buttons connected")
 
 
     #this just avoids having a million "switch to menu" functions. the menu passed to this function MUST already be in the stacked layout
     def goToMenu(self, menu):
-        self.screenStack.setCurrentWidget(menu)
+        logger.info("UI switched to screen " + str(menu))
+        self.centralWidget().setCurrentWidget(menu)
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
+    logger.add(sys.stderr, format="{time} {level} {message}", filter="my_module", level="DEBUG")
 
     processHandler = ProcessHandler()
     mainScreen = Main()
     mainScreen.show()
+    logger.info("Created main screen " + str(mainScreen))
 
     sys.exit(app.exec_())
