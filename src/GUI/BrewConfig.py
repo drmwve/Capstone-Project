@@ -1,6 +1,7 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from GUI.BrewConfigGUI import Ui_BrewConfigWindow
 from functools import partial
+import linecache
 
 class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
     def __init__(self):
@@ -32,6 +33,15 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
             self.hopDecrease[index].clicked.connect(partial(self.decreaseHop, index))
 
         self.StartBrewButton.clicked.connect(self.StartBrewing)
+        self.QBLoadButton.clicked.connect(self.toggleLoad)
+        self.QBSaveButton.clicked.connect(self.toggleSave)
+
+        self.QB1Button.clicked.connect(lambda: self.quickBrew(0))
+        self.QB2Button.clicked.connect(lambda: self.quickBrew(1))
+        self.QB3Button.clicked.connect(lambda: self.quickBrew(2))
+        self.QB4Button.clicked.connect(lambda: self.quickBrew(3))
+        self.QB5Button.clicked.connect(lambda: self.quickBrew(4))
+        self.QB6Button.clicked.connect(lambda: self.quickBrew(5))
 
     ## Defining button functions
     def IncreaseMashTemp(self):
@@ -74,3 +84,53 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
     def StartBrewing(self):
         ## This function should connect to Husam's brewing program
         print("I need connected to the brewing program")
+
+    def toggleLoad(self):
+        if self.QBSaveButton.isChecked():
+            self.QBSaveButton.toggle()
+
+    def toggleSave(self):
+        if self.QBLoadButton.isChecked():
+            self.QBLoadButton.toggle()
+
+    def quickBrew(self, index):
+        ## Load a brew
+        if self.QBLoadButton.isChecked():
+            print("I just read a QuickBrew file")
+            ## Retrieve settings from file and store them in the usual variables
+            self.MashTunTemperature = int(linecache.getline('src\GUI\QuickBrewSaves\QuickBrew%d.txt'%(index,), 1))
+            self.HopCartridges = int(linecache.getline('src\GUI\QuickBrewSaves\QuickBrew%d.txt'%(index,), 2))
+            for i in range(0, 5):
+                self.hopTiming[i] = int(linecache.getline('src\GUI\QuickBrewSaves\QuickBrew%d.txt'%(index,), 3+i))
+            ## Print retrieved settings
+            print("MTT:"+str(self.MashTunTemperature)+" HC:"+str(self.HopCartridges)+" HT:"+str(self.hopTiming))
+            ## Reset text field displays
+            for i in range(0,5):
+                self.hopEntry[i].setText(str(self.hopTiming[i]))
+            self.HopCartridgeSelectEntry.setText(str(self.HopCartridges))
+            self.MashTempEntry.setText(str(self.MashTunTemperature))
+            ## Show all hop fields
+            for i in range(0,5):
+                self.hopEntry[i].setHidden(False)
+                self.hopIncrease[i].setHidden(False)
+                self.hopDecrease[i].setHidden(False)
+            ## Hide irrelevant hop fields
+            if self.HopCartridges < 5:
+                for i in range(self.HopCartridges, 5):
+                    self.hopEntry[i].setHidden(True)
+                    self.hopIncrease[i].setHidden(True)
+                    self.hopDecrease[i].setHidden(True)
+        ## Save a brew
+        if self.QBSaveButton.isChecked():
+            ## Open or create file in writing mode
+            self.qbFile = open('src\GUI\QuickBrewSaves\QuickBrew%d.txt'%(index,), 'w')
+            print("I just saved a QuickBrew file")
+            ## Write Mash temp
+            self.qbFile.write(str(self.MashTunTemperature)) 
+            ## Write hop cartridges to new line
+            self.qbFile.write('\n'+str(self.HopCartridges))
+            ## Write hop timings to new individual lines
+            for i in range(0,5):
+                self.qbFile.write('\n'+str(self.hopTiming[i])) 
+            ## Close the file
+            self.qbFile.close()
