@@ -1,6 +1,9 @@
 import RPi.GPIO as GPIO #to control the input and output
 from ExecutionCode.BrewState import BrewState
 GPIO.setup(1,GPIO.OUT) #2 way valve number 1
+GPIO.setup(10,GPIO.out) #hop servo terminal
+servo = GPIO.PWM(10,50) # 10 is the terminal number an 50 is the frequency of the servo, this whill allow us to control the servo angle
+servo.start(0)
 
 # Signals: step completed
 
@@ -55,17 +58,26 @@ class ControlHandler():
         self.brewState.heatingElement[index-1] = False
         print("Excution turned off heating element" + str(index))
 
+    def threeWayBallValveD1(self, index): # D1 is meant for direction 1, D2 for direction 2
+        GPIO.output(self.threeWayBallValveGPIOs[index-1],False)
+        self.brewState.threeWayBallValve[index-1] = False
+        print("Excution turned 3 way ball valve" + str(index) + "to direction 1")
+
+    def threeWayBallValveD2(self, index): 
+        GPIO.output(self.threeWayBallValveGPIOs[index-1],True)
+        self.brewState.threeWayBallValve[index-1] = True
+        print("Excution turned 3 way ball valve" + str(index) + "to direction 2")
+
+    def motorAngle(self, angle):      # i will test this function and change it if necessary
+        duty = float(angle) / 18 + 2.5      # to change the angle inputed to duty cycles for the motor to turn to 
+        servo.ChangeDutyCycle(duty)
+        self.brewState.angle = angle
+        print("Excution turned the motor an angle of" + str(angle))
         
 
-    def openHopServo(self, index):
-        GPIO.output(self.hopServoGPIOs[index-1],True)
-        self.brewState.hopservo[index-1] = True
-        print("Excution turned On the Hop Servo")
 
-    def closeHopServo(self, index):
-        GPIO.output(self.hopServoGPIOs[index-1],False)
-        self.brewState.hopservo[index-1] = False
-        print("Excution turned Off the Hop Servo")
+
+    
         
 
 

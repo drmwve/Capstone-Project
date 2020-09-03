@@ -10,6 +10,8 @@ class BrewState():
         self.pump = [False, False]
         self.heatingElement = [False, False]
         self.hopservo = [False]
+        self.threeWayBallValve = [False, False, False, False, False, False]
+        self.angle = 0
 
 
     pass
