@@ -29,10 +29,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.mainMenu = MainMenu()
         self.brewConfigScreen = BrewConfig()
-        self.BrewStatusScreen = BrewStatus()
-        self.CleaningScreen = CleaningScreen()
-        self.DeviceStatusScreen = DeviceStatus()
+        self.brewStatusScreen = BrewStatus()
+        self.cleaningScreen = CleaningScreen()
+        self.deviceStatusScreen = DeviceStatus()
         menus = [self.mainMenu, self.brewConfigScreen, self.BrewStatusScreen, self.CleaningScreen, self.DeviceStatusScreen]
+        #menus = [MainMenu(), BrewConfig(), BrewStatus(), CleaningScreen(), DeviceStatus()]
+        #(self.mainMenu, self.brewConfigScreen, self.brewStatusScreen, self.cleaningScreen, self.deviceStatusScreen) = menus
         for menu in menus:
             self.centralWidget().addWidget(menu)
         #create instances of the screens and add them to the stacked layout here
@@ -42,11 +44,11 @@ class MainWindow(QtWidgets.QMainWindow):
         #see "goToMenu" function below. the 'lambda: ' statement is required for arcane reasons when calling a function that takes arguments
         #in a signal-slot connection like this
         self.brewConfigScreen.BackButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
-        self.BrewStatusScreen.ReturnToMenuButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
-        self.DeviceStatusScreen.ReturnToMenuButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
-        self.CleaningScreen.ReturnToMenuButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
+        self.brewStatusScreen.ReturnToMenuButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
+        self.deviceStatusScreen.ReturnToMenuButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
+        self.cleaningScreen.ReturnToMenuButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
 
-        self.brewConfigScreen.StartBrewButton.clicked.connect(partial(self.goToMenu, self.BrewStatusScreen))
+        self.brewconfigScreen.StartBrewButton.clicked.connect(partial(self.goToMenu, self.BrewStatusScreen))
         self.mainMenu.EnterBrewConfigButton.clicked.connect(partial(self.goToMenu, self.brewConfigScreen))
         self.mainMenu.EnterCleanScreenButton.clicked.connect(partial(self.goToMenu, self.CleaningScreen))
         self.mainMenu.EnterDeviceStatusScreen.clicked.connect(partial(self.goToMenu, self.DeviceStatusScreen))
