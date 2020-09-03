@@ -1,9 +1,9 @@
-from ExecutionCode.Process import Process
+from ExecutionCode.Process import BrewProcess, CleaningProcess
 from PySide2 import QtCore, QtGui
 from loguru import logger
 #from ExecutionCode.ControlWrapper import ControlHandler
 
-class ProcessHandler():
+class ExecutionHandler():
     #I wrap the thread handling up in a neat package. The UI code creates a process and passes it to me with my startProcess(process)
     #function and I create a new thread which this process is executed in.
     def __init__(self):
@@ -28,6 +28,12 @@ class ProcessHandler():
             error = QtGui.QMessageBox()
             error.setText("A process is already running.")
             error.exec()
+
+    def startBrewProcess(self, brewRecipe):
+        self.startProcess(BrewProcess(brewRecipe))
+
+    def startCleaningProcess(self):
+        self.startProcess(CleaningProcess())
 
     # Stops the process. The process's stop function is called, which is connected to the thread's.
     # This saves the trouble of figuring out what you can do before a thread exits when you call its
