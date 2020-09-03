@@ -1,17 +1,17 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
+from ExecutionCode.BrewRecipe import BrewRecipe
 from GUI.BrewConfigGUI import Ui_BrewConfigWindow
 from functools import partial
 import linecache
+import pickle
 
 class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
 
-        self.HopCartridges = 5
-        self.MashTunTemperature = 160
-        self.hopTiming = [0,0,0,0,0]
+
         self.hopEntry = [self.Hop1Entry, self.Hop2Entry, self.Hop3Entry, self.Hop4Entry, self.Hop5Entry]
         self.hopIncrease = [self.Hop1Increase, self.Hop2Increase, self.Hop3Increase, self.Hop4Increase, self.Hop5Increase]
         self.hopDecrease = [self.Hop1Decrease, self.Hop2Decrease, self.Hop3Decrease, self.Hop4Decrease, self.Hop5Decrease]
@@ -99,13 +99,11 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
         ## Load a brew
         if self.QBLoadButton.isChecked():
             logger.info("Read QuickBrew file "+str(index+1))
-            ## Linecache has to be cleared before loading or recently edited files will remain unchanged
-            linecache.clearcache()
-            ## Retrieve settings from file and store them in the usual variables
-            self.MashTunTemperature = int(linecache.getline('src\GUI\QuickBrewSaves\QuickBrew%d.txt'%(index,), 1))
-            self.HopCartridges = int(linecache.getline('src\GUI\QuickBrewSaves\QuickBrew%d.txt'%(index,), 2))
-            for i in range(0, 5):
-                self.hopTiming[i] = int(linecache.getline('src\GUI\QuickBrewSaves\QuickBrew%d.txt'%(index,), 3+i))
+            
+            self.outfile = open('filename.txt','rb')
+            self.quickBrewP = pickle.load(self.outfile)
+            print(self.quickBrewP)
+            
             ## Print retrieved settings
             logger.info("Brew parameters set to: ""MTT:"+str(self.MashTunTemperature)+" HC:"+str(self.HopCartridges)+" HT:"+str(self.hopTiming))
             ## Reset text field displays
@@ -127,16 +125,16 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
         ## Save a brew
         if self.QBSaveButton.isChecked():
             ## Open or create file in writing mode
-            self.qbFile = open('src\GUI\QuickBrewSaves\QuickBrew%d.txt'%(index,), 'w')
+            #self.qbFile = open('src\GUI\QuickBrewSaves\QuickBrew%d.txt'%(index,), 'w')
             ## Logging
-            logger.info("Saved QuickBrew file "+str(index+1))
-            logger.info("Brew parameters saved: ""MTT:"+str(self.MashTunTemperature)+" HC:"+str(self.HopCartridges)+" HT:"+str(self.hopTiming))
-            ## Write Mash temp
-            self.qbFile.write(str(self.MashTunTemperature))
-            ## Write hop cartridges to new line
-            self.qbFile.write('\n'+str(self.HopCartridges))
-            ## Write hop timings to new individual lines
-            for i in range(0,5):
-                self.qbFile.write('\n'+str(self.hopTiming[i]))
+            #logger.info("Saved QuickBrew file "+str(index+1))
+            #logger.info("Brew parameters saved: ""MTT:"+str(self.MashTunTemperature)+" HC:"+str(self.HopCartridges)+" HT:"+str(self.hopTiming))
+
+            self.quickBrewP = [self.MashTunTemperature, self.HopCartridges, self.hopTiming]
+            print(self.quickBrewP)
+            self.outfile = open('filename.txt','wb')
+            self.quickBrewPickle = pickle.dump(self.quickBrewP,self.outfile)
+            self.outfile.close()
+
             ## Close the file
-            self.qbFile.close()
+            #self.qbFile.close()
