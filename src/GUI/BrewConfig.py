@@ -28,7 +28,6 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
         self.HopCartridgeSelectIncrease.clicked.connect(self.IncreaseCartridgeSelect)
 
         for index, hopRow in enumerate(self.hopEntry):
-            print(index)
             self.hopEntry[index].setText(str(self.hopTiming[index]))
             self.hopIncrease[index].clicked.connect(partial(self.increaseHop, index))
             self.hopDecrease[index].clicked.connect(partial(self.decreaseHop, index))
@@ -133,11 +132,11 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
             logger.info("Saved QuickBrew file "+str(index+1))
             logger.info("Brew parameters saved: ""MTT:"+str(self.MashTunTemperature)+" HC:"+str(self.HopCartridges)+" HT:"+str(self.hopTiming))
             ## Write Mash temp
-            self.qbFile.write(str(self.MashTunTemperature)) 
+            self.qbFile.write(str(self.MashTunTemperature))
             ## Write hop cartridges to new line
             self.qbFile.write('\n'+str(self.HopCartridges))
             ## Write hop timings to new individual lines
             for i in range(0,5):
-                self.qbFile.write('\n'+str(self.hopTiming[i])) 
+                self.qbFile.write('\n'+str(self.hopTiming[i]))
             ## Close the file
             self.qbFile.close()

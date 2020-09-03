@@ -3,7 +3,7 @@ import sys
 from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
 from functools import partial
-from ExecutionCode.ProcessHandler import ProcessHandler
+from ExecutionCode.ExecutionHandler import ExecutionHandler
 from GUI.BrewConfig import BrewConfig
 from GUI.BrewProgress import BrewStatus
 from GUI.CleaningScreen import CleaningScreen
@@ -67,7 +67,8 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     logger.add(sys.stderr, format="{time} {level} {message}", filter="my_module", level="DEBUG")
 
-    processHandler = ProcessHandler()
+
+    executionHandler = ExecutionHandler()
     mainScreen = Main()
     mainScreen.show()
     logger.info("Created main screen " + str(mainScreen))
