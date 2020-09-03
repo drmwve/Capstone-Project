@@ -1,4 +1,5 @@
 from PySide2 import QtCore, QtGui, QtWidgets
+from loguru import logger
 from GUI.CleaningScreenGUI import Ui_CleaningScreen
 from datetime import timedelta
 
@@ -34,6 +35,7 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
     def abortClean(self):
         ## This function should stop the machine, return it to a neutral state with no liquid.
         ## Then take the user back to the main menu when finished.
+        logger.info("User requested to abort clean.")
         self.CurrentCleanTaskLabel.setText("Aborting Cleaning Cycle . . .")
         self.PauseResumeCleanButton.setEnabled(False)
         self.AbortCleanButton.setEnabled(False)
@@ -41,6 +43,7 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         self.CurrentCleanTaskProgressBar.setRange(-15000, 0)
         self.cleaningTimer.stop()
         self.updateETA()
+        
 
 
     def pauseResumeClean(self):
@@ -50,17 +53,20 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
 
         if self.PauseResumeCleanButton.isChecked():
             ## Pauses process
+            logger.info("User requested to pause clean.")
             self.PauseResumeCleanButton.setText("Resume")
             self.cleaningTimer.setInterval(self.cleaningTimer.remainingTime())
             self.cleaningTimer.stop()
         else:
             ## Restarts process
+            logger.info("User requested to resume cleaning.")
             self.PauseResumeCleanButton.setText("Pause")
             self.cleaningTimer.start()
 
     def startClean(self):
 
         ## Reshow hidden elements that are now relevent and hide start button
+        logger.info("Starting cleaning cycle.")
         for i in range(len(self.cleanRunningElements)):
             self.cleanRunningElements[i].setHidden(False)
         self.StartCleaningButton.setHidden(True)
