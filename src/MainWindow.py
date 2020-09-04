@@ -32,7 +32,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.brewStatusScreen = BrewStatus()
         self.cleaningScreen = CleaningScreen()
         self.deviceStatusScreen = DeviceStatus()
-        menus = [self.mainMenu, self.brewConfigScreen, self.BrewStatusScreen, self.CleaningScreen, self.DeviceStatusScreen]
+        menus = [self.mainMenu, self.brewConfigScreen, self.brewStatusScreen, self.cleaningScreen, self.deviceStatusScreen]
         #menus = [MainMenu(), BrewConfig(), BrewStatus(), CleaningScreen(), DeviceStatus()]
         #(self.mainMenu, self.brewConfigScreen, self.brewStatusScreen, self.cleaningScreen, self.deviceStatusScreen) = menus
         for menu in menus:
@@ -48,10 +48,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.deviceStatusScreen.ReturnToMenuButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
         self.cleaningScreen.ReturnToMenuButton.clicked.connect(partial(self.goToMenu, self.mainMenu))
 
-        self.brewConfigScreen.StartBrewButton.clicked.connect(partial(self.goToMenu, self.BrewStatusScreen))
+        self.brewConfigScreen.StartBrewButton.clicked.connect(partial(self.goToMenu, self.brewStatusScreen))
         self.mainMenu.EnterBrewConfigButton.clicked.connect(partial(self.goToMenu, self.brewConfigScreen))
-        self.mainMenu.EnterCleanScreenButton.clicked.connect(partial(self.goToMenu, self.CleaningScreen))
-        self.mainMenu.EnterDeviceStatusScreen.clicked.connect(partial(self.goToMenu, self.DeviceStatusScreen))
+        self.mainMenu.EnterCleanScreenButton.clicked.connect(partial(self.goToMenu, self.cleaningScreen))
+        self.mainMenu.EnterDeviceStatusScreen.clicked.connect(partial(self.goToMenu, self.deviceStatusScreen))
         logger.info("Menu navigation buttons connected")
 
 
