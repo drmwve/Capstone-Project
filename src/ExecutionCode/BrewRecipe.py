@@ -28,30 +28,56 @@ class BrewRecipePickler(object):
             # Put any initialization here.
         return cls._instance
 
-
-    def saveRecipes(self, brewRecipes):
-        recipePickle = pickle.dumps(brewRecipes)
-        pickleDigest = self.make_digest(recipePickle)
-        with open(BrewRecipePickler._picklefile, "w") as picklefile:
-            picklefile.write(str(pickleDigest) + '\n')
-            picklefile.write(str(recipePickle))
-
     def loadRecipes(self):
         logger.debug("Attempting to load recipes")
         try:
-            with open(BrewRecipePickler._picklefile, "r") as picklefile:
-                pickleDigest, recipePickle = picklefile.readlines(2)
-                checkPD = self.make_digest(pickleDigest)
-                if hmac.compare_digest(checkPD, pickleDigest):
-                    brewRecipes = pickle.loads(recipePickle)
-                logger.debug("Loading " + brewRecipes)
+            objectToPickle = self._readPickleFile(BrewRecipePickler._picklefile)
         except:
-            brewRecipes = [BrewRecipe()]
-            self.saveRecipes(brewRecipes)
-            logger.debug("Creating new brew recipes file")
-        return brewRecipes
+            logger.exception("Exception noted")
+            objectToPickle = self._createNewPickleFile()
+        logger.debug("Loading " + str(objectToPickle))
+        return objectToPickle
 
-    def make_digest(self, message):
+    def saveRecipes(self, recipes):
+        self._savePickleToFile(recipes)
+
+    #saves a given object to a pickle file with encryption
+    def _savePickleToFile(self, objectToPickle):
+        logger.debug("Pickling object: %s" % objectToPickle)
+        pickledObject = pickle.dumps(objectToPickle)
+        digest = self._make_digest(pickledObject)
+        #hmac code is written as UTF-8 header, pickle is written as bytes
+        with open(BrewRecipePickler._picklefile, "wb") as picklefile:
+            logger.debug("Writing digest to file %s" % digest)
+            picklefile.write(("%s\n" % digest).encode('utf-8'))
+            logger.debug("Wrote pickle object: %s" % pickledObject)
+            picklefile.write(pickledObject)
+
+    #read pickle file and check hmac, raising an exception if there's an issue
+    def _readPickleFile(self, picklefile):
+        with open(picklefile, "rb") as picklefile:
+            logger.debug("File %s read successfully" % picklefile.name)
+            readDigest = picklefile.readline().decode('utf-8').rstrip()
+            readPickle = picklefile.read()
+
+        logger.debug("Read recipePickle: %s" % readPickle)
+        actualDigest = self._make_digest(readPickle)
+
+        logger.debug("Doing hmac check: %s  %s" % (actualDigest,readDigest))
+        if hmac.compare_digest(actualDigest, readDigest):
+            logger.debug("hmac check passed")
+            return pickle.loads(readPickle)
+        else:
+            logger.debug("hmac check failed")
+            raise AssertionError
+
+    def _createNewPickleFile(self):
+        objectToPickle = [BrewRecipe()]
+        self._savePickleToFile(objectToPickle)
+        logger.debug("Creating new brew recipes file")
+        return objectToPickle
+
+    def _make_digest(self, message):
         hash = hmac.new(bytes(192),
                     message,
                     hashlib.sha1)

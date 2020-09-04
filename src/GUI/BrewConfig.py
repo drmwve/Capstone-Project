@@ -11,6 +11,7 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
         self.setupUi(self)
         self.pickler = BrewRecipePickler()
         self.savedBrewRecipes = self.pickler.loadRecipes()
+        logger.debug("Loaded recipes %s" % self.savedBrewRecipes)
         self.selectedBrewRecipe = self.savedBrewRecipes[0]
 
         self.hopEntry = [self.Hop1Entry, self.Hop2Entry, self.Hop3Entry, self.Hop4Entry, self.Hop5Entry]
