@@ -36,13 +36,6 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
         self.QBLoadButton.clicked.connect(self.toggleLoad)
         self.QBSaveButton.clicked.connect(self.toggleSave)
 
-        self.QB1Button.clicked.connect(lambda: self.quickBrew(0))
-        self.QB2Button.clicked.connect(lambda: self.quickBrew(1))
-        self.QB3Button.clicked.connect(lambda: self.quickBrew(2))
-        self.QB4Button.clicked.connect(lambda: self.quickBrew(3))
-        self.QB5Button.clicked.connect(lambda: self.quickBrew(4))
-        self.QB6Button.clicked.connect(lambda: self.quickBrew(5))
-
     ## Defining button functions
     def IncreaseMashTemp(self):
         self.MashTunTemperature += 1
@@ -88,12 +81,10 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
 
 
     def toggleLoad(self):
-        if self.QBSaveButton.isChecked():
-            self.QBSaveButton.toggle()
+        pass
 
     def toggleSave(self):
-        if self.QBLoadButton.isChecked():
-            self.QBLoadButton.toggle()
+        pass
 
     def quickBrew(self, index):
         ## Load a brew
