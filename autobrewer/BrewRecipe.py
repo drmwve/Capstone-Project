@@ -7,11 +7,12 @@ import hmac
 from dataclasses import dataclass, field
 from loguru import logger
 
-@dataclass
+@dataclass(init=True)
 class BrewRecipe():
     # I'm a messenger class which holds information about the brew recipe such as
     # hop timing, mash temperature, etc. I am created by the BrewConfig UI screen
     # and passed to a Brew Process in the signal that starts the brewing process.
+
     name: str = "Default"
     hopCartridges: int = 5
     mashTunTemperature: int = 160
@@ -30,19 +31,20 @@ class BrewRecipePickler(object):
             # Put any initialization here.
         return cls._instance
 
+    #attempts to read pickle object from file, creates a new default one and saves it otherwise
     def loadRecipes(self):
         logger.debug("Attempting to load recipes")
         try:
             objectToPickle = self._readPickleFromFile(BrewRecipePickler._picklefile)
         except:
             logger.exception("Loading - creating new brew recipes pickle")
-            objectToPickle = [BrewRecipe()]
+            objectToPickle = {"Default": BrewRecipe()}
             self._savePickleToFile(objectToPickle, BrewRecipePickler._picklefile)
         logger.debug("Loading " + str(objectToPickle))
         return objectToPickle
 
     def saveRecipes(self, recipes):
-        self._savePickleToFile(recipes)
+        self._savePickleToFile(recipes, BrewRecipePickler._picklefile)
 
     #saves a given object to a pickle file with encryption
     def _savePickleToFile(self, objectToPickle, picklefile):

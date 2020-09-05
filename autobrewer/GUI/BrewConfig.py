@@ -1,24 +1,28 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
-from ExecutionCode.BrewRecipe import BrewRecipe, BrewRecipePickler
+from BrewRecipe import BrewRecipe, BrewRecipePickler
 from GUI.BrewConfigGUI import Ui_BrewConfigWindow
 from functools import partial
-import linecache
 
-class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
+class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.changeUI()
         self.pickler = BrewRecipePickler()
         self.savedBrewRecipes = self.pickler.loadRecipes()
         logger.debug("Loaded recipes %s" % self.savedBrewRecipes)
-        self.selectedBrewRecipe = self.savedBrewRecipes[0]
-
+        self.selectedBrewRecipe = self.savedBrewRecipes["Default"]
+        self.QBDeleteButton.setEnabled(False)
+        self.QBComboBox.addItems([x.name for x in self.savedBrewRecipes.values()])
         self.hopEntry = [self.Hop1Entry, self.Hop2Entry, self.Hop3Entry, self.Hop4Entry, self.Hop5Entry]
         self.hopIncrease = [self.Hop1Increase, self.Hop2Increase, self.Hop3Increase, self.Hop4Increase, self.Hop5Increase]
         self.hopDecrease = [self.Hop1Decrease, self.Hop2Decrease, self.Hop3Decrease, self.Hop4Decrease, self.Hop5Decrease]
         self.connections()
 
+    def changeUI(self):
+        self.QBNewButton = self.QBLoadButton
+        self.QBNewButton.setText("New Quick Brew")
 
     def connections(self):
         self.MashTempDecrease.clicked.connect(self.DecreaseMashTemp)
@@ -35,8 +39,10 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
             self.hopDecrease[index].clicked.connect(partial(self.decreaseHop, index))
 
         self.StartBrewButton.clicked.connect(self.StartBrewing)
-        self.QBLoadButton.clicked.connect(self.toggleLoad)
-        self.QBSaveButton.clicked.connect(self.toggleSave)
+        self.QBSaveButton.clicked.connect(partial(self.saveRecipe, self.savedBrewRecipes))
+        self.QBNewButton.clicked.connect(self.addNewRecipe)
+        self.QBDeleteButton.clicked.connect(partial(self.deleteRecipe, self.savedBrewRecipes))
+        self.QBComboBox.currentTextChanged.connect(self.changeSelectedRecipe)
 
     ## Defining button functions
     def IncreaseMashTemp(self):
@@ -79,47 +85,60 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
     def StartBrewing(self):
         ## This function should connect to Husam's brewing program
         print("I need connected to the brewing program")
-        logger.info("Starting brew cycle with parameters: " + self.selectedBrewRecipe)
+        logger.info("Starting brew cycle with parameters: %s" % self.selectedBrewRecipe)
 
+    def saveRecipe(self, recipe):
+        logger.info("Saving recipe")
+        self.saveRecipeFromUI(recipe)
+        self.pickler.saveRecipes(recipe)
 
-    def toggleLoad(self):
-        pass
+    def addNewRecipe(self):
+        text, ok = QtWidgets.QInputDialog.getText(self, "Enter a new recipe name","Recipe name:")
+        if ok and text:
+            logger.debug("Adding new recipe %s" % text)
+            self.savedBrewRecipes[text] = BrewRecipe(text)
+            self.selectedBrewRecipe = self.savedBrewRecipes[text]
+            self.QBComboBox.addItem(text)
+            self.QBComboBox.setCurrentText(text)
+            self.loadRecipeToUI(self.selectedBrewRecipe)
 
-    def toggleSave(self):
-        pass
+    def deleteRecipe(self):
+        box = self.QBComboBox
+        self.savedBrewRecipes.pop(box.currentText(),"")
+        self.pickler.saveRecipes(self.savedBrewRecipes)
+        box.removeItem(box.currentIndex())
+        self.selectedBrewRecipe = self.savedBrewRecipes[box.currentText()]
+        self.loadRecipeToUI(self.selectedBrewRecipe)
 
-    def quickBrew(self, index):
-        ## Load a brew
-        if self.QBLoadButton.isChecked():
-            self.selectedBrewRecipe = self.savedBrewRecipes[index]
-            logger.info("Read QuickBrew file "+str(index+1)+ ": " + self.selectedBrewRecipe)
+    def changeSelectedRecipe(self, newRecipe):
+        self.selectedBrewRecipe = self.savedBrewRecipes[newRecipe]
+        self.loadRecipeToUI(self.selectedBrewRecipe)
+        if (newRecipe == "Default"):
+            self.QBDeleteButton.setEnabled(False)
+        else:
+            self.QBDeleteButton.setEnabled(True)
 
+    def saveRecipeFromUI(self, recipe):
+        recipe.name = self.QBComboBox.currentText()
+        recipe.mashTunTemperature = int(self.MashTempEntry.text())
+        recipe.hopCartridges = int(self.HopCartridgeSelectEntry.text())
+        for i in range(0, 5):
+            recipe.hopTiming[i] = int(self.hopEntry[i].text())
 
-            ## Reset text field displays
-            for i in range(0,5):
-                self.hopEntry[i].setText(str(self.selectedBrewRecipe.hopTiming[i]))
-            self.HopCartridgeSelectEntry.setText(str(self.selectedBrewRecipe.hopCartridges))
-            self.MashTempEntry.setText(str(self.selectedBrewRecipe.mashTunTemperature))
-            ## Show all hop fields
-            for i in range(0,5):
-                self.hopEntry[i].setHidden(False)
-                self.hopIncrease[i].setHidden(False)
-                self.hopDecrease[i].setHidden(False)
-            ## Hide irrelevant hop fields
-            if self.selectedBrewRecipe.hopCartridges < 5:
-                for i in range(self.selectedBrewRecipe.hopCartridges, 5):
-                    self.hopEntry[i].setHidden(True)
-                    self.hopIncrease[i].setHidden(True)
-                    self.hopDecrease[i].setHidden(True)
-        ## Save a brew
-        if self.QBSaveButton.isChecked():
-            ## Open or create file in writing mode
-            #self.qbFile = open('src\GUI\QuickBrewSaves\QuickBrew%d.txt'%(index,), 'w')
-            ## Logging
-            #logger.info("Saved QuickBrew file "+str(index+1))
-            #logger.info("Brew parameters saved: ""MTT:"+str(self.selectedBrewRecipe.mashTunTemperature)+" HC:"+str(self.HopCartridges)+" HT:"+str(self.selectedBrewRecipe.hopTiming))
-
-            self.pickler.saveRecipes(self.savedBrewRecipes)
-
-            ## Close the file
-            #self.qbFile.close()
+    def loadRecipeToUI(self, recipe):
+        ## Reset text field displays
+        for i in range(0,5):
+            self.hopEntry[i].setText(str(recipe.hopTiming[i]))
+        self.HopCartridgeSelectEntry.setText(str(recipe.hopCartridges))
+        self.MashTempEntry.setText(str(recipe.mashTunTemperature))
+        ## Show all hop fields
+        for i in range(0,5):
+            self.hopEntry[i].setHidden(False)
+            self.hopIncrease[i].setHidden(False)
+            self.hopDecrease[i].setHidden(False)
+        ## Hide irrelevant hop fields
+        if recipe.hopCartridges < 5:
+            for i in range(self.selectedBrewRecipe.hopCartridges, 5):
+                self.hopEntry[i].setHidden(True)
+                self.hopIncrease[i].setHidden(True)
+                self.hopDecrease[i].setHidden(True)

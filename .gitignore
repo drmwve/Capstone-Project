@@ -3,3 +3,4 @@ capstone-project.code-workspace
 .vscode/
 **/QuickBrewSaves/
 **.pkl
+brewrecipes.pkl
