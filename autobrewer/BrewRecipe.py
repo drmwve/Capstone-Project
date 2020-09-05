@@ -16,7 +16,7 @@ class BrewRecipe():
     name: str = "Default"
     hopCartridges: int = 5
     mashTunTemperature: int = 160
-    hopTiming: int = field(default_factory=lambda: [0,0,0,0,0])
+    hopTiming: int = field(default_factory=lambda: [0,10,20,30,40])
 
 # Makes it easy to save and load particular recipes to a file
 class BrewRecipePickler(object):
@@ -38,7 +38,7 @@ class BrewRecipePickler(object):
             objectToPickle = self._readPickleFromFile(BrewRecipePickler._picklefile)
         except:
             logger.exception("Loading - creating new brew recipes pickle")
-            objectToPickle = {"Default": BrewRecipe()}
+            objectToPickle = {BrewRecipe().name: BrewRecipe()}
             self._savePickleToFile(objectToPickle, BrewRecipePickler._picklefile)
         logger.debug("Loading " + str(objectToPickle))
         return objectToPickle
