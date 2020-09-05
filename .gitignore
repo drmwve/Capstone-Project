@@ -1,4 +1,4 @@
-capstone-project.code-workspace
+**/*.code-workspace
 **/__pycache__/
 .vscode/
 **/QuickBrewSaves/
