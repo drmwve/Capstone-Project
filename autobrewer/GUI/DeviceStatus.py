@@ -1,6 +1,6 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
-from GUI.DeviceStatusGUI import Ui_DeviceStatus
+from .DeviceStatusGUI import Ui_DeviceStatus
 
 class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
 
@@ -46,7 +46,7 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
         pass
 
     ## Defining button functions
-    def toggleBallValve(self, index): 
+    def toggleBallValve(self, index):
         if self.ballValveButton[index].isChecked():
             ## Open ball valve
             logger.info("User requested ball valve "+str(index+1)+" to open")

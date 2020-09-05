@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO #to control the input and output
-from BrewState import BrewState
+from .BrewState import BrewState
 GPIO.setup(1,GPIO.OUT) #2 way valve number 1
 
 # Signals: step completed
