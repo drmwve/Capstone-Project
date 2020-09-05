@@ -52,41 +52,50 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
 
     ## Defining button functions
     def IncreaseMashTemp(self):
-        self.selectedBrewRecipe.mashTunTemperature += 1
-        self.MashTempEntry.setText(str(self.selectedBrewRecipe.mashTunTemperature))
+        newtemp = int(self.MashTempEntry.text()) + 1
+        logger.debug(f'Increased {self.selectedBrewRecipe.name} mash temperature to {newtemp}')
+        self.MashTempEntry.setText(str(newtemp))
 
     def DecreaseMashTemp(self):
-        self.selectedBrewRecipe.mashTunTemperature -= 1
-        self.MashTempEntry.setText(str(self.selectedBrewRecipe.mashTunTemperature))
+        newtemp = int(self.MashTempEntry.text()) - 1
+        logger.debug(f'Decreased {self.selectedBrewRecipe.name} mash temperature to {newtemp}')
+        self.MashTempEntry.setText(str(newtemp))
 
     def IncreaseCartridgeSelect(self):
-        if self.selectedBrewRecipe.hopCartridges < 5:
-            self.selectedBrewRecipe.hopCartridges += 1
-            self.HopCartridgeSelectEntry.setText(str(self.selectedBrewRecipe.hopCartridges))
-            self.hopEntry[self.selectedBrewRecipe.hopCartridges - 1].setHidden(False)
-            self.hopIncrease[self.selectedBrewRecipe.hopCartridges - 1].setHidden(False)
-            self.hopDecrease[self.selectedBrewRecipe.hopCartridges - 1].setHidden(False)
-            self.selectedBrewRecipe.hopTiming[self.selectedBrewRecipe.hopCartridges - 1] = 0
-            self.hopEntry[self.selectedBrewRecipe.hopCartridges - 1].setText("0")
+        hopcarts = int(self.HopCartridgeSelectEntry.text())
+        if hopcarts < 5:
+            logger.debug(f'Increasing {self.selectedBrewRecipe.name} hop cartridges from {hopcarts} to {hopcarts + 1}')
+            hopcarts += 1
+            self.HopCartridgeSelectEntry.setText(str(hopcarts))
+            self.hopEntry[hopcarts-1].setHidden(False)
+            self.hopIncrease[hopcarts-1].setHidden(False)
+            self.hopDecrease[hopcarts-1].setHidden(False)
+            self.hopEntry[hopcarts-1].setText(str(BrewRecipe().hopTiming[hopcarts-1]))
 
     def DecreaseCartridgeSelect(self):
-        if self.selectedBrewRecipe.hopCartridges > 1:
-            self.selectedBrewRecipe.hopCartridges -= 1
-            self.HopCartridgeSelectEntry.setText(str(self.selectedBrewRecipe.hopCartridges))
-            self.hopEntry[self.selectedBrewRecipe.hopCartridges].setHidden(True)
-            self.hopIncrease[self.selectedBrewRecipe.hopCartridges].setHidden(True)
-            self.hopDecrease[self.selectedBrewRecipe.hopCartridges].setHidden(True)
-            self.selectedBrewRecipe.hopTiming[self.selectedBrewRecipe.hopCartridges] = -1
+        hopcarts = int(self.HopCartridgeSelectEntry.text())
+        if hopcarts > 1:
+            logger.debug(f'Decreasing {self.selectedBrewRecipe.name} hop cartridges from {hopcarts} to {hopcarts - 1}')
+            hopcarts -= 1
+            self.HopCartridgeSelectEntry.setText(str(hopcarts))
+            self.hopEntry[hopcarts].setHidden(True)
+            self.hopIncrease[hopcarts].setHidden(True)
+            self.hopDecrease[hopcarts].setHidden(True)
+            self.hopEntry[hopcarts].setText("-1")
 
     def increaseHop(self, index):
-        if self.selectedBrewRecipe.hopTiming[index] < 60:
-            self.selectedBrewRecipe.hopTiming[index] +=5
-            self.hopEntry[index].setText(str(self.selectedBrewRecipe.hopTiming[index]))
+        hoptiming = int(self.hopEntry[index].text())
+        logger.debug(f'Increased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}')
+        if hoptiming < 60:
+            hoptiming +=5
+            self.hopEntry[index].setText(str(hoptiming))
 
     def decreaseHop(self, index):
-        if self.selectedBrewRecipe.hopTiming[index] > 0:
-            self.selectedBrewRecipe.hopTiming[index] -=5
-            self.hopEntry[index].setText(str(self.selectedBrewRecipe.hopTiming[index]))
+        hoptiming = int(self.hopEntry[index].text())
+        logger.debug(f'Decreased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}')
+        if hoptiming < 0:
+            hoptiming -=5
+            self.hopEntry[index].setText(str(hoptiming))
 
     def StartBrewing(self):
         ## This function should connect to Husam's brewing program
