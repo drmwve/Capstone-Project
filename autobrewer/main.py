@@ -1,7 +1,7 @@
 import sys
 from PySide2 import QtCore, QtWidgets
 from MainWindow import MainWindow
-from ExecutionCode.ExecutionHandler import ExecutionHandler
+from ExecutionHandler import ExecutionHandler
 from loguru import logger
 
 if __name__ == "__main__":

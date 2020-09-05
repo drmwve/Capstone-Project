@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO #to control the input and output
-from ExecutionCode.BrewState import BrewState
+from BrewState import BrewState
 GPIO.setup(1,GPIO.OUT) #2 way valve number 1
 
 # Signals: step completed
@@ -31,7 +31,7 @@ class ControlHandler():
 
     def readTemperatureSensor(self, whichSensor):
         print("Execution read sensor " + str(whichSensor))
-    
+
     def readFlowSensor(self, whichSensor):
         print("Excution read sensor " + str(whichSensor))
 
@@ -39,12 +39,12 @@ class ControlHandler():
          GPIO.output(self.pumpGPIOs[index-1],True)
          self.brewState.pump[index-1] = True
          print("Excution opened pump" + str(index))
-    
+
     def closePump(self, index):
          GPIO.output(self.pumpGPIOs[index-1],False)
          self.brewState.pump[index-1] = False
          print("Excution closed pump" + str(index))
-    
+
     def openHeatingElement(self, index):
         GPIO.output(self.heatingElementGPIOs[index-1],True)
         self.brewState.heatingElement[index-1] = True
@@ -55,7 +55,7 @@ class ControlHandler():
         self.brewState.heatingElement[index-1] = False
         print("Excution turned off heating element" + str(index))
 
-        
+
 
     def openHopServo(self, index):
         GPIO.output(self.hopServoGPIOs[index-1],True)
@@ -66,7 +66,7 @@ class ControlHandler():
         GPIO.output(self.hopServoGPIOs[index-1],False)
         self.brewState.hopservo[index-1] = False
         print("Excution turned Off the Hop Servo")
-        
+
 
 
     pass
