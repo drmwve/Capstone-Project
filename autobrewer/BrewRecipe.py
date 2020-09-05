@@ -33,7 +33,7 @@ class BrewRecipePickler(object):
     def loadRecipes(self):
         logger.debug("Attempting to load recipes")
         try:
-            objectToPickle = self._readPickleFile(BrewRecipePickler._picklefile)
+            objectToPickle = self._readPickleFromFile(BrewRecipePickler._picklefile)
         except:
             logger.exception("Loading - creating new brew recipes pickle")
             objectToPickle = [BrewRecipe()]
@@ -57,7 +57,7 @@ class BrewRecipePickler(object):
             picklefile.write(pickledObject)
 
     #read pickle file and check hmac, raising an exception if there's an issue
-    def _readPickleFile(self, picklefile):
+    def _readPickleFromFile(self, picklefile):
         with open(picklefile, "rb") as picklefile:
             logger.debug("File %s read successfully" % picklefile.name)
             readDigest = picklefile.readline().decode('utf-8').rstrip()
