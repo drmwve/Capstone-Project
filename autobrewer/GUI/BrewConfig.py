@@ -1,7 +1,7 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
-from BrewRecipe import BrewRecipe, BrewRecipePickler
-from GUI.BrewConfigGUI import Ui_BrewConfigWindow
+from ..BrewRecipe import BrewRecipe, BrewRecipePickler
+from .BrewConfigGUI import Ui_BrewConfigWindow
 from functools import partial
 import linecache
 

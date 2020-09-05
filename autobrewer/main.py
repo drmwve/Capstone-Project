@@ -1,12 +1,11 @@
 import sys
-from PySide2 import QtCore, QtWidgets, QtGui
-from MainWindow import MainWindow
-from ExecutionHandler import ExecutionHandler
-from GUI.Styler import WindowStyler
+from PySide2 import QtCore, QtWidgets
+from .MainWindow import MainWindow
+from .ExecutionHandler import ExecutionHandler
 from loguru import logger
+from .GUI.Styler import WindowStyler
 
-if __name__ == "__main__":
-    import sys
+def main():
     app = QtWidgets.QApplication(sys.argv)
     logger.add(sys.stderr, format="{time} {level} {message}", filter="my_module", level="DEBUG")
 

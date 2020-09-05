@@ -1,6 +1,6 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
-from GUI.CleaningScreenGUI import Ui_CleaningScreen
+from .CleaningScreenGUI import Ui_CleaningScreen
 from datetime import timedelta
 
 
@@ -42,7 +42,7 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         self.actionTimer.start(15000)
         self.CurrentCleanTaskProgressBar.setRange(-15000, 0)
         self.updateETA()
-        
+
 
 
     def pauseResumeClean(self):

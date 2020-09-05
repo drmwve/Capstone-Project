@@ -1,6 +1,6 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
-from GUI.BrewProgressGUI import Ui_BrewStatus
+from .BrewProgressGUI import Ui_BrewStatus
 
 class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
 

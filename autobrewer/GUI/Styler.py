@@ -4,7 +4,7 @@ from loguru import logger
 
 class WindowStyler():
     def styleWindows(self, app):
-        
+
         ## This defines the style and colors for all windows and widgets.
         app.setStyle('Fusion')
         palette = QtGui.QPalette()
@@ -22,4 +22,4 @@ class WindowStyler():
         palette.setColor(QtGui.QPalette.HighlightedText, QtCore.Qt.black)
         palette.setColor(QtGui.QPalette.Disabled, QtGui.QPalette.Button, QtGui.QColor(38, 38, 38))
         app.setPalette(palette)
-        logger.info("Applied custom window palette")
+        logger.debug("Applied custom window palette")

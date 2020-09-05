@@ -1,4 +1,4 @@
-from Process import BrewProcess, CleaningProcess
+from .Process import BrewProcess, CleaningProcess
 from PySide2 import QtCore, QtGui
 from loguru import logger
 #from ExecutionCode.ControlWrapper import ControlHandler

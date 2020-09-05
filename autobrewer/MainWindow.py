@@ -1,11 +1,11 @@
 from PySide2 import QtGui, QtWidgets
 from loguru import logger
 from functools import partial
-from GUI.BrewConfig import BrewConfig
-from GUI.BrewProgress import BrewStatus
-from GUI.CleaningScreen import CleaningScreen
-from GUI.DeviceStatus import DeviceStatus
-from GUI.MainMenu import MainMenu
+from .GUI.BrewConfig import BrewConfig
+from .GUI.BrewProgress import BrewStatus
+from .GUI.CleaningScreen import CleaningScreen
+from .GUI.DeviceStatus import DeviceStatus
+from .GUI.MainMenu import MainMenu
 
 
 class MainWindow(QtWidgets.QMainWindow):
