@@ -50,9 +50,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.brewConfigScreen.StartBrewButton.clicked.connect(partial(self.goToMenu, self.brewStatusScreen))
         self.mainMenu.EnterBrewConfigButton.clicked.connect(partial(self.goToMenu, self.brewConfigScreen))
-        self.mainMenu.EnterCleanScreenButton.clicked.connect(partial(self.goToMenu, self.cleaningScreen))
-        self.mainMenu.EnterDeviceStatusScreen.clicked.connect(partial(self.goToMenu, self.deviceStatusScreen))
-        logger.info("Menu navigation buttons connected")
+        self.mainMenu.EnterCleanScreenButton.clicked.connect(partial(self.goToMenu, self.CleaningScreen))
+        self.mainMenu.EnterDeviceStatusScreen.clicked.connect(partial(self.goToMenu, self.DeviceStatusScreen))
+        logger.debug("Menu navigation buttons connected")
 
 
     #this just avoids having a million "switch to menu" functions. the menu passed to this function MUST already be in the stacked layout

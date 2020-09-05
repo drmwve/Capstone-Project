@@ -12,6 +12,6 @@ if __name__ == "__main__":
     executionHandler = ExecutionHandler()
     mainScreen = MainWindow()
     mainScreen.show()
-    logger.info("Created main screen " + str(mainScreen))
+    logger.info("Opened main screen " + str(mainScreen))
 
     sys.exit(app.exec_())
