@@ -1,4 +1,4 @@
-from autobrewer.main import main
+from autobrewer.autobrewer import main
 
 if __name__ == "__main__":
     main()
