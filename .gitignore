@@ -2,3 +2,4 @@ capstone-project.code-workspace
 **/__pycache__/
 .vscode/
 **/QuickBrewSaves/
+**.pkl
