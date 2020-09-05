@@ -4,7 +4,6 @@ try:
 except:
     import pickle
 import pytest
-from loguru import logger
 import hmac
 
 #basic test data:
@@ -13,12 +12,12 @@ import hmac
 def pickle_file_data(tmpdir):
     tempfile = tmpdir.join("test.pkl")
     pickler = BrewRecipePickler()
-    brewRecipe = [BrewRecipe()]
-    pickledobject = pickle.dumps(brewRecipe)
+    newBrewRecipeDict = {BrewRecipe().name: BrewRecipe()}
+    pickledobject = pickle.dumps(newBrewRecipeDict)
     digest = pickler._make_digest(pickledobject)
     expectedFileData = ("%s\n" % digest).encode('utf-8') + pickledobject
     return {
-        "object": brewRecipe,
+        "object": newBrewRecipeDict,
         "pickledobject": pickledobject,
         "digest": digest,
         "expectedFileData": expectedFileData,

@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 black = {git = "git://github.com/psf/black"}
 pytest = "*"
+pytest-qt = "*"
 
 [packages]
 pyside2 = "*"
