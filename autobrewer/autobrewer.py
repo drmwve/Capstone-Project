@@ -5,7 +5,7 @@ from .ExecutionHandler import ExecutionHandler
 from loguru import logger
 from .GUI.Styler import WindowStyler
 from gpiozero import Device
-from .ControlWrapper import ControlHandler
+from .ControlWrapper import DeviceHandler
 import time
 
 def main():
