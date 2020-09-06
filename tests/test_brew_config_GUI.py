@@ -37,8 +37,12 @@ class TestBrewConfig:
             BrewRecipe("test", 1, 134, [1, -1, -1, -1, -1]),
         ],
     )
-    def test_add_new_recipe(self, testrecipe, brewconfigscreen):
-        pass
+    def test_add_new_recipe(self, testName, brewconfigscreen):
+        brewconfigscreen.addNewRecipe(testName)
+        assert testName in brewconfigscreen.savedBrewRecipes
+        assert brewconfigscreen.selectedBrewRecipe == BrewRecipe(testName)
+        assert brewconfigscreen.QBComboBox.findText(testName) >= 0
+        assert brewconfigscreen.QBComboBox.currentText() == testName
 
     @pytest.mark.parametrize(
         "testName", ["test2", "test3"],
