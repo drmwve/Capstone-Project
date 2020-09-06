@@ -30,12 +30,7 @@ class TestBrewConfig:
         assert loaded_brew_recipes
 
     @pytest.mark.parametrize(
-        "testrecipe",
-        [
-            BrewRecipe("test", 5, 190, [1, 2, 3, 4, 5]),
-            BrewRecipe("test", 3, 122, [1, 2, 3, -1, -1]),
-            BrewRecipe("test", 1, 134, [1, -1, -1, -1, -1]),
-        ],
+        "testName", ["test2", "test3"],
     )
     def test_add_new_recipe(self, testName, brewconfigscreen):
         brewconfigscreen.addNewRecipe(testName)
