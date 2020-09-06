@@ -7,8 +7,8 @@ GPIO.setup(1,GPIO.OUT) #2 way valve number 1
 class ControlHandler():
     def __init__(self):
         self.twoWayBallValveGPIOs = [14, 15, 18,23, 24]
-        self.pumpGPIOs = [20., 21]
-        self.heatingElementGPIOs = [6, 13, 19, 26]
+        self.pumpGPIOs = [20, 21]
+        self.heatingElementGPIOs = [26,19, 13,6]
         self.threeWayBallValveGPIOs = [25, 8, 7, 12, 16]
         self.liquidSensorGPIOs = [22]
         self.tempSensorGPIOs = [9, 27]
