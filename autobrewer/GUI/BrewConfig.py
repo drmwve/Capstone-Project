@@ -111,19 +111,13 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         self.selectedBrewRecipe = self.savedBrewRecipes[recipeName]
         self.QBComboBox.addItem(recipeName)
         self.QBComboBox.setCurrentText(recipeName)
-        self.loadRecipeToUI(self.selectedBrewRecipe)
 
     def deleteRecipe(self, recipeName):
         box = self.QBComboBox
         logger.info(f'Deleting recipe: {recipeName}')
         self.savedBrewRecipes.pop(recipeName,"")
         self.pickler.saveRecipes(self.savedBrewRecipes)
-        lastitem = box.currentIndex()
-        if lastitem > 0:
-            box.setCurrentIndex(lastitem-1)
-        else:
-            box.setCurrentIndex(lastitem+1)
-        box.removeItem(lastitem)
+        box.removeItem(box.currentIndex())
 
     def changeSelectedRecipe(self, recipeName):
         logger.debug(f'Requested change to recipe {recipeName}')
