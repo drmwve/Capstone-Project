@@ -36,6 +36,8 @@ class BrewRecipePickler(object):
         logger.debug("Attempting to load recipes")
         try:
             objectToPickle = self._readPickleFromFile(BrewRecipePickler._picklefile)
+            if not "Default" in objectToPickle:
+                raise Exception
         except:
             logger.exception("Loading - creating new brew recipes pickle")
             objectToPickle = {BrewRecipe().name: BrewRecipe()}

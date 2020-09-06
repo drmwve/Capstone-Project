@@ -47,7 +47,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
 
         self.QBSaveButton.clicked.connect(lambda: self.saveRecipe(self.selectedBrewRecipe))
         self.QBDeleteButton.clicked.connect(lambda: self.deleteRecipe(self.selectedBrewRecipe))
-        self.QBNewButton.clicked.connect(self.addNewRecipe)
+        self.QBNewButton.clicked.connect(self.enterNewRecipe)
         self.QBComboBox.currentTextChanged.connect(self.changeSelectedRecipe)
 
     ## Defining button functions
@@ -100,31 +100,34 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         self.saveRecipeFromUI(recipe)
         self.pickler.saveRecipes(self.savedBrewRecipes)
 
-    def addNewRecipe(self):
+    def enterNewRecipe(self):
         text, ok = QtWidgets.QInputDialog.getText(self, "Enter a new recipe name","Recipe name:")
         if ok and text:
-            logger.info(f'Adding new recipe: {text}')
-            self.savedBrewRecipes[text] = BrewRecipe(text)
-            self.selectedBrewRecipe = self.savedBrewRecipes[text]
-            self.QBComboBox.addItem(text)
-            self.QBComboBox.setCurrentText(text)
-            self.loadRecipeToUI(self.selectedBrewRecipe)
+            self.addNewRecipe(text)
 
-    def deleteRecipe(self, recipe):
+    def addNewRecipe(self,recipeName):
+        logger.info(f'Adding new recipe: {recipeName}')
+        self.savedBrewRecipes[text] = BrewRecipe(recipeName)
+        self.selectedBrewRecipe = self.savedBrewRecipes[recipeName]
+        self.QBComboBox.addItem(recipeName)
+        self.QBComboBox.setCurrentText(recipeName)
+        self.loadRecipeToUI(self.selectedBrewRecipe)
+
+    def deleteRecipe(self, recipeName):
         box = self.QBComboBox
-        logger.info(f'Deleting recipe: {recipe}')
-        self.savedBrewRecipes.pop(recipe.name,"")
+        logger.info(f'Deleting recipe: {recipeName}')
+        self.savedBrewRecipes.pop(recipeName,"")
         self.pickler.saveRecipes(self.savedBrewRecipes)
         box.removeItem(box.currentIndex())
         self.selectedBrewRecipe = self.savedBrewRecipes[box.currentText()]
         self.loadRecipeToUI(self.selectedBrewRecipe)
 
-    def changeSelectedRecipe(self, newRecipeName):
-        logger.debug(f'Requested change to recipe {newRecipeName}')
-        self.selectedBrewRecipe = self.savedBrewRecipes[newRecipeName]
+    def changeSelectedRecipe(self, recipeName):
+        logger.debug(f'Requested change to recipe {recipeName}')
+        self.selectedBrewRecipe = self.savedBrewRecipes[recipeName]
         self.loadRecipeToUI(self.selectedBrewRecipe)
         logger.info(f'Changed to recipe: {self.selectedBrewRecipe}')
-        if (newRecipeName == "Default"):
+        if (recipeName == "Default"):
             self.QBDeleteButton.setEnabled(False)
         else:
             self.QBDeleteButton.setEnabled(True)
@@ -142,7 +145,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         ## Reset text field displays
         for i in range(0,5):
             self.hopEntry[i].setText(str(recipe.hopTiming[i]))
-            if (self.selectedBrewRecipe.hopTiming[i] == -1):
+            if (recipe.hopTiming[i] == -1):
                 self.hopEntry[i].setHidden(True)
                 self.hopIncrease[i].setHidden(True)
                 self.hopDecrease[i].setHidden(True)
