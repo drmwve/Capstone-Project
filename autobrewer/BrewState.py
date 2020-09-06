@@ -7,6 +7,7 @@ class BrewState():
 
     def __init__(self):
         self.twoWayBallValves = [False, False, False, False, False]
+        self.threeWayBallValves = [False, False, False, False, False]
         self.pump = [False, False]
         self.heatingElement = [False, False]
         self.hopservo = [False]
