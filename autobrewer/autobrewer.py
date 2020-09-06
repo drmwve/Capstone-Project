@@ -6,6 +6,7 @@ from loguru import logger
 from .GUI.Styler import WindowStyler
 from gpiozero import Device
 from .ControlWrapper import ControlHandler
+import time
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
@@ -20,5 +21,9 @@ def main():
     mainScreen = MainWindow()
     mainScreen.show()
     logger.info("Opened main screen " + str(mainScreen))
+    handler.open2WBallValve(1)
+    handler.open2WBallValve(2)
+    time.sleep(6)
+    handler.open2WBallValve(1)
 
     sys.exit(app.exec_())
