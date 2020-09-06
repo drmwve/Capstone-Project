@@ -28,12 +28,17 @@ class TestBrewConfig:
         assert loaded_brew_recipes
 
     @pytest.mark.parametrize(
-        "testName", ["Default", "test2", "test3"],
+        "testName", ["test2", "test3"],
     )
     def test_delete_recipe(self, savedrecipesdict, testName, brewconfigscreen):
         brewconfigscreen.savedBrewRecipes = savedrecipesdict
+        logger.debug(testName)
+        brewconfigscreen.QBComboBox.blockSignals(True)
+        brewconfigscreen.QBComboBox.setCurrentText(testName)
+        brewconfigscreen.QBComboBox.blockSignals(False)
         brewconfigscreen.deleteRecipe(testName)
-
+        assert not testName in brewconfigscreen.savedBrewRecipes
+        assert brewconfigscreen.QBComboBox.findText(testName) == -1
 
     @pytest.mark.parametrize(
         "testName", ["Default", "test2", "test3"],

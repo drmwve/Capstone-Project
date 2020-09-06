@@ -45,8 +45,8 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
 
         self.StartBrewButton.clicked.connect(self.StartBrewing)
 
-        self.QBSaveButton.clicked.connect(lambda: self.saveRecipe(self.selectedBrewRecipe))
-        self.QBDeleteButton.clicked.connect(lambda: self.deleteRecipe(self.selectedBrewRecipe))
+        self.QBSaveButton.clicked.connect(lambda: self.saveRecipe(self.QBComboBox.currentText()))
+        self.QBDeleteButton.clicked.connect(lambda: self.deleteRecipe(self.QBComboBox.currentText()))
         self.QBNewButton.clicked.connect(self.enterNewRecipe)
         self.QBComboBox.currentTextChanged.connect(self.changeSelectedRecipe)
 
@@ -107,7 +107,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
 
     def addNewRecipe(self,recipeName):
         logger.info(f'Adding new recipe: {recipeName}')
-        self.savedBrewRecipes[text] = BrewRecipe(recipeName)
+        self.savedBrewRecipes[recipeName] = BrewRecipe(recipeName)
         self.selectedBrewRecipe = self.savedBrewRecipes[recipeName]
         self.QBComboBox.addItem(recipeName)
         self.QBComboBox.setCurrentText(recipeName)
@@ -118,9 +118,12 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         logger.info(f'Deleting recipe: {recipeName}')
         self.savedBrewRecipes.pop(recipeName,"")
         self.pickler.saveRecipes(self.savedBrewRecipes)
-        box.removeItem(box.currentIndex())
-        self.selectedBrewRecipe = self.savedBrewRecipes[box.currentText()]
-        self.loadRecipeToUI(self.selectedBrewRecipe)
+        lastitem = box.currentIndex()
+        if lastitem > 0:
+            box.setCurrentIndex(lastitem-1)
+        else:
+            box.setCurrentIndex(lastitem+1)
+        box.removeItem(lastitem)
 
     def changeSelectedRecipe(self, recipeName):
         logger.debug(f'Requested change to recipe {recipeName}')
