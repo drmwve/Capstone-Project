@@ -11,7 +11,6 @@ import time
 def main():
     app = QtWidgets.QApplication(sys.argv)
     logger.add(sys.stderr, format="{time} {level} {message}", filter="my_module", level="DEBUG")
-
     executionHandler = ExecutionHandler()
     styler = WindowStyler()
     styler.styleWindows(app)

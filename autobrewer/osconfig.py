@@ -1,5 +1,4 @@
-from gpiozero.pins.mock import MockFactory, MockPWMPin
-from gpiozero import Device
+
 import io
 
 
@@ -43,8 +42,3 @@ def is_raspberry_pi(raise_on_errors=False):
             return False
 
     return True
-
-
-if not is_raspberry_pi():
-    Device.pin_factory = MockFactory()
-    pwmPinFactory = MockFactory(pin_class=MockPWMPin)

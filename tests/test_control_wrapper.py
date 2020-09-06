@@ -1,11 +1,20 @@
 import pytest
-from autobrewer.ControlWrapper import ControlWrapper
+from autobrewer.ControlWrapper import ControlHandler
 from autobrewer.exceptions import ComponentControlException
 
-class TestControlWrapper():
+@pytest.fixture
+def controlHandler():
+    return ControlHandler()
 
-    @pytest.mark.parametrize("index, state", [1,2,3,4,5], [True,False])
-    def test_open_2way_ball_valve(self, index, state):
-        controller = ControlWrapper()
-        controller._set2WayState(index, state)
-        assert controller.twoWayBallValves[index] == state
+class TestControlWrapper():
+    @pytest.mark.parametrize("index", [0,1,2,3,4])
+    @pytest.mark.parametrize("state", [True,False])
+    def test_open_2way_ball_valve(self, index, state, controlHandler):
+        controlHandler._set2WayState(index, state)
+        assert controlHandler.twoWayBallValves[index].value == state
+
+    @pytest.mark.parametrize("index", [0,1,2,3,4])
+    @pytest.mark.parametrize("state", [True,False])
+    def test_open_3way_ball_valve(self, index, state, controlHandler):
+        controlHandler._set3WayState(index, state)
+        assert controlHandler.threeWayBallValves[index].value == state
