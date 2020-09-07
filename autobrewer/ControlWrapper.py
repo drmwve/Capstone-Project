@@ -1,18 +1,18 @@
-from gpiozero import (
-    OutputDevice,
-    PWMOutputDevice,
-    AngularServo,
-    Device,
-)  # to control the input and output
-from gpiozero.pins.mock import MockFactory, MockPWMPin
-from .BrewState import BrewState
-from loguru import logger
-from .osconfig import is_raspberry_pi
-from .exceptions import ComponentControlException
 import time
+
+from gpiozero import AngularServo, Device, OutputDevice, PWMOutputDevice
+from loguru import logger
+
+from .ads1x15 import *
+from .BrewState import BrewState
+from .exceptions import ComponentControlException
+from .osconfig import is_raspberry_pi
 from .utils import set_windup_time
 
-# from w1thermsensor import W1ThermSensor, Unit
+if is_raspberry_pi():
+    from w1thermsensor import W1ThermSensor, Unit
+else:
+    from gpiozero.pins.mock import MockFactory, MockPWMPin
 
 # Signals: step completed
 
@@ -26,12 +26,15 @@ class DeviceHandler:
     ADCGPIO = 11
     hopServoGPIO = 5
 
-     # Only allow one Control Handler
+    # Only allow one Control Handler
     _instance = None
+
     def __new__(cls):
         if DeviceHandler._instance is None:
-            print('Creating the object')
-            DeviceHandler._instance = super(DeviceHandler, DeviceHandler).__new__(DeviceHandler)
+            print("Creating the object")
+            DeviceHandler._instance = super(DeviceHandler, DeviceHandler).__new__(
+                DeviceHandler
+            )
             # Put any initialization here::
             DeviceHandler._instance._connectPins()
             DeviceHandler._instance.brewState = BrewState()
@@ -107,10 +110,16 @@ class DeviceHandler:
             PWMOutputDevice(n, pin_factory=self.pwmPinFactory)
             for n in DeviceHandler.heatingElementGPIOs
         ]
-        self.hopServo = AngularServo(DeviceHandler.ADCGPIO, pin_factory=self.pwmPinFactory)
-        self.twoWayBallValves = [OutputDevice(n) for n in DeviceHandler.twoWayBallValveGPIOs]
+        self.hopServo = AngularServo(
+            DeviceHandler.ADCGPIO, pin_factory=self.pwmPinFactory
+        )
+        self.twoWayBallValves = [
+            OutputDevice(n) for n in DeviceHandler.twoWayBallValveGPIOs
+        ]
         self.pumps = [OutputDevice(n) for n in DeviceHandler.pumpGPIOs]
-        self.threeWayBallValves = [OutputDevice(n) for n in DeviceHandler.threeWayBallValveGPIOs]
+        self.threeWayBallValves = [
+            OutputDevice(n) for n in DeviceHandler.threeWayBallValveGPIOs
+        ]
         self.GPZeroComponents = (
             self.twoWayBallValves
             + self.threeWayBallValves

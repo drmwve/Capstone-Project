@@ -3,17 +3,13 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
-[dev-packages]
-pylint = "*"
-black = {git = "git://github.com/psf/black"}
-pytest = "*"
-
 [packages]
 pyside2 = "*"
-adafruit-circuitpython-ads1x15 = "*"
 w1thermsensor = "*"
 loguru = "*"
 gpiozero = "*"
+pytest = "*"
+black = {git = "git://github.com/psf/black"}
 
 [requires]
-python_version = "3.8"
+python_version = "3"
