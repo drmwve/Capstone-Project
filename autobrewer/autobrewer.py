@@ -6,6 +6,7 @@ from loguru import logger
 from .GUI.Styler import WindowStyler
 from gpiozero import Device
 from .ControlWrapper import DeviceHandler
+from .osconfig import is_raspberry_pi
 import time
 
 def main():
@@ -17,5 +18,6 @@ def main():
     mainScreen = MainWindow()
     mainScreen.show()
     logger.info("Opened main screen " + str(mainScreen))
+    logger.info(f'Is Raspberry Pi: {is_raspberry_pi()}')
 
     sys.exit(app.exec_())
