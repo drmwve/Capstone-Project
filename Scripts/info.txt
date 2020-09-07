@@ -1,0 +1,1 @@
+To get setup easily on a new Pi, download these two files and run them.
