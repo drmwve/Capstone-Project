@@ -65,8 +65,7 @@ class TestBrewConfig:
         brewconfigscreen.QBComboBox.blockSignals(False)
 
         brewconfigscreen.changeSelectedRecipe(testName)
-        recipe = BrewRecipe()
-        brewconfigscreen.copyRecipeFromUI(recipe)
+        recipe = brewconfigscreen.copyRecipeFromUI()
         assert brewconfigscreen.selectedBrewRecipe == savedrecipesdict[testName]
         assert recipe.hopTiming == savedrecipesdict[testName].hopTiming
         assert recipe.mashTunTemperature == savedrecipesdict[testName].mashTunTemperature
@@ -92,8 +91,7 @@ class TestBrewConfig:
         brewconfigscreen.HopCartridgeSelectEntry.setText(str(testrecipe.hopCartridges))
         for i in range(len(testrecipe.hopTiming)):
             brewconfigscreen.hopEntry[i].setText(str(testrecipe.hopTiming[i]))
-        recipe = BrewRecipe()
-        brewconfigscreen.copyRecipeFromUI(recipe)
+        recipe = brewconfigscreen.copyRecipeFromUI()
         assert recipe == testrecipe
 
 

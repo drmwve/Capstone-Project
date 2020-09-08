@@ -32,7 +32,7 @@ class BrewRecipePickler(object):
             # Put any initialization here.
         return cls._instance
 
-    def loadRecipes(self):
+    def loadRecipes(self) -> dict:
         """Loads the recipes from the file system. Attempts to read pickle object from file, creates a new default one and saves it if this fails or if there's
         not a 'Default' recipe in the brew recipe dictionary for some reason.
 

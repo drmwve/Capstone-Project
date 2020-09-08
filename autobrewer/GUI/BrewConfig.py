@@ -138,7 +138,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
 
     def StartBrewing(self):
         ## This function should connect to Husam's brewing program
-        self.copyRecipeFromUI(self.selectedBrewRecipe)
+        self.selectedBrewRecipe = self.copyRecipeFromUI()
         print("I need connected to the brewing program")
         logger.info(f"Starting brew cycle with parameters: {self.selectedBrewRecipe}")
 
@@ -152,7 +152,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             f"Saving recipe, currently selected recipe is: {self.selectedBrewRecipe}"
         )
         logger.info(f"Saving recipe {recipeName}")
-        self.copyRecipeFromUI(self.savedBrewRecipes[recipeName])
+        self.savedBrewRecipes[recipeName] = self.copyRecipeFromUI()
         self.pickler.saveRecipes(self.savedBrewRecipes)
 
     def enterNewRecipe(self):
@@ -205,18 +205,20 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         else:
             self.QBDeleteButton.setEnabled(True)
 
-    def copyRecipeFromUI(self, recipe: BrewRecipe):
+    def copyRecipeFromUI(self) -> BrewRecipe:
         """Copies the recipe specified in the UI to the given brew recipe object
 
-        Args:
+        Returns:
             recipe (BrewRecipe): The recipe object which the UI element values are copied to"""
 
+        recipe = BrewRecipe()
         recipe.name = self.QBComboBox.currentText()
         recipe.mashTunTemperature = int(self.MashTempEntry.text())
         recipe.hopCartridges = int(self.HopCartridgeSelectEntry.text())
         for i in range(0, 5):
             recipe.hopTiming[i] = int(self.hopEntry[i].text())
         logger.debug(f"Copied recipe from UI: {recipe} ")
+        return recipe
 
     def loadRecipeToUI(self, recipe: BrewRecipe):
         """Loads the given recipe object to the UI
