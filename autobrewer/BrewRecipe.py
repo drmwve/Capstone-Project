@@ -51,7 +51,7 @@ class BrewRecipePickler(object):
         logger.debug("Loading " + str(loadedRecipes))
         return loadedRecipes
 
-    def saveRecipes(self, recipes):
+    def saveRecipes(self, recipes: dict):
         """Saves the provided recipes to the recipe pickler. Detached from the actual saving function in case
         there's a future need to pickle other files.
 
@@ -62,7 +62,7 @@ class BrewRecipePickler(object):
         self._savePickleToFile(recipes, BrewRecipePickler._picklefile)
 
 
-    def _savePickleToFile(self, objectToPickle, picklefile):
+    def _savePickleToFile(self, objectToPickle: object, picklefile: str):
         """Saves a given object to a file with hmac encryption to validate data integrity and prevent security threats.
 
         Args:
@@ -79,7 +79,7 @@ class BrewRecipePickler(object):
             logger.debug("Wrote pickle object: %s" % pickledObject)
             picklefile.write(pickledObject)
 
-    def _readPickleFromFile(self, picklefile):
+    def _readPickleFromFile(self, picklefile: str):
         """Reads the pickled object in the given hmac-validated file. Returns an exception if the validation fails.
 
         Args:
@@ -104,7 +104,7 @@ class BrewRecipePickler(object):
             raise AssertionError
 
 
-    def _make_digest(self, message):
+    def _make_digest(self, message: str):
         """Creates a string hash (a digest) of a message which can validate data integrity"""
 
         hash = hmac.new(bytes(192),

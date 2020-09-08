@@ -116,7 +116,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
                 self.selectedBrewRecipe.hopCartridges
             ] = -1
 
-    def increaseHop(self, index):
+    def increaseHop(self, index: int):
         """Increases the time to release the relevant hop cartridge
 
         Args:
@@ -126,7 +126,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             self.selectedBrewRecipe.hopTiming[index] += 5
             self.hopEntry[index].setText(str(self.selectedBrewRecipe.hopTiming[index]))
 
-    def decreaseHop(self, index):
+    def decreaseHop(self, index: int):
         """Decreases the time to release the relevant hop cartridge
 
         Args:
@@ -142,7 +142,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         print("I need connected to the brewing program")
         logger.info(f"Starting brew cycle with parameters: {self.selectedBrewRecipe}")
 
-    def saveRecipe(self, recipeName):
+    def saveRecipe(self, recipeName: str):
         """Copies the recipe specified in the UI fields and saves all recipes to disk
 
         Args:
@@ -164,7 +164,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         if ok and text:
             self.addNewRecipe(text)
 
-    def addNewRecipe(self, recipeName):
+    def addNewRecipe(self, recipeName: str):
         """Adds a blank new recipe with the given name and opens it in the UI
 
         Args:
@@ -176,7 +176,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         self.QBComboBox.addItem(recipeName)
         self.QBComboBox.setCurrentText(recipeName)
 
-    def deleteRecipe(self, recipeName):
+    def deleteRecipe(self, recipeName: str):
         """Deletes a recipe from the recipe list and saves the dictionary
 
         Args:
@@ -190,7 +190,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         # change selected recipe is called by this statement because of the signal connection
         box.removeItem(box.currentIndex())
 
-    def changeSelectedRecipe(self, recipeName):
+    def changeSelectedRecipe(self, recipeName: str):
         """Switches the UI to a new recipe - this is called when the recipe combo box changes
 
         Args:
@@ -205,7 +205,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         else:
             self.QBDeleteButton.setEnabled(True)
 
-    def copyRecipeFromUI(self, recipe):
+    def copyRecipeFromUI(self, recipe: BrewRecipe):
         """Copies the recipe specified in the UI to the given brew recipe object
 
         Args:
@@ -218,7 +218,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             recipe.hopTiming[i] = int(self.hopEntry[i].text())
         logger.debug(f"Copied recipe from UI: {recipe} ")
 
-    def loadRecipeToUI(self, recipe):
+    def loadRecipeToUI(self, recipe: BrewRecipe):
         """Loads the given recipe object to the UI
 
         Args:
