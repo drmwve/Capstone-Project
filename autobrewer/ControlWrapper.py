@@ -10,7 +10,7 @@ from .osconfig import is_raspberry_pi
 from .utils import set_windup_time
 
 if is_raspberry_pi():
-    from w1thermsensor import W1ThermSensor, Unit
+    from w1thermsensor import W1ThermSensor
 else:
     from gpiozero.pins.mock import MockFactory, MockPWMPin
 

@@ -6,6 +6,7 @@ from .GUI.BrewProgress import BrewStatus
 from .GUI.CleaningScreen import CleaningScreen
 from .GUI.DeviceStatus import DeviceStatus
 from .GUI.MainMenu import MainMenu
+from .osconfig import is_raspberry_pi
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -18,10 +19,11 @@ class MainWindow(QtWidgets.QMainWindow):
     #define size of whole screen
     def defineMainScreenUI(self):
         self.setObjectName("MainWindow")
-        self.setFixedSize(1024,600)
+        if is_raspberry_pi():
+            self.showFullScreen()
+        else:
+            self.setFixedSize(1024,600)
         self.setWindowTitle("Auto Brewser System")
-        ## Uncomment next line to enable fullscreen, disabled for when testing on bigger screens.
-        #self.showFullScreen()
 
     #create stacked layout for different pages, add them to central widget
     def createStackedLayout(self):
