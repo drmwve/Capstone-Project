@@ -66,7 +66,7 @@ class TestBrewConfig:
 
         brewconfigscreen.changeSelectedRecipe(testName)
         recipe = BrewRecipe()
-        brewconfigscreen.saveRecipeFromUI(recipe)
+        brewconfigscreen.copyRecipeFromUI(recipe)
         assert brewconfigscreen.selectedBrewRecipe == savedrecipesdict[testName]
         assert recipe.hopTiming == savedrecipesdict[testName].hopTiming
         assert recipe.mashTunTemperature == savedrecipesdict[testName].mashTunTemperature
@@ -93,7 +93,7 @@ class TestBrewConfig:
         for i in range(len(testrecipe.hopTiming)):
             brewconfigscreen.hopEntry[i].setText(str(testrecipe.hopTiming[i]))
         recipe = BrewRecipe()
-        brewconfigscreen.saveRecipeFromUI(recipe)
+        brewconfigscreen.copyRecipeFromUI(recipe)
         assert recipe == testrecipe
 
 
