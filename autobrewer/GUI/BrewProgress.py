@@ -1,5 +1,6 @@
 from PySide2 import QtCore, QtGui, QtWidgets
-from GUI.BrewProgressGUI import Ui_BrewStatus
+from loguru import logger
+from .BrewProgressGUI import Ui_BrewStatus
 
 class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
 
@@ -24,6 +25,8 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.CurrentTaskLabel.setText("Aborting Brew Cycle . . .")
         self.PauseResumeButton.setEnabled(False)
         self.AbortBrewButton.setEnabled(False)
+        logger.info("User requested to abort brew.")
+
 
     def pauseResumeBrew(self):
         ## This should pause the current brewing process.
@@ -31,8 +34,10 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         ## Heaters should remain operational to preserve the integrity of the brew.
         if self.PauseResumeButton.isChecked():
             self.PauseResumeButton.setText("Resume")
+            logger.info("User requested to pause brew.")
         else:
             self.PauseResumeButton.setText("Pause")
+            logger.info("User requested to resume brewing.")
 
     def resetBrewScreen(self):
         ## This will reset the screen to the default layout.

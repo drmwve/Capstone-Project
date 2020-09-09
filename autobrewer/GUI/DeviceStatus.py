@@ -1,5 +1,6 @@
 from PySide2 import QtCore, QtGui, QtWidgets
-from GUI.DeviceStatusGUI import Ui_DeviceStatus
+from loguru import logger
+from .DeviceStatusGUI import Ui_DeviceStatus
 
 class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
 
@@ -45,40 +46,48 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
         pass
 
     ## Defining button functions
-    def toggleBallValve(self, index): 
+    def toggleBallValve(self, index):
         if self.ballValveButton[index].isChecked():
             ## Open ball valve
+            logger.info("User requested ball valve "+str(index+1)+" to open")
             self.ballValveButton[index].setText("Close")
             self.ballValveState[index].setText("State: Open")
         else:
             ## Close ball valve
+            logger.info("User requested ball valve "+str(index+1)+" to close")
             self.ballValveButton[index].setText("Open")
             self.ballValveState[index].setText("State: Closed")
 
     def toggleThreeWay(self, index):
         if self.threeWayValveButton[index].isChecked():
             ## Change to direction 2
+            logger.info("User requested three way valve "+str(index+1)+" to change to direction 2")
             self.threeWayValveState[index].setText("State: Direction 2")
         else:
             ## Change to direction 1
+            logger.info("User requested three way valve "+str(index+1)+" to change to direction 1")
             self.threeWayValveState[index].setText("State: Direction 1")
 
     def toggleHeater(self, index):
         if self.heaterButton[index].isChecked():
             ## Turn heater on
+            logger.info("User requested heater "+str(index+1)+" to turn on")
             self.heaterButton[index].setText("Turn Off")
             self.heaterState[index].setText("State: On")
         else:
             ##  Turn heater off
+            logger.info("User requested heater "+str(index+1)+" to turn off")
             self.heaterButton[index].setText("Turn On")
             self.heaterState[index].setText("State: Off")
 
     def togglePump(self, index):
         if self.pumpButton[index].isChecked():
             ## Turn pump on
+            logger.info("User requested pump "+str(index+1)+" to turn on")
             self.pumpButton[index].setText("Turn Off")
             self.pumpState[index].setText("State: On")
         else:
             ## Turn pump off
+            logger.info("User requested pump "+str(index+1)+" to turn off")
             self.pumpButton[index].setText("Turn On")
             self.pumpState[index].setText("State: Off")

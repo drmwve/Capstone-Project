@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO #to control the input and output
-from ExecutionCode.BrewState import BrewState
+from .BrewState import BrewState
 GPIO.setup(1,GPIO.OUT) #2 way valve number 1
 GPIO.setup(10,GPIO.out) #hop servo terminal
 servo = GPIO.PWM(10,50) # 10 is the terminal number an 50 is the frequency of the servo, this whill allow us to control the servo angle
@@ -10,8 +10,8 @@ servo.start(0)
 class ControlHandler():
     def __init__(self):
         self.twoWayBallValveGPIOs = [14, 15, 18,23, 24]
-        self.pumpGPIOs = [20., 21]
-        self.heatingElementGPIOs = [6, 13, 19, 26]
+        self.pumpGPIOs = [20, 21]
+        self.heatingElementGPIOs = [26,19, 13,6]
         self.threeWayBallValveGPIOs = [25, 8, 7, 12, 16]
         self.liquidSensorGPIOs = [22]
         self.tempSensorGPIOs = [9, 27]
@@ -34,7 +34,7 @@ class ControlHandler():
 
     def readTemperatureSensor(self, whichSensor):
         print("Execution read sensor " + str(whichSensor))
-    
+
     def readFlowSensor(self, whichSensor):
         print("Excution read sensor " + str(whichSensor))
 
@@ -42,12 +42,12 @@ class ControlHandler():
          GPIO.output(self.pumpGPIOs[index-1],True)
          self.brewState.pump[index-1] = True
          print("Excution opened pump" + str(index))
-    
+
     def closePump(self, index):
          GPIO.output(self.pumpGPIOs[index-1],False)
          self.brewState.pump[index-1] = False
          print("Excution closed pump" + str(index))
-    
+
     def openHeatingElement(self, index):
         GPIO.output(self.heatingElementGPIOs[index-1],True)
         self.brewState.heatingElement[index-1] = True
