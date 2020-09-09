@@ -1,2 +1,2 @@
-class ComponentControlException(Exception):
+class ComponentControlError(Exception):
     pass

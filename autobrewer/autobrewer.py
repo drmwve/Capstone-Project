@@ -6,7 +6,7 @@ from gpiozero import Device
 from loguru import logger
 from PySide2 import QtCore, QtWidgets
 
-from .ControlWrapper import DeviceHandler
+from .devicehandler import DeviceHandler
 from .ExecutionHandler import ExecutionHandler
 from .GUI.Styler import WindowStyler
 from .MainWindow import MainWindow

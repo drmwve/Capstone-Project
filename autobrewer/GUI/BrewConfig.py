@@ -78,7 +78,6 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
     def StartBrewing(self):
         ## This function should connect to Husam's brewing program
         print("I need connected to the brewing program")
-        logger.info("Starting brew cycle with parameters: " + self.selectedBrewRecipe)
 
 
     def toggleLoad(self):

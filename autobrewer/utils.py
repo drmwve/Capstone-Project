@@ -1,6 +1,6 @@
 import time
 from functools import wraps
-from .exceptions import ComponentControlException
+from .exceptions import ComponentControlError
 
 class _Disabled:
     """helper class for a decorator that disables
@@ -41,7 +41,7 @@ def set_windup_time(disable_time=5, num_components=1):
         @wraps(f)
         def wrapped(self, component_index, *args, **kwargs):
             if must_not_call_function(component_index):
-                raise ComponentControlException("Attempted to control component while changing state")
+                raise ComponentControlError("Attempted to control component while changing state")
             else:
                 r = f(self, component_index, *args, **kwargs)
             return r

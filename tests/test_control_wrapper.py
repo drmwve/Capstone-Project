@@ -1,6 +1,6 @@
 import pytest
 from autobrewer.ControlWrapper import DeviceHandler
-from autobrewer.exceptions import ComponentControlException
+from autobrewer.exceptions import ComponentControlError
 
 @pytest.fixture
 def controlHandler():
