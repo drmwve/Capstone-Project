@@ -6,6 +6,10 @@ from functools import partial
 import linecache
 
 class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
+
+    startBrewSignal = QtCore.Signal()
+
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -76,9 +80,8 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
             self.hopEntry[index].setText(str(self.selectedBrewRecipe.hopTiming[index]))
 
     def StartBrewing(self):
-        ## This function should connect to Husam's brewing program
-        print("I need connected to the brewing program")
-        logger.info("Starting brew cycle with parameters: " + self.selectedBrewRecipe)
+        self.startBrewSignal.emit()
+        logger.info("User requested to start brewing cycle")
 
 
     def toggleLoad(self):
