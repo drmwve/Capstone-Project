@@ -12,6 +12,8 @@ from .pinhandler import PinHandler
 class DeviceHandler(QObject, PinHandler):
     """Controls the components and provides checking of invalid states for safety, such as preventing the opening of a pump
     when there is no open ball valve path or running a heating element in an empty kettle.
+    This class has many functions for controlling components in logical groups and individually.
+    The functions start with the large group controls and break down into low-level private controls.
 
     Attributes:
         emitState: Emits a signal with the current BrewState
@@ -20,10 +22,12 @@ class DeviceHandler(QObject, PinHandler):
         resetFlowControl: Disables all pumps and returns ball valves to de-energized position
         openValves*: Opens particular ball valve paths
         set*/open*/close*/enable*/disable*: Individual component control functions"""
+
     signalState = Signal(BrewState)
 
     # Only allow one Control Handler
     _instance = None
+
     def __new__(cls):
         if DeviceHandler._instance is None:
             logger.warning("Hop servo needs tuning")
@@ -145,29 +149,37 @@ class DeviceHandler(QObject, PinHandler):
         )
 
     def _setPumpState(self, index: int, state: bool):
-        #check if a valid path is open for either pump
-        pump0ValidPathOpen = (self.brewState._pathOpenHLTtoMT() or self.brewState._pathOpenMTRecirc())
-        pump1ValidPathOpen = (self.brewState._pathOpenMTtoBK() or self.brewState._pathOpenBKWhirl() or self.brewState._pathOpenBKDrain())
-        #disable the pumps if that's requested, or enable the selected pump if there's an open path
-        if (not state) or (index == 0 and pump0ValidPathOpen) or (index == 1 and pump1ValidPathOpen):
+        # check if a valid path is open for either pump
+        pump0ValidPathOpen = (
+            self.brewState._pathOpenHLTtoMT() or self.brewState._pathOpenMTRecirc()
+        )
+        pump1ValidPathOpen = (
+            self.brewState._pathOpenMTtoBK()
+            or self.brewState._pathOpenBKWhirl()
+            or self.brewState._pathOpenBKDrain()
+        )
+        # disable the pumps if that's requested, or enable the selected pump if there's an open path
+        if (
+            (not state)
+            or (index == 0 and pump0ValidPathOpen)
+            or (index == 1 and pump1ValidPathOpen)
+        ):
             self.pumps[index] = state
             self.brewState.pumps[index] = state
-            logger.debug(
-                f'Set pump {index} to {"On" if state else "Off"}'
-            )
-        #raise an error otherwise
+            logger.debug(f'Set pump {index} to {"On" if state else "Off"}')
+        # raise an error otherwise
         else:
             raise ComponentControlError(
-                f'Cannot turn pump {index} on. There is no suitable ball valve path open'
+                f"Cannot turn pump {index} on. There is no suitable ball valve path open"
             )
 
     def _setHeatingElementValue(self, index: int, value: int):
         self.heatingElements[index].value = value
         self.brewState.heatingElements[index] = value
-        logger.debuf(f'Set heating element {index} to {value}')
+        logger.debuf(f"Set heating element {index} to {value}")
 
     def _readSensors(self):
-        #read the sensors and save the values here
+        # read the sensors and save the values here
         for temp in self.brewState.temperatures:
             self.brewState.temperatures[temp] = 0
         for volume in self.brewState.temperatures:

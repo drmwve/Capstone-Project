@@ -1,6 +1,8 @@
-from PySide2 import QtGui, QtWidgets
-from loguru import logger
 from functools import partial
+
+from loguru import logger
+from PySide2 import QtGui, QtWidgets
+
 from .GUI.BrewConfig import BrewConfig
 from .GUI.BrewProgress import BrewStatus
 from .GUI.CleaningScreen import CleaningScreen

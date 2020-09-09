@@ -1,7 +1,7 @@
-from .Process import BrewProcess, CleaningProcess
-from PySide2 import QtCore, QtGui
 from loguru import logger
-#from ExecutionCode.ControlWrapper import ControlHandler
+from PySide2 import QtCore, QtGui
+
+from .Process import BrewProcess, CleaningProcess
 
 class ExecutionHandler():
     #I wrap the thread handling up in a neat package. The UI code creates a process and passes it to me with my startProcess(process)
