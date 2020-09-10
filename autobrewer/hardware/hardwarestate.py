@@ -1,4 +1,4 @@
-class BrewState():
+class HardwareState():
     """A messenger class which holds information about what state the brewer
     components are in. This includes the ball valves, heating elements, pumps,
     and sensors. Exists to provide a simple format to send state information
@@ -17,7 +17,7 @@ class BrewState():
     def _pathOpenHLTtoMT(self):
         """Check ball valve path for hot liquor tank to mash tun is open"""
         return (
-            self.twoWayBallValves[1].value and not self.threeWayBallValveGPIOs[1].value
+            self.twoWayBallValves[1] and not self.threeWayBallValves[1]
         )
 
     def _pathOpenMTRecirc(self):
@@ -28,7 +28,7 @@ class BrewState():
             and self.threeWayBallValves[1]
         )
 
-    def _pathOpenMashtoBK(self):
+    def _pathOpenMTtoBK(self):
         """Check ball valve path from mash tun to boil kettle is open"""
         return (
             self.twoWayBallValves[2]

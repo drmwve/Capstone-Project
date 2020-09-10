@@ -6,7 +6,6 @@ from gpiozero import Device
 from loguru import logger
 from PySide2 import QtCore, QtWidgets
 
-from .devicehandler import DeviceHandler
 from .ExecutionHandler import ExecutionHandler
 from .GUI.Styler import WindowStyler
 from .MainWindow import MainWindow
@@ -16,8 +15,6 @@ from .osconfig import is_raspberry_pi
 def main():
     app = QtWidgets.QApplication(sys.argv)
     logger.add(sys.stderr, format="{time} {level} {message}", filter="my_module", level="DEBUG")
-    handler = DeviceHandler()
-    executionHandler = ExecutionHandler()
     styler = WindowStyler()
     styler.styleWindows(app)
     mainScreen = MainWindow()
