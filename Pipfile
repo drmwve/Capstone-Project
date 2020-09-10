@@ -4,9 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pylint = "*"
 black = {git = "git://github.com/psf/black"}
 pytest = "*"
+pytest-qt = "*"
+hypothesis = "*"
 
 [packages]
 pyside2 = "*"

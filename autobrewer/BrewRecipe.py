@@ -7,20 +7,24 @@ import hmac
 from dataclasses import dataclass, field
 from loguru import logger
 
-@dataclass
+@dataclass(init=True)
 class BrewRecipe():
-    # I'm a messenger class which holds information about the brew recipe such as
-    # hop timing, mash temperature, etc. I am created by the BrewConfig UI screen
-    # and passed to a Brew Process in the signal that starts the brewing process.
+    """A messenger class which holds information about the brew recipe such as
+    hop timing, mash temperature, etc. Created by the BrewConfig UI screen
+    and passed to a Brew Process in the signal that starts the brewing process."""
+
     name: str = "Default"
     hopCartridges: int = 5
     mashTunTemperature: int = 160
-    hopTiming: int = field(default_factory=lambda: [0,0,0,0,0])
+    hopTiming: int = field(default_factory=lambda: [0,10,20,30,40])
+
 
 class BrewRecipePickler(object):
+    """Saves and loads a dictionary of brew recipes to the file system using the 'pickle' module so the user can have a list of saved recipes."""
     _instance = None
     _picklefile = "brewrecipes.pkl"
 
+    # All instances of this class point to the same object since you only really need one
     def __new__(cls):
         if cls._instance is None:
             print('Creating the object')
@@ -28,30 +32,81 @@ class BrewRecipePickler(object):
             # Put any initialization here.
         return cls._instance
 
+    def loadRecipes(self) -> dict:
+        """Loads the recipes from the file system. Attempts to read pickle object from file, creates a new default one and saves it if this fails or if there's
+        not a 'Default' recipe in the brew recipe dictionary for some reason.
 
-    def saveRecipes(self, brewRecipes):
-        recipePickle = pickle.dumps(brewRecipes)
-        pickleDigest = self.make_digest(recipePickle)
-        with open(BrewRecipePickler._picklefile, "w") as picklefile:
-            picklefile.write(str(pickleDigest) + '\n')
-            picklefile.write(str(recipePickle))
+        Returns:
+            loadedRecipes (dict): A dictionary of brew recipes"""
 
-    def loadRecipes(self):
         logger.debug("Attempting to load recipes")
         try:
-            with open(BrewRecipePickler._picklefile, "r") as picklefile:
-                pickleDigest, recipePickle = picklefile.readlines(2)
-                checkPD = self.make_digest(pickleDigest)
-                if hmac.compare_digest(checkPD, pickleDigest):
-                    brewRecipes = pickle.loads(recipePickle)
-                logger.debug("Loading " + brewRecipes)
+            loadedRecipes = self._readPickleFromFile(BrewRecipePickler._picklefile)
+            if not "Default" in loadedRecipes:
+                raise Exception
         except:
-            brewRecipes = [BrewRecipe()]
-            self.saveRecipes(brewRecipes)
-            logger.debug("Creating new brew recipes file")
-        return brewRecipes
+            logger.exception("Loading - creating new brew recipes pickle")
+            loadedRecipes = {BrewRecipe().name: BrewRecipe()}
+            self._savePickleToFile(loadedRecipes, BrewRecipePickler._picklefile)
+        logger.debug("Loading " + str(loadedRecipes))
+        return loadedRecipes
 
-    def make_digest(self, message):
+    def saveRecipes(self, recipes: dict):
+        """Saves the provided recipes to the recipe pickler. Detached from the actual saving function in case
+        there's a future need to pickle other files.
+
+        Args:
+            recipes (dict): A dictionary of recipes. There must be a 'Default' recipe in the dictionary or it will be
+            erased the next time the dictionary is loaded."""
+
+        self._savePickleToFile(recipes, BrewRecipePickler._picklefile)
+
+
+    def _savePickleToFile(self, objectToPickle: object, picklefile: str):
+        """Saves a given object to a file with hmac encryption to validate data integrity and prevent security threats.
+
+        Args:
+            objectToPickle (object): The Python object to be pickled
+            picklefile (str): The filepath of the file to save the pickle to"""
+
+        logger.debug("Pickling object: %s" % objectToPickle)
+        pickledObject = pickle.dumps(objectToPickle)
+        digest = self._make_digest(pickledObject)
+        #hmac code is written as UTF-8 header, pickle is written as bytes
+        with open(picklefile, "wb") as picklefile:
+            logger.debug("Writing digest to file %s" % digest)
+            picklefile.write(("%s\n" % digest).encode('utf-8'))
+            logger.debug("Wrote pickle object: %s" % pickledObject)
+            picklefile.write(pickledObject)
+
+    def _readPickleFromFile(self, picklefile: str):
+        """Reads the pickled object in the given hmac-validated file. Returns an exception if the validation fails.
+
+        Args:
+            picklefile (str): The filepath of the saved pickle object.
+
+        Raises:
+            AssertionError: If the hmac validation fails."""
+
+        with open(picklefile, "rb") as picklefile:
+            logger.debug("File %s read successfully" % picklefile.name)
+            readDigest = picklefile.readline().decode('utf-8').rstrip()
+            readPickle = picklefile.read()
+            logger.debug("Read recipePickle: %s" % readPickle)
+
+        actualDigest = self._make_digest(readPickle)
+        logger.debug("Doing hmac check: %s  %s" % (actualDigest,readDigest))
+        if hmac.compare_digest(actualDigest, readDigest):
+            logger.debug("hmac check passed")
+            return pickle.loads(readPickle)
+        else:
+            logger.debug("hmac check failed")
+            raise AssertionError
+
+
+    def _make_digest(self, message: str):
+        """Creates a string hash (a digest) of a message which can validate data integrity"""
+
         hash = hmac.new(bytes(192),
                     message,
                     hashlib.sha1)
