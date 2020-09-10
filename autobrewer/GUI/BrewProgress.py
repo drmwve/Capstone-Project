@@ -4,6 +4,9 @@ from .BrewProgressGUI import Ui_BrewStatus
 
 class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
 
+    nextBrewStepSignal = QtCore.Signal()
+    abortBrewSignal = QtCore.Signal()
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -28,6 +31,7 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.ManualBrewButton.setEnabled(False)
         self.AbortBrewButton.setEnabled(False)
         logger.info("User requested to abort brew.")
+        self.abortBrewSignal.emit()
 
 
     def manualBrewing(self):
@@ -47,4 +51,5 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
 
     def nextBrewingStep(self):
         logger.info("User requested to advance brewing to next step.")
+        self.nextBrewStepSignal.emit()
         pass

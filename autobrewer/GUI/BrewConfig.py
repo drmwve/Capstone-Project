@@ -9,7 +9,6 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
 
     startBrewSignal = QtCore.Signal()
 
-
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -21,7 +20,6 @@ class BrewConfig(QtWidgets.QWidget,Ui_BrewConfigWindow):
         self.hopIncrease = [self.Hop1Increase, self.Hop2Increase, self.Hop3Increase, self.Hop4Increase, self.Hop5Increase]
         self.hopDecrease = [self.Hop1Decrease, self.Hop2Decrease, self.Hop3Decrease, self.Hop4Decrease, self.Hop5Decrease]
         self.connections()
-
 
     def connections(self):
         self.MashTempDecrease.clicked.connect(self.DecreaseMashTemp)

@@ -6,6 +6,10 @@ from datetime import timedelta
 
 class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
 
+    startCleaningSignal = QtCore.Signal()
+    abortCleaningSignal = QtCore.Signal()
+    nextCleaningStepSignal = QtCore.Signal()
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -40,12 +44,12 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         self.CurrentCleanTaskLabel.setText("Aborting Cleaning Cycle . . .")
         self.ManualCleanButton.setEnabled(False)
         self.AbortCleanButton.setEnabled(False)
+        self.abortCleaningSignal.emit()
+
         self.actionTimer.stop()
         self.actionTimer.start(15000)
         self.CurrentCleanTaskProgressBar.setRange(-15000, 0)
         self.updateETA()
-
-
 
     def manualCleaning(self):
         if self.ManualCleanButton.isChecked():
@@ -64,6 +68,8 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         for i in range(len(self.cleanRunningElements)):
             self.cleanRunningElements[i].setHidden(False)
         self.StartCleaningButton.setHidden(True)
+        self.startCleaningSignal.emit()
+
         self.CurrentCleanTaskLabel.setText("This should update the user on what's happening . . .")
         self.actionTimer.start(3.6e+6)
         self.CurrentCleanTaskProgressBar.setRange(-3.6e+6, 0)
@@ -89,4 +95,4 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
 
     def nextCleaningStep(self):
         logger.info("User requested to advance cleaning to next step.")
-        pass
+        self.nextCleaningStepSignal.emit()
