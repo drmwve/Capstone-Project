@@ -9,7 +9,7 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.cleanRunningElements = [self.PauseResumeCleanButton, self.AbortCleanButton, self.CurrentCleanTaskLabel, self.CleanETALabel, self.CurrentCleanTaskProgressBar]
+        self.cleanRunningElements = [self.NextCleanStepButton, self.ManualCleanButton, self.AbortCleanButton, self.CurrentCleanTaskLabel, self.CleanETALabel, self.CurrentCleanTaskProgressBar]
         self.adjustUI()
         self.timers = [self.updateTimer, self.actionTimer]
         self.connections()
@@ -17,26 +17,28 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
     def connections(self):
         #add any connections that are internal to the functioning of this widget only
         self.AbortCleanButton.clicked.connect(self.abortClean)
-        self.PauseResumeCleanButton.clicked.connect(self.pauseResumeClean)
+        self.ManualCleanButton.clicked.connect(self.manualCleaning)
         self.StartCleaningButton.clicked.connect(self.startClean)
         self.actionTimer.timeout.connect(self.resetCleanScreen)
         self.updateTimer.timeout.connect(self.updateETA)
+        self.NextCleanStepButton.clicked.connect(self.nextCleaningStep)
 
     def adjustUI(self):
         self.updateTimer=QtCore.QTimer()
         self.actionTimer=QtCore.QTimer()
-        self.PauseResumeCleanButton.setCheckable(True)
-        self.PauseResumeCleanButton.setText("Pause")
+        self.ManualCleanButton.setCheckable(True)
+        self.ManualCleanButton.setText("Manual Control")
+        self.NextCleanStepButton.setEnabled(False)
         ## Hide UI elements that don't have a purpose until cleaning starts.
         for i in range(len(self.cleanRunningElements)):
-            self.cleanRunningElements[i].setHidden(True)
+            self.cleanRunningElements[i].setVisible(False)
 
     def abortClean(self):
         ## This function should stop the machine, return it to a neutral state with no liquid.
         ## Then take the user back to the main menu when finished.
         logger.info("User requested to abort clean.")
         self.CurrentCleanTaskLabel.setText("Aborting Cleaning Cycle . . .")
-        self.PauseResumeCleanButton.setEnabled(False)
+        self.ManualCleanButton.setEnabled(False)
         self.AbortCleanButton.setEnabled(False)
         self.actionTimer.stop()
         self.actionTimer.start(15000)
@@ -45,24 +47,15 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
 
 
 
-    def pauseResumeClean(self):
-        ## This should pause the current brewing process.
-        ## For the cleaning cycle it should be safe to disable all functions.
-        ## (Pumps, heaters, etc.)
-
-        if self.PauseResumeCleanButton.isChecked():
-            ## Pauses process
-            logger.info("User requested to pause clean.")
-            self.PauseResumeCleanButton.setText("Resume")
-            self.actionTimer.setInterval(self.actionTimer.remainingTime())
-            self.actionTimer.stop()
-            self.updateTimer.stop()
+    def manualCleaning(self):
+        if self.ManualCleanButton.isChecked():
+            ## Enables next step button
+            logger.info("User requested manual control over cleaning cycle.")
+            self.NextCleanStepButton.setEnabled(True)
         else:
             ## Restarts process
-            logger.info("User requested to resume cleaning.")
-            self.PauseResumeCleanButton.setText("Pause")
-            self.actionTimer.start()
-            self.updateTimer.start()
+            logger.info("User requested to disable manual control over cleaning cycle.")
+            self.NextCleanStepButton.setEnabled(False)
 
     def startClean(self):
 
@@ -80,11 +73,11 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         ## This will reset the screen to the default layout.
         for i in range(len(self.cleanRunningElements)):
             self.cleanRunningElements[i].setHidden(True)
-        self.PauseResumeCleanButton.setText("Pause")
+        self.ManualCleanButton.setText("Pause")
         self.StartCleaningButton.setHidden(False)
-        self.PauseResumeCleanButton.setChecked(False)
+        self.ManualCleanButton.setChecked(False)
         self.CurrentCleanTaskLabel.setText("What am I doing?")
-        self.PauseResumeCleanButton.setEnabled(True)
+        self.ManualCleanButton.setEnabled(True)
         self.AbortCleanButton.setEnabled(True)
         self.CleanETALabel.setText("ETA: 84 Years")
         self.actionTimer.stop()
@@ -93,3 +86,7 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         self.CleanETALabel.setText("ETA: "+str(timedelta(seconds=int(self.actionTimer.remainingTime()/1000))))
         self.CurrentCleanTaskProgressBar.setValue(-self.actionTimer.remainingTime())
         self.updateTimer.start(1000)
+
+    def nextCleaningStep(self):
+        logger.info("User requested to advance cleaning to next step.")
+        pass

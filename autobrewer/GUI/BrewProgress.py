@@ -13,35 +13,38 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
     def connections(self):
         #add any connections that are internal to the functioning of this widget only
         self.AbortBrewButton.clicked.connect(self.abortBrew)
-        self.PauseResumeButton.clicked.connect(self.pauseResumeBrew)
+        self.ManualBrewButton.clicked.connect(self.manualBrewing)
+        self.NextBrewStepButton.clicked.connect(self.nextBrewingStep)
 
     def adjustUI(self):
-        self.PauseResumeButton.setCheckable(True)
-        self.PauseResumeButton.setText("Pause")
+        self.ManualBrewButton.setCheckable(True)
+        self.ManualBrewButton.setText("Manual Control")
+        self.NextBrewStepButton.setEnabled(False)
 
     def abortBrew(self):
         ## This function should stop the machine, return it to a neutral state with no liquid.
         ## Then take the user back to the main menu when finished.
         self.CurrentTaskLabel.setText("Aborting Brew Cycle . . .")
-        self.PauseResumeButton.setEnabled(False)
+        self.ManualBrewButton.setEnabled(False)
         self.AbortBrewButton.setEnabled(False)
         logger.info("User requested to abort brew.")
 
 
-    def pauseResumeBrew(self):
-        ## This should pause the current brewing process.
-        ## Primarily pumps and liquid transfers should be stopped.
-        ## Heaters should remain operational to preserve the integrity of the brew.
-        if self.PauseResumeButton.isChecked():
-            self.PauseResumeButton.setText("Resume")
-            logger.info("User requested to pause brew.")
+    def manualBrewing(self):
+        if self.ManualBrewButton.isChecked():
+            logger.info("User requested manual control over brewing cycle.")
+            self.NextBrewStepButton.setEnabled(True)
         else:
-            self.PauseResumeButton.setText("Pause")
-            logger.info("User requested to resume brewing.")
+            logger.info("User requested to disable manual control over brewing cycle.")
+            self.NextBrewStepButton.setEnabled(False)
 
     def resetBrewScreen(self):
         ## This will reset the screen to the default layout.
-        self.PauseResumeButton.setText("Pause")
-        self.PauseResumeButton.setChecked(False)
-        self.PauseResumeButton.setEnabled(True)
-        self.AbortBrewButton.setEnabled(True)
+        self.ManualBrewButton.setText("Pause")
+        self.ManualBrewButton.setChecked(False)
+        self.ManualBrewButton.setEnabled(True)
+        self.ManualBrewButton.setEnabled(True)
+
+    def nextBrewingStep(self):
+        logger.info("User requested to advance brewing to next step.")
+        pass
