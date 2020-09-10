@@ -66,6 +66,6 @@ class Pins():
             pass
 
     @classmethod
-    def _refreshPins(cls):
+    def refreshPins(cls):
         cls._releasePins()
         cls._connectPins()

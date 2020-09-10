@@ -53,5 +53,5 @@ class MainWindow(QtWidgets.QMainWindow):
 
     #this just avoids having a million "switch to menu" functions. the menu passed to this function MUST already be in the stacked layout
     def goToMenu(self, menu):
-        logger.info("UI switched to screen " + str(menu))
+        logger.info("Switched to screen " + str(menu))
         self.centralWidget().setCurrentWidget(menu)

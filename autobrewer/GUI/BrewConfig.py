@@ -111,17 +111,17 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
 
     def increaseHop(self, index):
         hoptiming = int(self.hopEntry[index].text())
-        logger.debug(f'Increased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}')
         if hoptiming < 60:
             hoptiming +=5
             self.hopEntry[index].setText(str(hoptiming))
+            logger.debug(f'Increased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}')
 
     def decreaseHop(self, index):
         hoptiming = int(self.hopEntry[index].text())
-        logger.debug(f'Decreased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}')
-        if hoptiming < 0:
+        if hoptiming > 0:
             hoptiming -=5
             self.hopEntry[index].setText(str(hoptiming))
+            logger.debug(f'Decreased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}')
 
     def StartBrewing(self):
         ## This function should connect to Husam's brewing program

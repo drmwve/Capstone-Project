@@ -5,7 +5,7 @@ from autobrewer.exceptions import ComponentControlError
 @pytest.fixture
 def devicehandler():
     handler = DeviceHandler()
-    handler._refreshPins()
+    handler.refreshPins()
     return DeviceHandler()
 
 
