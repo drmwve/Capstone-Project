@@ -26,64 +26,6 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="CleanScreenLayout">
-   <item row="3" column="0">
-    <layout class="QHBoxLayout" name="LowerCleaningButtonsLayout">
-     <item>
-      <widget class="QPushButton" name="PauseResumeCleanButton">
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>60</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Pause/Resume</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="AbortCleanButton">
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>60</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Abort Cleaning</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ReturnToMenuButton">
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>60</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Main Menu</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="0" column="0">
     <layout class="QGridLayout" name="CleaningStatusLayout">
      <item row="0" column="0">
@@ -163,6 +105,82 @@
        </property>
        <property name="text">
         <string>Start Cleaning Cycle</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="0">
+    <layout class="QGridLayout" name="LowerCleaningButtonsLayout">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="ManualCleanButton">
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>60</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Pause/Resume</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="AbortCleanButton">
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>60</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Abort Cleaning</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QPushButton" name="ReturnToMenuButton">
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>60</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Main Menu</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="NextCleanStepButton">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Next Stage</string>
        </property>
       </widget>
      </item>
