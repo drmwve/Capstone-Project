@@ -11,7 +11,7 @@ https://pypi.org/project/PySide2/#description
 https://github.com/timofurrer/w1thermsensor
 
 #### ADC Library
-https://github.com/adafruit/Adafruit_CircuitPython_ADS1x15
+https://github.com/robert-hh/ads1x15
 
 #### Pressure (Level) Sensor Datasheet
 https://www.nxp.com/docs/en/data-sheet/MPXV4006.pdf
