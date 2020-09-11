@@ -1,6 +1,19 @@
+import platform
 import time
 from functools import wraps
 from .exceptions import ComponentControlError
+
+def is_raspberry_pi():
+    """Checks if Raspberry PI.
+
+    Returns:
+        bool: True if Raspberry Pi
+    """
+    return platform.uname()[4].startswith("arm")
+
+
+IS_RASPBERRY_PI = is_raspberry_pi()
+
 
 class _Disabled:
     """helper class for a decorator that disables
@@ -16,7 +29,6 @@ class _Disabled:
         Attention: has a side effect with consequences:
         ==>> upon first time called, sets first_called flag to false
         """
-
 
     def __call__(self,index):
         if self.first_call[index]:
@@ -47,3 +59,5 @@ def set_windup_time(disable_time=5, num_components=1):
             return r
         return wrapped
     return _disable_for_a_while_after_called
+
+

@@ -1,7 +1,8 @@
 from gpiozero import AngularServo, Device, OutputDevice, PWMOutputDevice
 
-from ..osconfig import is_raspberry_pi
-if is_raspberry_pi():
+from ..utils import IS_RASPBERRY_PI
+
+if IS_RASPBERRY_PI:
     from w1thermsensor import W1ThermSensor
 else:
     from gpiozero.pins.mock import MockFactory, MockPWMPin
@@ -29,7 +30,7 @@ class Pins():
         # this little bit of weirdness is a consequence of gpiozero's fake pin code being goofy
         logger.debug("Connecting Pins")
         cls.pwmPinFactory = Device.pin_factory
-        if not is_raspberry_pi():
+        if not IS_RASPBERRY_PI:
             Device.pin_factory = MockFactory()
             cls.pwmPinFactory = MockFactory(pin_class=MockPWMPin)
 

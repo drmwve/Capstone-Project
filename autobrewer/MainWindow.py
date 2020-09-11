@@ -1,14 +1,14 @@
 from functools import partial
 
+from PySide2 import QtWidgets
 from loguru import logger
-from PySide2 import QtGui, QtWidgets
 
 from .GUI.BrewConfig import BrewConfig
 from .GUI.BrewProgress import BrewStatus
 from .GUI.CleaningScreen import CleaningScreen
 from .GUI.DeviceStatus import DeviceStatus
 from .GUI.MainMenu import MainMenu
-from .osconfig import is_raspberry_pi
+from .utils import IS_RASPBERRY_PI
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -21,7 +21,7 @@ class MainWindow(QtWidgets.QMainWindow):
     #define size of whole screen
     def defineMainScreenUI(self):
         self.setObjectName("MainWindow")
-        if is_raspberry_pi():
+        if IS_RASPBERRY_PI:
             self.showFullScreen()
         else:
             self.setFixedSize(1024,600)
