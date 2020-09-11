@@ -37,8 +37,8 @@ class DeviceHandler(QObject, Pins):
         each path.
 
         To add paths, add them in the main valvepaths variable (both open and close must be defined, even if they're
-        empty) and then add relevant paths to the appropriate pump dictionary so that the pump's available paths can
-        be checked when attempting to turn it on.
+        empty) and then add relevant path names to the pumpvalvepathmap tuple in the position of the index of the
+        relevant pump
         """
         cls.valvepaths = {"HLTtoMT": {"open": [1], "close": [6]},
                           "MTRecirc": {"open": [2, 6], "close": [7]},
@@ -46,8 +46,8 @@ class DeviceHandler(QObject, Pins):
                           "BKWhirl": {"open": [3, 4, 8], "close": [9]},
                           "BKDrain": {"open": [4, 8, 9], "close": []}
                           }
-        cls.pumps[0].valvepaths = {path: cls.valvepaths[path] for path in ["HLTtoMT", "MTRecirc"]}
-        cls.pumps[1].valvepaths = {path: cls.valvepaths[path] for path in ["MTtoBK", "BKWhirl", "BKDrain"]}
+        cls.pumpvalvepathmap = (("HLTtoMT", "MTRecirc"),
+                                ("MTtoBK", "BKWhirl", "BKDrain"))
 
     @classmethod
     def openValvePath(cls, pathname: str):
@@ -136,25 +136,25 @@ class DeviceHandler(QObject, Pins):
         logger.debug(f'Set ball valve {index} to {"On" if state else "Off"}')
 
     @classmethod
-    def _setPumpState(cls, index: int, state: bool):
+    def _setPumpState(cls, pumpindex: int, state: bool):
         # check if a valid path is open for either pump
-        if (not state) or (state and cls._pumpHasOpenPath(cls.pumps[index])):
-            cls.pumps[index] = state
-            cls.hardwareState.pumps[index] = state
-            logger.debug(f'Set pump {index} to {"On" if state else "Off"}')
+        if (not state) or (state and cls._pumpHasOpenPath(pumpindex)):
+            cls.pumps[pumpindex] = state
+            cls.hardwareState.pumps[pumpindex] = state
+            logger.debug(f'Set pump {pumpindex} to {"On" if state else "Off"}')
         # raise an error otherwise
         else:
             raise ComponentControlError(
-                f"Cannot turn pump {index} on. There is no suitable ball valve path open"
+                f"Cannot turn pump {pumpindex} on. There is no suitable ball valve path open"
             )
 
     @classmethod
-    def _pumpHasOpenPath(cls, pump) -> bool:
-        for valvepath in pump.valvepaths.values():
-            for valveindex in valvepath["open"]:
+    def _pumpHasOpenPath(cls, pumpindex) -> bool:
+        for valvepath in cls.pumpvalvepathmap[pumpindex]:
+            for valveindex in cls.valvepaths[valvepath]["open"]:
                 if cls.ballValves[valveindex].value != 1:
                     return False
-            for valveindex in valvepath["close"]:
+            for valveindex in cls.valvepaths[valvepath]["close"]:
                 if cls.ballValves[valveindex].value != 0:
                     return False
 
