@@ -11,7 +11,6 @@ from .GUI.Styler import WindowStyler
 from .MainWindow import MainWindow
 from .osconfig import is_raspberry_pi
 
-
 def main():
     app = QtWidgets.QApplication(sys.argv)
     logger.add(sys.stderr, format="{time} {level} {message}", filter="my_module", level="DEBUG")
