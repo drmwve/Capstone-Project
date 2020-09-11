@@ -8,7 +8,9 @@ from .hardwarestate import HardwareState
 from ..exceptions import ComponentControlError
 from .pins import Pins
 
+
 # To do: Implement hop servo and sensor code
+
 class DeviceHandler(QObject, Pins):
     """Controls the components and provides checking of invalid states for safety, such as preventing the opening of a pump
     when there is no open ball valve path or running a heating element in an empty kettle.
@@ -23,10 +25,36 @@ class DeviceHandler(QObject, Pins):
         shutdown: Disables all heating elements and pumps and returns ball valves to de-energized position
         resetFlowControl: Disables all pumps and returns ball valves to de-energized position
         openValves*: Opens particular ball valve paths
-        set*/open*/close*/enable*/disable*: Individual component control functions"""
-
+        set*/open*/close*/enable*/disable*: Individual component control functions
+    """
     signalState = Signal(HardwareState)
     hardwareState = HardwareState()
+
+    @classmethod
+    def _createValvePaths(cls):
+        """Defines paths which must be open for a pump to run without forming a vacuum. The valvepaths variable is a
+        dictionary of dictionaries, describing the indexes of the valves which must either be opened or closed for
+        each path.
+
+        To add paths, add them in the main valvepaths variable (both open and close must be defined, even if they're
+        empty) and then add relevant paths to the appropriate pump dictionary so that the pump's available paths can
+        be checked when attempting to turn it on.
+        """
+        cls.valvepaths = {"HLTtoMT": {"open": [1], "close": [6]},
+                          "MTRecirc": {"open": [2, 6], "close": [7]},
+                          "MTtoBK": {"open": [2, 3, 7], "close": [8, 9]},
+                          "BKWhirl": {"open": [3, 4, 8], "close": [9]},
+                          "BKDrain": {"open": [4, 8, 9], "close": []}
+                          }
+        cls.pumps[0].valvepaths = {path: cls.valvepaths[path] for path in ["HLTtoMT", "MTRecirc"]}
+        cls.pumps[1].valvepaths = {path: cls.valvepaths[path] for path in ["MTtoBK", "BKWhirl", "BKDrain"]}
+
+    @classmethod
+    def openValvePath(cls, pathname: str):
+        for valveindex in cls.valvepaths[pathname]["open"]:
+            cls.openBallValve(valveindex)
+        for valveindex in cls.valvepaths[pathname]["close"]:
+            cls.closeBallValve(valveindex)
 
     @classmethod
     def emitState(cls):
@@ -48,43 +76,6 @@ class DeviceHandler(QObject, Pins):
         cls.disableAllPumps()
         cls.disableAllBallValves()
         logger.info("Shut down all liquid flow")
-
-    @classmethod
-    def openValvesHLTtoMT(cls):
-        logger.debug("Opening valve path from HLT to Mash Tun")
-        cls.open2WBallValve(1)
-        cls.close3WBallValve(1)
-
-    @classmethod
-    def openValvesMTRecirc(cls):
-        logger.debug("Opening valve path for MT recirculation")
-        cls.open2WBallValve(2)
-        cls.close3WBallValve(2)
-        cls.open3WBallValve(1)
-
-    @classmethod
-    def openValvesMTtoBK(cls):
-        logger.debug("Opening valve path from MT to BK")
-        cls.open2WBallValve(2)
-        cls.open3WBallValve(2)
-        cls.close3WBallValve(3)
-        cls.close3WBallValve(4)
-        cls.open2WBallValve(3)
-
-    @classmethod
-    def openValvesBKWhirl(cls):
-        logger.debug("Opening valve path for BK whirl")
-        cls.open2WBallValve(4)
-        cls.open3WBallValve(3)
-        cls.close3WBallValve(4)
-        cls.open2WBallValve(3)
-
-    @classmethod
-    def openValvesBKDrain(cls):
-        logger.debug("Opening valve path for BK drain")
-        cls.open2WBallValve(4)
-        cls.open3WBallValve(3)
-        cls.open3WBallValve(4)
 
     @classmethod
     def disableAllHeatingElements(cls):
@@ -147,20 +138,7 @@ class DeviceHandler(QObject, Pins):
     @classmethod
     def _setPumpState(cls, index: int, state: bool):
         # check if a valid path is open for either pump
-        pump0ValidPathOpen = (
-            cls.hardwareState._pathOpenHLTtoMT() or cls.hardwareState._pathOpenMTRecirc()
-        )
-        pump1ValidPathOpen = (
-            cls.hardwareState._pathOpenMTtoBK()
-            or cls.hardwareState._pathOpenBKWhirl()
-            or cls.hardwareState._pathOpenBKDrain()
-        )
-        # disable the pumps if that's requested, or enable the selected pump if there's an open path
-        if (
-            (not state)
-            or (index == 0 and pump0ValidPathOpen)
-            or (index == 1 and pump1ValidPathOpen)
-        ):
+        if (not state) or (state and cls._pumpHasOpenPath(cls.pumps[index])):
             cls.pumps[index] = state
             cls.hardwareState.pumps[index] = state
             logger.debug(f'Set pump {index} to {"On" if state else "Off"}')
@@ -169,6 +147,16 @@ class DeviceHandler(QObject, Pins):
             raise ComponentControlError(
                 f"Cannot turn pump {index} on. There is no suitable ball valve path open"
             )
+
+    @classmethod
+    def _pumpHasOpenPath(cls, pump) -> bool:
+        for valvepath in pump.valvepaths.values():
+            for valveindex in valvepath["open"]:
+                if cls.ballValves[valveindex].value != 1:
+                    return False
+            for valveindex in valvepath["close"]:
+                if cls.ballValves[valveindex].value != 0:
+                    return False
 
     @classmethod
     def _setHeatingElementValue(cls, index: int, value: int):
@@ -183,3 +171,6 @@ class DeviceHandler(QObject, Pins):
             cls.hardwareState.temperatures[temp] = 0
         for volume in cls.hardwareState.temperatures:
             cls.hardwareState.volumes[volume] = 0
+
+
+DeviceHandler._createValvePaths()

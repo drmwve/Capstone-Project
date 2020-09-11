@@ -4,3 +4,4 @@
 **/QuickBrewSaves/
 **/*.pkl
 **/.hypothesis/
+/.idea/

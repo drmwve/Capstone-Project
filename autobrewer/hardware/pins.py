@@ -66,4 +66,5 @@ class Pins():
         cls._releasePins()
         cls._connectPins()
 
+
 Pins._connectPins()
