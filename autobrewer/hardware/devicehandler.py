@@ -150,13 +150,19 @@ class DeviceHandler(QObject, Pins):
 
     @classmethod
     def _pumpHasOpenPath(cls, pumpindex) -> bool:
+        pumphasopenpath = False
         for valvepath in cls.pumpvalvepathmap[pumpindex]:
+            pathopen = True
             for valveindex in cls.valvepaths[valvepath]["open"]:
                 if cls.ballValves[valveindex].value != 1:
-                    return False
+                    pathopen = False
             for valveindex in cls.valvepaths[valvepath]["close"]:
                 if cls.ballValves[valveindex].value != 0:
-                    return False
+                    pathopen = False
+            if pathopen:
+               pumphasopenpath = True
+               break
+        return pumphasopenpath
 
     @classmethod
     def _setHeatingElementValue(cls, index: int, value: int):
