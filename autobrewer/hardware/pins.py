@@ -9,8 +9,7 @@ from loguru import logger
 
 class Pins():
     """Low level class which directly interfaces with the Raspberry Pi pins. This gets passed up to the Device Handler which handles higher-level component control logic."""
-    twoWayBallValveGPIOs = [25, 8, 7, 12, 16]
-    threeWayBallValveGPIOs = [14, 15, 18, 23, 24]
+    ballValveGPIOs = [25, 8, 7, 12, 16, 14, 15, 18, 23, 24]
     pumpGPIOs = [20, 21]
     heatingElementGPIOs = [26, 19, 13, 6]
     tempSensorGPIO = 9
@@ -41,17 +40,13 @@ class Pins():
         cls.hopServo = AngularServo(
             Pins.ADCGPIO, pin_factory=cls.pwmPinFactory
         )
-        cls.twoWayBallValves = [
-            OutputDevice(n) for n in Pins.twoWayBallValveGPIOs
+        cls.ballValves = [
+            OutputDevice(n) for n in Pins.ballValveGPIOs
         ]
         cls.pumps = [OutputDevice(n) for n in Pins.pumpGPIOs]
-        cls.threeWayBallValves = [
-            OutputDevice(n) for n in Pins.threeWayBallValveGPIOs
-        ]
 
         cls.GPZeroComponents = (
-            cls.twoWayBallValves
-            + cls.threeWayBallValves
+            cls.ballValves
             + cls.heatingElements
             + [cls.hopServo]
             + cls.pumps
@@ -67,5 +62,8 @@ class Pins():
 
     @classmethod
     def _refreshPins(cls):
+        logger.debug("Pins refreshed")
         cls._releasePins()
         cls._connectPins()
+
+Pins._connectPins()

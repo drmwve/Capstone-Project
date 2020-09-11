@@ -26,7 +26,6 @@ class DeviceHandler(QObject, Pins):
         set*/open*/close*/enable*/disable*: Individual component control functions"""
 
     signalState = Signal(HardwareState)
-
     hardwareState = HardwareState()
 
     @classmethod
@@ -102,10 +101,8 @@ class DeviceHandler(QObject, Pins):
     @classmethod
     def disableAllBallValves(cls):
         logger.debug("Closing all ball valves")
-        for index, _ in enumerate(cls.twoWayBallValves):
-            cls.close2WBallValve(index)
-        for index, _ in enumerate(cls.threeWayBallValves):
-            cls.close3WBallValve(index)
+        for index, _ in enumerate(cls.ballValves):
+            cls.closeBallValve(index)
 
     @classmethod
     def setHopServoPosition(cls, angle: int):
@@ -114,20 +111,12 @@ class DeviceHandler(QObject, Pins):
             cls.hardwareState.hopServo = angle
 
     @classmethod
-    def open2WBallValve(cls, index: int):
-        cls._set2WayState(index, True)
+    def openBallValve(cls, index: int):
+        cls._setBallValveState(index, True)
 
     @classmethod
-    def close2WBallValve(cls, index: int):
-        cls._set2WayState(index, False)
-
-    @classmethod
-    def open3WBallValve(cls, index: int):
-        cls._set3WayState(index, True)
-
-    @classmethod
-    def close3WBallValve(cls, index: int):
-        cls._set3WayState(index, False)
+    def closeBallValve(cls, index: int):
+        cls._setBallValveState(index, False)
 
     @classmethod
     def enablePump(cls, index: int):
@@ -150,18 +139,10 @@ class DeviceHandler(QObject, Pins):
         cls._setHeatingElementValue(index, value)
 
     @classmethod
-    def _set2WayState(cls, index: int, state: bool):
-        cls.twoWayBallValves[index].value = state
-        cls.hardwareState.twoWayBallValves[index] = state
-        logger.debug(f'Set 2-way ball valve {index} to {"On" if state else "Off"}')
-
-    @classmethod
-    def _set3WayState(cls, index: int, state: bool):
-        cls.threeWayBallValves[index].value = state
-        cls.hardwareState.threeWayBallValves[index] = state
-        logger.debug(
-            f'Set 3-way ball valve {index} to {"Direction 1" if state else "Direction 2"}'
-        )
+    def _setBallValveState(cls, index: int, state: bool):
+        cls.ballValves[index].value = state
+        cls.hardwareState.ballValves[index] = state
+        logger.debug(f'Set ball valve {index} to {"On" if state else "Off"}')
 
     @classmethod
     def _setPumpState(cls, index: int, state: bool):

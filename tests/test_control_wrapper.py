@@ -1,6 +1,8 @@
 import pytest
 from autobrewer.hardware.devicehandler import DeviceHandler
 from autobrewer.exceptions import ComponentControlError
+from autobrewer.hardware.pins import Pins
+
 
 @pytest.fixture
 def devicehandler():
@@ -10,20 +12,14 @@ def devicehandler():
 
 
 class TestControlWrapper():
-    @pytest.mark.parametrize("index", [0,1,2,3,4])
+    @pytest.mark.parametrize("index", [x for x in range(len(Pins.ballValveGPIOs))])
     @pytest.mark.parametrize("state", [True,False])
-    def test_set_2way_ball_valve_state(self, index, state, devicehandler):
-        assert devicehandler.twoWayBallValves[index].value == False
-        devicehandler._set2WayState(index, state)
-        assert devicehandler.twoWayBallValves[index].value == state
+    def test_set_ball_valve_state(self, index, state, devicehandler):
+        assert devicehandler.ballValves[index].value == False
+        devicehandler._setBallValveState(index, state)
+        assert devicehandler.ballValves[index].value == state
 
-    @pytest.mark.parametrize("index", [0,1,2,3,4])
-    @pytest.mark.parametrize("state", [True,False])
-    def test_set_3way_ball_valve_state(self, index, state, devicehandler):
-        assert devicehandler.threeWayBallValves[index].value == False
-        devicehandler._set3WayState(index, state)
-        assert devicehandler.threeWayBallValves[index].value == state
-
+    @pytest.mark.xfail
     @pytest.mark.parametrize("index", [0,1])
     def test_set_pump_open_valves_closed(self, index, devicehandler):
         state = True
