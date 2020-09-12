@@ -68,13 +68,13 @@ class DeviceHandler(QObject, Pins):
     def shutdown(cls):
         logger.info("Shutting all system components off")
         cls.disableAllPumps()
-        cls.disableAllBallValves()
+        cls.closeAllBallValves()
         cls.disableAllHeatingElements()
 
     @classmethod
     def resetFlowControl(cls):
         cls.disableAllPumps()
-        cls.disableAllBallValves()
+        cls.closeAllBallValves()
         logger.info("Shut down all liquid flow")
 
     @classmethod
@@ -90,7 +90,7 @@ class DeviceHandler(QObject, Pins):
             cls.disablePump(index)
 
     @classmethod
-    def disableAllBallValves(cls):
+    def closeAllBallValves(cls):
         logger.debug("Closing all ball valves")
         for index, _ in enumerate(cls.ballValves):
             cls.closeBallValve(index)
@@ -100,6 +100,8 @@ class DeviceHandler(QObject, Pins):
         if angle in range(0, 360):
             cls.hopServo.angle = angle
             cls.hardwareState.hopServo = angle
+        else:
+            raise ComponentControlError("Invalid servo angle selected")
 
     @classmethod
     def openBallValve(cls, index: int):
@@ -126,7 +128,7 @@ class DeviceHandler(QObject, Pins):
         cls._setHeatingElementValue(index, 0)
 
     @classmethod
-    def setHeatingElementPWM(cls, index: int, value: int):
+    def setHeatingElementPWM(cls, index: int, value: float):
         cls._setHeatingElementValue(index, value)
 
     @classmethod
@@ -149,7 +151,7 @@ class DeviceHandler(QObject, Pins):
             )
 
     @classmethod
-    def _pumpHasOpenPath(cls, pumpindex) -> bool:
+    def _pumpHasOpenPath(cls, pumpindex: int) -> bool:
         pumphasopenpath = False
         for valvepath in cls.pumpvalvepathmap[pumpindex]:
             pathopen = True
@@ -165,7 +167,7 @@ class DeviceHandler(QObject, Pins):
         return pumphasopenpath
 
     @classmethod
-    def _setHeatingElementValue(cls, index: int, value: int):
+    def _setHeatingElementValue(cls, index: int, value: float):
         cls.heatingElements[index].value = value
         cls.hardwareState.heatingElements[index] = value
         logger.debug(f"Set heating element {index} to {value}")
