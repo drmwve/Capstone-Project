@@ -1,4 +1,5 @@
-from gpiozero import AngularServo, Device, OutputDevice, PWMOutputDevice
+
+from gpiozero import AngularServo, Device, OutputDevice, PWMOutputDevice, GPIOPinInUse
 
 from ..utils import IS_RASPBERRY_PI
 
@@ -27,31 +28,34 @@ class Pins():
     @classmethod
     def _connectPins(cls):
         """Creates gpiozero objects for components based on pins specified at class level"""
-        # this little bit of weirdness is a consequence of gpiozero's fake pin code being goofy
-        logger.debug("Connecting Pins")
-        cls.pwmPinFactory = Device.pin_factory
-        if not IS_RASPBERRY_PI:
-            Device.pin_factory = MockFactory()
-            cls.pwmPinFactory = MockFactory(pin_class=MockPWMPin)
+        try:
+            # this little bit of weirdness is a consequence of gpiozero's fake pin code being goofy
+            logger.debug("Connecting Pins")
+            cls.pwmPinFactory = Device.pin_factory
+            if not IS_RASPBERRY_PI:
+                Device.pin_factory = MockFactory()
+                cls.pwmPinFactory = MockFactory(pin_class=MockPWMPin)
 
-        cls.heatingElements = [
-            PWMOutputDevice(n, pin_factory=cls.pwmPinFactory)
-            for n in Pins.heatingElementGPIOs
-        ]
-        cls.hopServo = AngularServo(
-            Pins.ADCGPIO, pin_factory=cls.pwmPinFactory
-        )
-        cls.ballValves = [
-            OutputDevice(n) for n in Pins.ballValveGPIOs
-        ]
-        cls.pumps = [OutputDevice(n) for n in Pins.pumpGPIOs]
+            cls.heatingElements = [
+                PWMOutputDevice(n, pin_factory=cls.pwmPinFactory)
+                for n in Pins.heatingElementGPIOs
+            ]
+            cls.hopServo = AngularServo(
+                Pins.ADCGPIO, pin_factory=cls.pwmPinFactory
+            )
+            cls.ballValves = [
+                OutputDevice(n) for n in Pins.ballValveGPIOs
+            ]
+            cls.pumps = [OutputDevice(n) for n in Pins.pumpGPIOs]
 
-        cls.GPZeroComponents = (
-            cls.ballValves
-            + cls.heatingElements
-            + [cls.hopServo]
-            + cls.pumps
-        )
+            cls.GPZeroComponents = (
+                cls.ballValves
+                + cls.heatingElements
+                + [cls.hopServo]
+                + cls.pumps
+            )
+        except GPIOPinInUse:
+            pass
 
     @classmethod
     def _releasePins(cls):
