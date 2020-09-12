@@ -9,7 +9,7 @@ from PySide2 import QtCore, QtWidgets
 from .ExecutionHandler import ExecutionHandler
 from .GUI.Styler import WindowStyler
 from .MainWindow import MainWindow
-from .osconfig import is_raspberry_pi
+from .utils import IS_RASPBERRY_PI
 
 
 def main():
@@ -20,6 +20,6 @@ def main():
     mainScreen = MainWindow()
     mainScreen.show()
     logger.debug("Opened main screen " + str(mainScreen))
-    logger.info(f'Is Raspberry Pi: {is_raspberry_pi()}')
+    logger.info(f'Is Raspberry Pi: {IS_RASPBERRY_PI}')
 
     sys.exit(app.exec_())
