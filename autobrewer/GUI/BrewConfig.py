@@ -10,6 +10,15 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
     can be saved and loaded from the file system. When a brew is started, this screen is replaced by a 'Brew Progress' screen that
     gives feedback to the user on what the brew system is doing."""
 
+    HOP_TIMING_INCREMENT = 5
+    HOP_TIMING_MINIMUM = 0
+    HOP_TIMING_MAXIMUM = 60
+    HOP_CARTRIDGES_MAXIMUM = 5
+
+    MASH_TEMPERATURE_INCREMENT = 1
+    MASH_TEMPERATURE_MAXIMUM = 180
+    MASH_TEMPERATURE_MINIMUM = 140
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -75,21 +84,30 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         )
         self.QBNewButton.clicked.connect(self.enterNewRecipe)
         self.QBComboBox.currentTextChanged.connect(self.changeSelectedRecipe)
+        logger.debug("Brew config connections made")
 
     ## Defining button functions
     def IncreaseMashTemp(self):
         newtemp = int(self.MashTempEntry.text()) + 1
-        logger.debug(f'Increased {self.selectedBrewRecipe.name} mash temperature to {newtemp}')
+        if newtemp > BrewConfig.MASH_TEMPERATURE_MAXIMUM:
+            newtemp = BrewConfig.MASH_TEMPERATURE_MAXIMUM
+            logger.debug(f'Cannot increase mash temperature above maximum {BrewConfig.MASH_TEMPERATURE_MAXIMUM}')
+        else:
+            logger.debug(f'Increased {self.selectedBrewRecipe.name} mash temperature to {newtemp}')
         self.MashTempEntry.setText(str(newtemp))
 
     def DecreaseMashTemp(self):
-        newtemp = int(self.MashTempEntry.text()) - 1
-        logger.debug(f'Decreased {self.selectedBrewRecipe.name} mash temperature to {newtemp}')
+        newtemp = int(self.MashTempEntry.text()) - BrewConfig.MASH_TEMPERATURE_INCREMENT
+        if newtemp < BrewConfig.MASH_TEMPERATURE_MINIMUM:
+            newtemp = BrewConfig.MASH_TEMPERATURE_MINIMUM
+            logger.debug(f'Cannot decrease mash temperature below maximum {BrewConfig.MASH_TEMPERATURE_MAXIMUM}')
+        else:
+            logger.debug(f'Decreased {self.selectedBrewRecipe.name} mash temperature to {newtemp}')
         self.MashTempEntry.setText(str(newtemp))
 
     def IncreaseCartridgeSelect(self):
         hopcarts = int(self.HopCartridgeSelectEntry.text())
-        if hopcarts < 5:
+        if hopcarts < BrewConfig.HOP_CARTRIDGES_MAXIMUM:
             logger.debug(f'Increasing {self.selectedBrewRecipe.name} hop cartridges from {hopcarts} to {hopcarts + 1}')
             hopcarts += 1
             self.HopCartridgeSelectEntry.setText(str(hopcarts))
@@ -111,17 +129,19 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
 
     def increaseHop(self, index):
         hoptiming = int(self.hopEntry[index].text())
-        if hoptiming < 60:
-            hoptiming +=5
-            self.hopEntry[index].setText(str(hoptiming))
-            logger.debug(f'Increased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}')
+        hoptiming += BrewConfig.HOP_TIMING_INCREMENT
+        if hoptiming > BrewConfig.HOP_TIMING_MAXIMUM:
+            hoptiming = BrewConfig.HOP_TIMING_MAXIMUM
+        self.hopEntry[index].setText(str(hoptiming))
+        logger.debug(f'Increased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}')
 
     def decreaseHop(self, index):
         hoptiming = int(self.hopEntry[index].text())
-        if hoptiming > 0:
-            hoptiming -=5
-            self.hopEntry[index].setText(str(hoptiming))
-            logger.debug(f'Decreased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}')
+        hoptiming -= BrewConfig.HOP_TIMING_INCREMENT
+        if hoptiming < BrewConfig.HOP_TIMING_MINIMUM:
+            hoptiming = BrewConfig.HOP_TIMING_MINIMUM
+        self.hopEntry[index].setText(str(hoptiming))
+        logger.debug(f'Decreased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}')
 
     def StartBrewing(self):
         ## This function should connect to Husam's brewing program
@@ -183,7 +203,6 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         Args:
             recipeName (str): The name of the recipe to be switched to in the recipies dictionary"""
 
-        logger.debug(f"Requested change to recipe {recipeName}")
         self.selectedBrewRecipe = self.savedBrewRecipes[recipeName]
         self.loadRecipeToUI(self.selectedBrewRecipe)
         logger.info(f"Changed to recipe: {self.selectedBrewRecipe}")
