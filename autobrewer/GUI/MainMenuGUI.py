@@ -19,10 +19,14 @@ class Ui_MainMenu(object):
         self.MainMenuLayout = QtWidgets.QGridLayout(MainMenu)
         self.MainMenuLayout.setObjectName("MainMenuLayout")
         self.EnterCleanScreenButton = QtWidgets.QPushButton(MainMenu)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.EnterCleanScreenButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.EnterCleanScreenButton.sizePolicy().hasHeightForWidth()
+        )
         self.EnterCleanScreenButton.setSizePolicy(sizePolicy)
         self.EnterCleanScreenButton.setMinimumSize(QtCore.QSize(800, 60))
         font = QtGui.QFont()
@@ -33,10 +37,14 @@ class Ui_MainMenu(object):
         self.EnterCleanScreenButton.setObjectName("EnterCleanScreenButton")
         self.MainMenuLayout.addWidget(self.EnterCleanScreenButton, 1, 0, 1, 1)
         self.EnterBrewConfigButton = QtWidgets.QPushButton(MainMenu)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.EnterBrewConfigButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.EnterBrewConfigButton.sizePolicy().hasHeightForWidth()
+        )
         self.EnterBrewConfigButton.setSizePolicy(sizePolicy)
         self.EnterBrewConfigButton.setMinimumSize(QtCore.QSize(800, 60))
         font = QtGui.QFont()
@@ -47,10 +55,14 @@ class Ui_MainMenu(object):
         self.EnterBrewConfigButton.setObjectName("EnterBrewConfigButton")
         self.MainMenuLayout.addWidget(self.EnterBrewConfigButton, 0, 0, 1, 1)
         self.EnterDeviceStatusScreen = QtWidgets.QPushButton(MainMenu)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.EnterDeviceStatusScreen.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.EnterDeviceStatusScreen.sizePolicy().hasHeightForWidth()
+        )
         self.EnterDeviceStatusScreen.setSizePolicy(sizePolicy)
         self.EnterDeviceStatusScreen.setMinimumSize(QtCore.QSize(800, 60))
         font = QtGui.QFont()

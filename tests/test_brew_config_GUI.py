@@ -33,44 +33,69 @@ def testbrewconfigscreen(qtbot, defaultbrewconfigscreen, savedrecipesdict):
     defaultbrewconfigscreen.QBComboBox.blockSignals(True)
     defaultbrewconfigscreen.QBComboBox.clear()
     defaultbrewconfigscreen.QBComboBox.blockSignals(False)
-    defaultbrewconfigscreen.QBComboBox.addItems([x.name for x in savedrecipesdict.values()])
+    defaultbrewconfigscreen.QBComboBox.addItems(
+        [x.name for x in savedrecipesdict.values()]
+    )
     return defaultbrewconfigscreen
 
 
 class TestBrewConfig:
     def test_initialize(self, defaultbrewconfigscreen):
         pickler = BrewRecipePickler()
-        loaded_brew_recipes = defaultbrewconfigscreen.savedBrewRecipes == pickler.loadRecipes()
+        loaded_brew_recipes = (
+            defaultbrewconfigscreen.savedBrewRecipes == pickler.loadRecipes()
+        )
         assert loaded_brew_recipes
 
     @pytest.mark.parametrize("numclicks", [1, 4, 200])
     def test_increaseMashTemp(self, qtbot, testbrewconfigscreen, numclicks):
-        expected = int(testbrewconfigscreen.MashTempEntry.text()) + BrewConfig.MASH_TEMPERATURE_INCREMENT * numclicks
+        expected = (
+            int(testbrewconfigscreen.MashTempEntry.text())
+            + BrewConfig.MASH_TEMPERATURE_INCREMENT * numclicks
+        )
         if expected > BrewConfig.MASH_TEMPERATURE_MAXIMUM:
             expected = BrewConfig.MASH_TEMPERATURE_MAXIMUM
         for clicks in range(numclicks):
-            with qtbot.waitSignal(testbrewconfigscreen.MashTempIncrease.clicked, timeout=10):
-                qtbot.mouseClick(testbrewconfigscreen.MashTempIncrease, QtCore.Qt.LeftButton)
+            with qtbot.waitSignal(
+                testbrewconfigscreen.MashTempIncrease.clicked, timeout=10
+            ):
+                qtbot.mouseClick(
+                    testbrewconfigscreen.MashTempIncrease, QtCore.Qt.LeftButton
+                )
         assert int(testbrewconfigscreen.MashTempEntry.text()) == expected
 
     @pytest.mark.parametrize("numclicks", [1, 4, 200])
     def test_decreaseMashTemp(self, qtbot, testbrewconfigscreen, numclicks):
-        expected = int(testbrewconfigscreen.MashTempEntry.text()) - BrewConfig.MASH_TEMPERATURE_INCREMENT * numclicks
+        expected = (
+            int(testbrewconfigscreen.MashTempEntry.text())
+            - BrewConfig.MASH_TEMPERATURE_INCREMENT * numclicks
+        )
         if expected < BrewConfig.MASH_TEMPERATURE_MINIMUM:
             expected = BrewConfig.MASH_TEMPERATURE_MINIMUM
         for clicks in range(numclicks):
-            with qtbot.waitSignal(testbrewconfigscreen.MashTempDecrease.clicked, timeout=10):
-                qtbot.mouseClick(testbrewconfigscreen.MashTempDecrease, QtCore.Qt.LeftButton)
+            with qtbot.waitSignal(
+                testbrewconfigscreen.MashTempDecrease.clicked, timeout=10
+            ):
+                qtbot.mouseClick(
+                    testbrewconfigscreen.MashTempDecrease, QtCore.Qt.LeftButton
+                )
         assert int(testbrewconfigscreen.MashTempEntry.text()) == expected
 
     @pytest.mark.parametrize("numclicks", [1, 4, 200])
     def test_increaseCartridgeSelect(self, qtbot, defaultbrewconfigscreen, numclicks):
-        expected = int(defaultbrewconfigscreen.HopCartridgeSelectEntry.text()) + numclicks
+        expected = (
+            int(defaultbrewconfigscreen.HopCartridgeSelectEntry.text()) + numclicks
+        )
         if expected > BrewConfig.HOP_CARTRIDGES_MAXIMUM:
             expected = BrewConfig.HOP_CARTRIDGES_MAXIMUM
         for clicks in range(numclicks):
-            with qtbot.waitSignal(defaultbrewconfigscreen.HopCartridgeSelectIncrease.clicked, timeout=10):
-                qtbot.mouseClick(defaultbrewconfigscreen.HopCartridgeSelectIncrease, QtCore.Qt.LeftButton)
+            with qtbot.waitSignal(
+                defaultbrewconfigscreen.HopCartridgeSelectIncrease.clicked, timeout=10
+            ):
+                qtbot.mouseClick(
+                    defaultbrewconfigscreen.HopCartridgeSelectIncrease,
+                    QtCore.Qt.LeftButton,
+                )
         assert int(defaultbrewconfigscreen.HopCartridgeSelectEntry.text()) == expected
         for index in range(BrewConfig.HOP_CARTRIDGES_MAXIMUM):
             if index <= (expected - 1):
@@ -85,12 +110,19 @@ class TestBrewConfig:
 
     @pytest.mark.parametrize("numclicks", [1, 4, 200])
     def test_decreaseCartridgeSelect(self, qtbot, defaultbrewconfigscreen, numclicks):
-        expected = int(defaultbrewconfigscreen.HopCartridgeSelectEntry.text()) - numclicks
+        expected = (
+            int(defaultbrewconfigscreen.HopCartridgeSelectEntry.text()) - numclicks
+        )
         if expected < 1:
             expected = 1
         for clicks in range(numclicks):
-            with qtbot.waitSignal(defaultbrewconfigscreen.HopCartridgeSelectDecrease.clicked, timeout=10):
-                qtbot.mouseClick(defaultbrewconfigscreen.HopCartridgeSelectDecrease, QtCore.Qt.LeftButton)
+            with qtbot.waitSignal(
+                defaultbrewconfigscreen.HopCartridgeSelectDecrease.clicked, timeout=10
+            ):
+                qtbot.mouseClick(
+                    defaultbrewconfigscreen.HopCartridgeSelectDecrease,
+                    QtCore.Qt.LeftButton,
+                )
         assert int(defaultbrewconfigscreen.HopCartridgeSelectEntry.text()) == expected
         for index in range(BrewConfig.HOP_CARTRIDGES_MAXIMUM):
             if index <= (expected - 1):
@@ -107,28 +139,39 @@ class TestBrewConfig:
     @pytest.mark.parametrize("hopindex", [x for x in range(5)])
     def test_increaseHop(self, qtbot, defaultbrewconfigscreen, numclicks, hopindex):
         expected = int(defaultbrewconfigscreen.hopEntry[hopindex].text()) + (
-                numclicks * BrewConfig.HOP_TIMING_INCREMENT)
+            numclicks * BrewConfig.HOP_TIMING_INCREMENT
+        )
         if expected > BrewConfig.HOP_TIMING_MAXIMUM:
             expected = BrewConfig.HOP_TIMING_MAXIMUM
         for clicks in range(numclicks):
-            with qtbot.waitSignal(defaultbrewconfigscreen.hopIncrease[hopindex].clicked, timeout=10):
-                qtbot.mouseClick(defaultbrewconfigscreen.hopIncrease[hopindex], QtCore.Qt.LeftButton)
+            with qtbot.waitSignal(
+                defaultbrewconfigscreen.hopIncrease[hopindex].clicked, timeout=10
+            ):
+                qtbot.mouseClick(
+                    defaultbrewconfigscreen.hopIncrease[hopindex], QtCore.Qt.LeftButton
+                )
         assert int(defaultbrewconfigscreen.hopEntry[hopindex].text()) == expected
 
     @pytest.mark.parametrize("numclicks", [0, 1, 4, 200])
     @pytest.mark.parametrize("hopindex", [x for x in range(5)])
     def test_decreaseHop(self, defaultbrewconfigscreen, numclicks, hopindex, qtbot):
         expected = int(defaultbrewconfigscreen.hopEntry[hopindex].text()) - (
-                numclicks * BrewConfig.HOP_TIMING_INCREMENT)
+            numclicks * BrewConfig.HOP_TIMING_INCREMENT
+        )
         if expected < BrewConfig.HOP_TIMING_MINIMUM:
             expected = BrewConfig.HOP_TIMING_MINIMUM
         for clicks in range(numclicks):
-            with qtbot.waitSignal(defaultbrewconfigscreen.hopDecrease[hopindex].clicked, timeout=10):
-                qtbot.mouseClick(defaultbrewconfigscreen.hopDecrease[hopindex], QtCore.Qt.LeftButton)
+            with qtbot.waitSignal(
+                defaultbrewconfigscreen.hopDecrease[hopindex].clicked, timeout=10
+            ):
+                qtbot.mouseClick(
+                    defaultbrewconfigscreen.hopDecrease[hopindex], QtCore.Qt.LeftButton
+                )
         assert int(defaultbrewconfigscreen.hopEntry[hopindex].text()) == expected
 
     @pytest.mark.parametrize(
-        "testName", [x for x in recipesdict],
+        "testName",
+        [x for x in recipesdict],
     )
     def test_AddRecipe(self, testName, testbrewconfigscreen, qtbot, monkeypatch):
         def inputdialog(*args, **kwargs):
@@ -144,20 +187,40 @@ class TestBrewConfig:
         assert testbrewconfigscreen.QBComboBox.currentText() == testName
 
     @pytest.mark.parametrize(
-        "testName", [x for x in recipesdict if x != "Default"],
+        "testName",
+        [x for x in recipesdict],
     )
-    def test_deleteRecipe(self, qtbot, testbrewconfigscreen, savedrecipesdict, testName, monkeypatch):
-        monkeypatch.setattr(testbrewconfigscreen.pickler, "saveRecipes", lambda *args: True)
+    def test_deleteRecipe(
+        self, monkeypatch, qtbot, testbrewconfigscreen, savedrecipesdict, testName
+    ):
+        monkeypatch.setattr(
+            testbrewconfigscreen.pickler, "saveRecipes", lambda *args: True
+        )
         testbrewconfigscreen.QBComboBox.setCurrentText(testName)
-        with qtbot.waitSignal(testbrewconfigscreen.QBDeleteButton.clicked, timeout=1000):
-            qtbot.mouseClick(testbrewconfigscreen.QBDeleteButton, QtCore.Qt.LeftButton)
-        assert not testName in testbrewconfigscreen.savedBrewRecipes
-        assert testbrewconfigscreen.QBComboBox.findText(testName) == -1
+        if testName == "Default":
+            with qtbot.assert_not_emitted(
+                testbrewconfigscreen.QBDeleteButton.clicked, wait=100
+            ):
+                qtbot.mouseClick(
+                    testbrewconfigscreen.QBDeleteButton, QtCore.Qt.LeftButton
+                )
+        else:
+            with qtbot.waitSignal(
+                testbrewconfigscreen.QBDeleteButton.clicked, timeout=1000
+            ):
+                qtbot.mouseClick(
+                    testbrewconfigscreen.QBDeleteButton, QtCore.Qt.LeftButton
+                )
+            assert not testName in testbrewconfigscreen.savedBrewRecipes
+            assert testbrewconfigscreen.QBComboBox.findText(testName) == -1
 
     @pytest.mark.parametrize(
-        "testName", [x for x in recipesdict],
+        "testName",
+        [x for x in recipesdict],
     )
-    def test_changeSelectedRecipe(self, savedrecipesdict, testName, testbrewconfigscreen):
+    def test_changeSelectedRecipe(
+        self, testbrewconfigscreen, savedrecipesdict, testName
+    ):
         # clear selection combo box and add dict recipes
         logger.debug(savedrecipesdict)
         logger.debug(testName)
@@ -165,52 +228,45 @@ class TestBrewConfig:
         recipe = testbrewconfigscreen.copyRecipeFromUI()
         assert testbrewconfigscreen.selectedBrewRecipe == savedrecipesdict[testName]
         assert recipe.hopTiming == savedrecipesdict[testName].hopTiming
-        assert recipe.mashTunTemperature == savedrecipesdict[testName].mashTunTemperature
-        if (testName == "Default"):
+        assert (
+            recipe.mashTunTemperature == savedrecipesdict[testName].mashTunTemperature
+        )
+        if testName == "Default":
             assert not testbrewconfigscreen.QBDeleteButton.isEnabled()
         else:
             assert testbrewconfigscreen.QBDeleteButton.isEnabled()
 
-    @pytest.mark.parametrize(
-        "testrecipe",
-        [
-            BrewRecipe("test", 5, 190, [1, 2, 3, 4, 5]),
-            BrewRecipe("test", 3, 122, [1, 2, 3, -1, -1]),
-            BrewRecipe("test", 1, 134, [1, -1, -1, -1, -1]),
-        ],
-    )
-    def test_copyRecipeFromUI(self, testrecipe, testbrewconfigscreen):
+    @pytest.mark.parametrize("testrecipe", [x for x in recipesdict.values()])
+    def test_copyRecipeFromUI(self, testbrewconfigscreen, testrecipe):
         testbrewconfigscreen.QBComboBox.blockSignals(True)
         testbrewconfigscreen.QBComboBox.setItemText(
             testbrewconfigscreen.QBComboBox.currentIndex(), testrecipe.name
         )
         testbrewconfigscreen.MashTempEntry.setText(str(testrecipe.mashTunTemperature))
-        testbrewconfigscreen.HopCartridgeSelectEntry.setText(str(testrecipe.hopCartridges))
+        testbrewconfigscreen.HopCartridgeSelectEntry.setText(
+            str(testrecipe.hopCartridges)
+        )
         for i in range(len(testrecipe.hopTiming)):
             testbrewconfigscreen.hopEntry[i].setText(str(testrecipe.hopTiming[i]))
         recipe = testbrewconfigscreen.copyRecipeFromUI()
         assert recipe == testrecipe
 
-    @pytest.mark.parametrize(
-        "testrecipe",
-        [
-            BrewRecipe("test", 5, 190, [1, 2, 3, 4, 5]),
-            BrewRecipe("test", 3, 122, [1, 2, 3, -1, -1]),
-            BrewRecipe("test", 1, 134, [1, -1, -1, -1, -1]),
-        ],
-    )
+    @pytest.mark.parametrize("testrecipe", [x for x in recipesdict.values()])
     def test_loadRecipeToUI(self, testrecipe, testbrewconfigscreen):
         testbrewconfigscreen.loadRecipeToUI(testrecipe)
         assert (
-                int(testbrewconfigscreen.HopCartridgeSelectEntry.text())
-                == testrecipe.hopCartridges
+            int(testbrewconfigscreen.HopCartridgeSelectEntry.text())
+            == testrecipe.hopCartridges
         )
         assert (
-                int(testbrewconfigscreen.MashTempEntry.text()) == testrecipe.mashTunTemperature
+            int(testbrewconfigscreen.MashTempEntry.text())
+            == testrecipe.mashTunTemperature
         )
 
         for i in range(0, 5):
-            assert int(testbrewconfigscreen.hopEntry[i].text()) == testrecipe.hopTiming[i]
+            assert (
+                int(testbrewconfigscreen.hopEntry[i].text()) == testrecipe.hopTiming[i]
+            )
 
         expectedHiddenHopRows = [
             (testrecipe.hopTiming[i] == -1) for i in range(len(testrecipe.hopTiming))

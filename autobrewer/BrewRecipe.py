@@ -8,8 +8,9 @@ from dataclasses import dataclass, field
 
 from loguru import logger
 
+
 @dataclass(init=True)
-class BrewRecipe():
+class BrewRecipe:
     """A messenger class which holds information about the brew recipe such as
     hop timing, mash temperature, etc. Created by the BrewConfig UI screen
     and passed to a Brew Process in the signal that starts the brewing process."""
@@ -17,11 +18,12 @@ class BrewRecipe():
     name: str = "Default"
     hopCartridges: int = 5
     mashTunTemperature: int = 160
-    hopTiming: int = field(default_factory=lambda: [0,10,20,30,40])
+    hopTiming: int = field(default_factory=lambda: [0, 10, 20, 30, 40])
 
 
 class BrewRecipePickler(object):
     """Saves and loads a dictionary of brew recipes to the file system using the 'pickle' module so the user can have a list of saved recipes."""
+
     _instance = None
     _picklefile = "brewrecipes.pkl"
 
@@ -61,7 +63,6 @@ class BrewRecipePickler(object):
 
         self._savePickleToFile(recipes, BrewRecipePickler._picklefile)
 
-
     def _savePickleToFile(self, objectToPickle: object, picklefile: str):
         """Saves a given object to a file with hmac encryption to validate data integrity and prevent security threats.
 
@@ -72,10 +73,10 @@ class BrewRecipePickler(object):
         logger.debug("Pickling object: %s" % objectToPickle)
         pickledObject = pickle.dumps(objectToPickle)
         digest = self._make_digest(pickledObject)
-        #hmac code is written as UTF-8 header, pickle is written as bytes
+        # hmac code is written as UTF-8 header, pickle is written as bytes
         with open(picklefile, "wb") as picklefile:
             logger.debug("Writing digest to file %s" % digest)
-            picklefile.write(("%s\n" % digest).encode('utf-8'))
+            picklefile.write(("%s\n" % digest).encode("utf-8"))
             logger.debug("Wrote pickle object: %s" % pickledObject)
             picklefile.write(pickledObject)
 
@@ -90,12 +91,12 @@ class BrewRecipePickler(object):
 
         with open(picklefile, "rb") as picklefile:
             logger.debug("File %s read successfully" % picklefile.name)
-            readDigest = picklefile.readline().decode('utf-8').rstrip()
+            readDigest = picklefile.readline().decode("utf-8").rstrip()
             readPickle = picklefile.read()
             logger.debug("Read recipePickle: %s" % readPickle)
 
         actualDigest = self._make_digest(readPickle)
-        logger.debug("Doing hmac check: %s  %s" % (actualDigest,readDigest))
+        logger.debug("Doing hmac check: %s  %s" % (actualDigest, readDigest))
         if hmac.compare_digest(actualDigest, readDigest):
             logger.debug("hmac check passed")
             return pickle.loads(readPickle)
@@ -103,11 +104,8 @@ class BrewRecipePickler(object):
             logger.debug("hmac check failed")
             raise AssertionError
 
-
     def _make_digest(self, message: str):
         """Creates a string hash (a digest) of a message which can validate data integrity"""
 
-        hash = hmac.new(bytes(192),
-                    message,
-                    hashlib.sha1)
+        hash = hmac.new(bytes(192), message, hashlib.sha1)
         return hash.hexdigest()

@@ -1,9 +1,8 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from GUI.examplePair.example_GUI import Ui_Form
 
-#copy this and adjust 'Ui_Form' to inherit whatever the class Designer created
+# copy this and adjust 'Ui_Form' to inherit whatever the class Designer created
 class example(QtWidgets.QWidget, Ui_Form):
-
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -11,7 +10,7 @@ class example(QtWidgets.QWidget, Ui_Form):
         self.adjustUI()
 
     def connections(self):
-        #add any connections that are internal to the functioning of this widget only
+        # add any connections that are internal to the functioning of this widget only
         self.pushButton.clicked.connect(self.buttonPushed)
 
     def adjustUI(self):

@@ -11,6 +11,7 @@ from .pins import Pins
 
 # To do: Implement hop servo and sensor code
 
+
 class DeviceHandler(QObject, Pins):
     """Controls the components and provides checking of invalid states for safety, such as preventing the opening of a pump
     when there is no open ball valve path or running a heating element in an empty kettle.
@@ -27,6 +28,7 @@ class DeviceHandler(QObject, Pins):
         openValves*: Opens particular ball valve paths
         set*/open*/close*/enable*/disable*: Individual component control functions
     """
+
     signalState = Signal(HardwareState)
     hardwareState = HardwareState()
 
@@ -40,14 +42,17 @@ class DeviceHandler(QObject, Pins):
         empty) and then add relevant path names to the pumpvalvepathmap tuple in the position of the index of the
         relevant pump
         """
-        cls.valvepaths = {"HLTtoMT": {"open": [1], "close": [6]},
-                          "MTRecirc": {"open": [2, 6], "close": [7]},
-                          "MTtoBK": {"open": [2, 3, 7], "close": [8, 9]},
-                          "BKWhirl": {"open": [3, 4, 8], "close": [9]},
-                          "BKDrain": {"open": [4, 8, 9], "close": []}
-                          }
-        cls.pumpvalvepathmap = (("HLTtoMT", "MTRecirc"),
-                                ("MTtoBK", "BKWhirl", "BKDrain"))
+        cls.valvepaths = {
+            "HLTtoMT": {"open": [1], "close": [6]},
+            "MTRecirc": {"open": [2, 6], "close": [7]},
+            "MTtoBK": {"open": [2, 3, 7], "close": [8, 9]},
+            "BKWhirl": {"open": [3, 4, 8], "close": [9]},
+            "BKDrain": {"open": [4, 8, 9], "close": []},
+        }
+        cls.pumpvalvepathmap = (
+            ("HLTtoMT", "MTRecirc"),
+            ("MTtoBK", "BKWhirl", "BKDrain"),
+        )
 
     @classmethod
     def openValvePath(cls, pathname: str):
@@ -162,8 +167,8 @@ class DeviceHandler(QObject, Pins):
                 if cls.ballValves[valveindex].value != 0:
                     pathopen = False
             if pathopen:
-               pumphasopenpath = True
-               break
+                pumphasopenpath = True
+                break
         return pumphasopenpath
 
     @classmethod

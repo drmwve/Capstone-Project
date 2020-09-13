@@ -64,7 +64,9 @@ class Ui_CleaningScreen(object):
         self.CurrentCleanTaskProgressBar.setMaximumSize(QtCore.QSize(800, 16777215))
         self.CurrentCleanTaskProgressBar.setProperty("value", 24)
         self.CurrentCleanTaskProgressBar.setObjectName("CurrentCleanTaskProgressBar")
-        self.CleaningStatusLayout.addWidget(self.CurrentCleanTaskProgressBar, 1, 0, 1, 1)
+        self.CleaningStatusLayout.addWidget(
+            self.CurrentCleanTaskProgressBar, 1, 0, 1, 1
+        )
         self.CleanScreenLayout.addLayout(self.CleaningStatusLayout, 0, 0, 1, 1)
         self.StartCleaningButtonLayout = QtWidgets.QHBoxLayout()
         self.StartCleaningButtonLayout.setObjectName("StartCleaningButtonLayout")
@@ -84,9 +86,15 @@ class Ui_CleaningScreen(object):
     def retranslateUi(self, CleaningScreen):
         _translate = QtCore.QCoreApplication.translate
         CleaningScreen.setWindowTitle(_translate("CleaningScreen", "Form"))
-        self.PauseResumeCleanButton.setText(_translate("CleaningScreen", "Pause/Resume"))
+        self.PauseResumeCleanButton.setText(
+            _translate("CleaningScreen", "Pause/Resume")
+        )
         self.AbortCleanButton.setText(_translate("CleaningScreen", "Abort Cleaning"))
         self.ReturnToMenuButton.setText(_translate("CleaningScreen", "Main Menu"))
-        self.CurrentCleanTaskLabel.setText(_translate("CleaningScreen", "What am I doing?"))
+        self.CurrentCleanTaskLabel.setText(
+            _translate("CleaningScreen", "What am I doing?")
+        )
         self.CleanETALabel.setText(_translate("CleaningScreen", "ETA: 84 Years"))
-        self.StartCleaningButton.setText(_translate("CleaningScreen", "Start Cleaning Cycle"))
+        self.StartCleaningButton.setText(
+            _translate("CleaningScreen", "Start Cleaning Cycle")
+        )

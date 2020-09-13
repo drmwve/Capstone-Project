@@ -12,14 +12,19 @@ def devicehandler():
 
 # this ugly thing creates a bunch of tests for every path assigned to each pump
 # [0,"path1],[0,"path2"],[1,"path3"] etc.
-@pytest.fixture(params=[[x, y] for x in range(len(DeviceHandler.pumpvalvepathmap))
-                        for y in DeviceHandler.valvepaths if y in DeviceHandler.pumpvalvepathmap[x]])
+@pytest.fixture(
+    params=[
+        [x, y]
+        for x in range(len(DeviceHandler.pumpvalvepathmap))
+        for y in DeviceHandler.valvepaths
+        if y in DeviceHandler.pumpvalvepathmap[x]
+    ]
+)
 def indexpathpairs(request):
     return request.param
 
 
 class TestDeviceHandler:
-
     @pytest.mark.parametrize("path", [x for x in DeviceHandler.valvepaths.keys()])
     def test_open_valve_path(self, path, devicehandler):
         devicehandler.openValvePath(path)
@@ -73,7 +78,9 @@ class TestDeviceHandler:
         assert devicehandler.pumps[index].value == False
         assert devicehandler.hardwareState.pumps[index] == False
 
-    @pytest.mark.parametrize("pumpindex", [x for x in range(len(DeviceHandler.pumpGPIOs))])
+    @pytest.mark.parametrize(
+        "pumpindex", [x for x in range(len(DeviceHandler.pumpGPIOs))]
+    )
     def test_pump_has_open_path_false(self, pumpindex, devicehandler):
         devicehandler.closeAllBallValves()
         assert not devicehandler._pumpHasOpenPath(pumpindex)
@@ -84,7 +91,9 @@ class TestDeviceHandler:
         assert devicehandler._pumpHasOpenPath(index)
 
     @pytest.mark.parametrize("value", [0, 1, 0.2, 0.3, 0.4, 0.5, 0.6])
-    @pytest.mark.parametrize("index", [x for x in range(len(DeviceHandler.heatingElementGPIOs))])
+    @pytest.mark.parametrize(
+        "index", [x for x in range(len(DeviceHandler.heatingElementGPIOs))]
+    )
     def test_set_heating_element_value(self, index, value, devicehandler):
         assert devicehandler.heatingElements[index].value == 0
         if value == 0:

@@ -1,4 +1,5 @@
 from autobrewer.BrewRecipe import BrewRecipe, BrewRecipePickler
+
 try:
     import cPickle as pickle
 except:
@@ -6,8 +7,8 @@ except:
 import pytest
 import hmac
 
-#basic test data:
-#object being pickled, pickle, pickle digest, formatted file data, file
+# basic test data:
+# object being pickled, pickle, pickle digest, formatted file data, file
 @pytest.fixture
 def pickle_file_data(tmpdir):
     tempfile = tmpdir.join("test.pkl")
@@ -15,17 +16,17 @@ def pickle_file_data(tmpdir):
     newBrewRecipeDict = {BrewRecipe().name: BrewRecipe()}
     pickledobject = pickle.dumps(newBrewRecipeDict)
     digest = pickler._make_digest(pickledobject)
-    expectedFileData = ("%s\n" % digest).encode('utf-8') + pickledobject
+    expectedFileData = ("%s\n" % digest).encode("utf-8") + pickledobject
     return {
         "object": newBrewRecipeDict,
         "pickledobject": pickledobject,
         "digest": digest,
         "expectedFileData": expectedFileData,
-        "file": tempfile
+        "file": tempfile,
     }
 
-class TestRecipePickler():
 
+class TestRecipePickler:
     def test_load_recipes_file_exists(self, pickle_file_data):
         data = pickle_file_data
         pickler = BrewRecipePickler()
@@ -43,12 +44,12 @@ class TestRecipePickler():
     def test_save_file(self, pickle_file_data):
         data = pickle_file_data
         pickler = BrewRecipePickler()
-        pickler._savePickleToFile(data["object"],data["file"])
+        pickler._savePickleToFile(data["object"], data["file"])
 
         with open(data["file"], "rb") as tempfile:
             assert tempfile.read() == data["expectedFileData"]
 
-    #write expected data to file and check it's valid
+    # write expected data to file and check it's valid
     def test_read_file(self, pickle_file_data):
         data = pickle_file_data
         pickler = BrewRecipePickler()
@@ -56,12 +57,12 @@ class TestRecipePickler():
             tempfile.write(data["expectedFileData"])
         assert pickler._readPickleFromFile(data["file"]) == data["object"]
 
-    #write wrong data to file and check it's correctly rejected
+    # write wrong data to file and check it's correctly rejected
     def test_read_file_corrupted(self, pickle_file_data):
         data = pickle_file_data
         pickler = BrewRecipePickler()
         with open(data["file"], "wb") as tempfile:
-            tempfile.write("corrupt data".encode('utf-8'))
+            tempfile.write("corrupt data".encode("utf-8"))
         with pytest.raises(AssertionError):
             pickledobject = pickler._readPickleFromFile(data["file"])
             assert pickledobject == data["object"]

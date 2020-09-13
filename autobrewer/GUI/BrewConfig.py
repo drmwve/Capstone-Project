@@ -91,57 +91,91 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         newtemp = int(self.MashTempEntry.text()) + 1
         if newtemp > BrewConfig.MASH_TEMPERATURE_MAXIMUM:
             newtemp = BrewConfig.MASH_TEMPERATURE_MAXIMUM
-            logger.debug(f'Cannot increase mash temperature above maximum {BrewConfig.MASH_TEMPERATURE_MAXIMUM}')
+            logger.debug(
+                f"Cannot increase mash temperature above maximum {BrewConfig.MASH_TEMPERATURE_MAXIMUM}"
+            )
         else:
-            logger.debug(f'Increased {self.selectedBrewRecipe.name} mash temperature to {newtemp}')
+            logger.debug(
+                f"Increased {self.selectedBrewRecipe.name} mash temperature to {newtemp}"
+            )
         self.MashTempEntry.setText(str(newtemp))
 
     def DecreaseMashTemp(self):
         newtemp = int(self.MashTempEntry.text()) - BrewConfig.MASH_TEMPERATURE_INCREMENT
         if newtemp < BrewConfig.MASH_TEMPERATURE_MINIMUM:
             newtemp = BrewConfig.MASH_TEMPERATURE_MINIMUM
-            logger.debug(f'Cannot decrease mash temperature below maximum {BrewConfig.MASH_TEMPERATURE_MAXIMUM}')
+            logger.debug(
+                f"Cannot decrease mash temperature below maximum {BrewConfig.MASH_TEMPERATURE_MAXIMUM}"
+            )
         else:
-            logger.debug(f'Decreased {self.selectedBrewRecipe.name} mash temperature to {newtemp}')
+            logger.debug(
+                f"Decreased {self.selectedBrewRecipe.name} mash temperature to {newtemp}"
+            )
         self.MashTempEntry.setText(str(newtemp))
 
     def IncreaseCartridgeSelect(self):
         hopcarts = int(self.HopCartridgeSelectEntry.text())
         if hopcarts < BrewConfig.HOP_CARTRIDGES_MAXIMUM:
-            logger.debug(f'Increasing {self.selectedBrewRecipe.name} hop cartridges from {hopcarts} to {hopcarts + 1}')
+            logger.debug(
+                f"Increasing {self.selectedBrewRecipe.name} hop cartridges from {hopcarts} to {hopcarts + 1}"
+            )
             hopcarts += 1
             self.HopCartridgeSelectEntry.setText(str(hopcarts))
-            self.hopEntry[hopcarts-1].setHidden(False)
-            self.hopIncrease[hopcarts-1].setHidden(False)
-            self.hopDecrease[hopcarts-1].setHidden(False)
-            self.hopEntry[hopcarts-1].setText(str(BrewRecipe().hopTiming[hopcarts-1]))
+            self.hopEntry[hopcarts - 1].setHidden(False)
+            self.hopIncrease[hopcarts - 1].setHidden(False)
+            self.hopDecrease[hopcarts - 1].setHidden(False)
+            self.hopEntry[hopcarts - 1].setText(
+                str(BrewRecipe().hopTiming[hopcarts - 1])
+            )
+        else:
+            logger.debug(
+                f"Could not increase {self.selectedBrewRecipe.name} hop cartidges above maximum {BrewConfig.HOP_CARTRIDGES_MAXIMUM}"
+            )
 
     def DecreaseCartridgeSelect(self):
         hopcarts = int(self.HopCartridgeSelectEntry.text())
         if hopcarts > 1:
-            logger.debug(f'Decreasing {self.selectedBrewRecipe.name} hop cartridges from {hopcarts} to {hopcarts - 1}')
+            logger.debug(
+                f"Decreasing {self.selectedBrewRecipe.name} hop cartridges from {hopcarts} to {hopcarts - 1}"
+            )
             hopcarts -= 1
             self.HopCartridgeSelectEntry.setText(str(hopcarts))
             self.hopEntry[hopcarts].setHidden(True)
             self.hopIncrease[hopcarts].setHidden(True)
             self.hopDecrease[hopcarts].setHidden(True)
             self.hopEntry[hopcarts].setText("-1")
+        else:
+            logger.debug(
+                f"Could not decrease {self.selectedBrewRecipe.name} hop cartridges below minimum 1"
+            )
 
     def increaseHop(self, index):
         hoptiming = int(self.hopEntry[index].text())
         hoptiming += BrewConfig.HOP_TIMING_INCREMENT
         if hoptiming > BrewConfig.HOP_TIMING_MAXIMUM:
             hoptiming = BrewConfig.HOP_TIMING_MAXIMUM
+            logger.debug(
+                f"Could not increase {self.selectedBrewRecipe.name} hop timing {index + 1} above maximum {BrewConfig.HOP_TIMING_MAXIMUM}"
+            )
+        else:
+            logger.debug(
+                f"Increased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}"
+            )
         self.hopEntry[index].setText(str(hoptiming))
-        logger.debug(f'Increased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}')
 
     def decreaseHop(self, index):
         hoptiming = int(self.hopEntry[index].text())
         hoptiming -= BrewConfig.HOP_TIMING_INCREMENT
         if hoptiming < BrewConfig.HOP_TIMING_MINIMUM:
             hoptiming = BrewConfig.HOP_TIMING_MINIMUM
+            logger.debug(
+                f"Could not decrease {self.selectedBrewRecipe.name} hop timing {index + 1} below minimum {BrewConfig.HOP_TIMING_MINIMUM}"
+            )
+        else:
+            logger.debug(
+                f"Decreased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}"
+            )
         self.hopEntry[index].setText(str(hoptiming))
-        logger.debug(f'Decreased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}')
 
     def StartBrewing(self):
         ## This function should connect to Husam's brewing program
