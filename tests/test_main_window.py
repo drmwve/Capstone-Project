@@ -43,7 +43,7 @@ def test_connections(mainwindow, qtbot):
     qtbot.mouseClick(
         mainwindow.menus["brewConfig"].StartBrewButton, QtCore.Qt.LeftButton
     )
-    assert mainwindow.centralWidget().currentWidget() == mainwindow.menus["brewConfig"]
+    assert mainwindow.centralWidget().currentWidget() == mainwindow.menus["brewStatus"]
     mainwindow.centralWidget().setCurrentWidget(mainwindow.menus["test"])
 
     qtbot.mouseClick(

@@ -58,7 +58,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         self.menus["brewConfig"].StartBrewButton.clicked.connect(
-            partial(self.goToMenu, self.menus["brewConfig"])
+            partial(self.goToMenu, self.menus["brewStatus"])
         )
         self.menus["mainMenu"].EnterBrewConfigButton.clicked.connect(
             partial(self.goToMenu, self.menus["brewConfig"])
