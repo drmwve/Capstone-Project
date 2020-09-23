@@ -32,8 +32,11 @@ class DeviceHandler(QObject, Pins):
     signalState = Signal(HardwareState)
     hardwareState = HardwareState()
 
-    @classmethod
-    def _createValvePaths(cls):
+    def __init__(self):
+        self._connectPins()
+        self._createValvePaths()
+
+    def _createValvePaths(self):
         """Defines paths which must be open for a pump to run without forming a vacuum. The valvepaths variable is a
         dictionary of dictionaries, describing the indexes of the valves which must either be opened or closed for
         each path.
@@ -42,112 +45,94 @@ class DeviceHandler(QObject, Pins):
         empty) and then add relevant path names to the pumpvalvepathmap tuple in the position of the index of the
         relevant pump
         """
-        cls.valvepaths = {
+        self.valvepaths = {
             "HLTtoMT": {"open": [1], "close": [6]},
             "MTRecirc": {"open": [2, 6], "close": [7]},
             "MTtoBK": {"open": [2, 3, 7], "close": [8, 9]},
             "BKWhirl": {"open": [3, 4, 8], "close": [9]},
             "BKDrain": {"open": [4, 8, 9], "close": []},
         }
-        cls.pumpvalvepathmap = (
+        self.pumpvalvepathmap = (
             ("HLTtoMT", "MTRecirc"),
             ("MTtoBK", "BKWhirl", "BKDrain"),
         )
 
-    @classmethod
-    def openValvePath(cls, pathname: str):
-        for valveindex in cls.valvepaths[pathname]["open"]:
-            cls.openBallValve(valveindex)
-        for valveindex in cls.valvepaths[pathname]["close"]:
-            cls.closeBallValve(valveindex)
+    def openValvePath(self, pathname: str):
+        for valveindex in self.valvepaths[pathname]["open"]:
+            self.openBallValve(valveindex)
+        for valveindex in self.valvepaths[pathname]["close"]:
+            self.closeBallValve(valveindex)
 
-    @classmethod
-    def emitState(cls):
-        cls.signalState.emit(cls.hardwareState)
+    def emitState(self):
+        self.signalState.emit(self.hardwareState)
 
-    @classmethod
-    def getState(cls) -> HardwareState:
-        return cls.hardwareState
+    def getState(self) -> HardwareState:
+        return self.hardwareState
 
-    @classmethod
-    def shutdown(cls):
+    def shutdown(self):
         logger.info("Shutting all system components off")
-        cls.disableAllPumps()
-        cls.closeAllBallValves()
-        cls.disableAllHeatingElements()
+        self.disableAllPumps()
+        self.closeAllBallValves()
+        self.disableAllHeatingElements()
 
-    @classmethod
-    def resetFlowControl(cls):
-        cls.disableAllPumps()
-        cls.closeAllBallValves()
+    def resetFlowControl(self):
+        self.disableAllPumps()
+        self.closeAllBallValves()
         logger.info("Shut down all liquid flow")
 
-    @classmethod
-    def disableAllHeatingElements(cls):
+    def disableAllHeatingElements(self):
         logger.debug("Disabling all heating elements")
-        for index, _ in enumerate(cls.heatingElements):
-            cls.disableHeatingElement(index)
+        for index, _ in enumerate(self.heatingElements):
+            self.disableHeatingElement(index)
 
-    @classmethod
-    def disableAllPumps(cls):
+    def disableAllPumps(self):
         logger.debug("Disabling all pumps")
-        for index, _ in enumerate(cls.pumps):
-            cls.disablePump(index)
+        for index, _ in enumerate(self.pumps):
+            self.disablePump(index)
 
-    @classmethod
-    def closeAllBallValves(cls):
+    def closeAllBallValves(self):
         logger.debug("Closing all ball valves")
-        for index, _ in enumerate(cls.ballValves):
-            cls.closeBallValve(index)
+        for index, _ in enumerate(self.ballValves):
+            self.closeBallValve(index)
 
-    @classmethod
-    def setHopServoPosition(cls, angle: int):
+    def setHopServoPosition(self, angle: int):
         if angle in range(0, 360):
-            cls.hopServo.angle = angle
-            cls.hardwareState.hopServo = angle
+            self.hopServo.angle = angle
+            self.hardwareState.hopServo = angle
         else:
             raise ComponentControlError("Invalid servo angle selected")
 
-    @classmethod
-    def openBallValve(cls, index: int):
-        cls._setBallValveState(index, True)
+    def openBallValve(self, index: int):
+        self._setBallValveState(index, True)
 
-    @classmethod
-    def closeBallValve(cls, index: int):
-        cls._setBallValveState(index, False)
+    def closeBallValve(self, index: int):
+        self._setBallValveState(index, False)
 
-    @classmethod
-    def enablePump(cls, index: int):
-        cls._setPumpState(index, True)
+    def enablePump(self, index: int):
+        self._setPumpState(index, True)
 
-    @classmethod
-    def disablePump(cls, index: int):
-        cls._setPumpState(index, False)
+    def disablePump(self, index: int):
+        self._setPumpState(index, False)
 
-    @classmethod
-    def enableHeatingElement(cls, index: int):
-        cls._setHeatingElementValue(index, 1)
+    def enableHeatingElement(self, index: int):
+        self._setHeatingElementValue(index, 1)
 
-    @classmethod
-    def disableHeatingElement(cls, index: int):
-        cls._setHeatingElementValue(index, 0)
+    def disableHeatingElement(self, index: int):
+        self._setHeatingElementValue(index, 0)
 
-    @classmethod
-    def setHeatingElementPWM(cls, index: int, value: float):
-        cls._setHeatingElementValue(index, value)
+    def setHeatingElementPWM(self, index: int, value: float):
+        self._setHeatingElementValue(index, value)
 
-    @classmethod
-    def _setBallValveState(cls, index: int, state: bool):
-        cls.ballValves[index].value = state
-        cls.hardwareState.ballValves[index] = state
+    def _setBallValveState(self, index: int, state: bool):
+        self.ballValves[index].value = state
+        self.hardwareState.ballValves[index] = state
         logger.debug(f'Set ball valve {index} to {"On" if state else "Off"}')
 
-    @classmethod
-    def _setPumpState(cls, pumpindex: int, state: bool):
+    def _setPumpState(self, pumpindex: int, state: bool):
         # check if a valid path is open for either pump
-        if (not state) or (state and cls._pumpHasOpenPath(pumpindex)):
-            cls.pumps[pumpindex].value = state
-            cls.hardwareState.pumps[pumpindex] = state
+        if (not state) or (state and self._pumpHasOpenPath(pumpindex)):
+            self.pumps[pumpindex].value = state
+            self.hardwareState.pumps[pumpindex] = state
             logger.debug(f'Set pump {pumpindex} to {"On" if state else "Off"}')
         # raise an error otherwise
         else:
@@ -155,35 +140,30 @@ class DeviceHandler(QObject, Pins):
                 f"Cannot turn pump {pumpindex} on. There is no suitable ball valve path open"
             )
 
-    @classmethod
-    def _pumpHasOpenPath(cls, pumpindex: int) -> bool:
+    def _pumpHasOpenPath(self, pumpindex: int) -> bool:
         pumphasopenpath = False
-        for valvepath in cls.pumpvalvepathmap[pumpindex]:
+        for valvepath in self.pumpvalvepathmap[pumpindex]:
             pathopen = True
-            for valveindex in cls.valvepaths[valvepath]["open"]:
-                if cls.ballValves[valveindex].value != 1:
+            for valveindex in self.valvepaths[valvepath]["open"]:
+                if self.ballValves[valveindex].value != 1:
                     pathopen = False
-            for valveindex in cls.valvepaths[valvepath]["close"]:
-                if cls.ballValves[valveindex].value != 0:
+            for valveindex in self.valvepaths[valvepath]["close"]:
+                if self.ballValves[valveindex].value != 0:
                     pathopen = False
             if pathopen:
                 pumphasopenpath = True
                 break
         return pumphasopenpath
 
-    @classmethod
-    def _setHeatingElementValue(cls, index: int, value: float):
-        cls.heatingElements[index].value = value
-        cls.hardwareState.heatingElements[index] = value
+    def _setHeatingElementValue(self, index: int, value: float):
+        self.heatingElements[index].value = value
+        self.hardwareState.heatingElements[index] = value
         logger.debug(f"Set heating element {index} to {value}")
 
-    @classmethod
-    def _readSensors(cls):
+    def _readSensors(self):
         # read the sensors and save the values here
-        for temp in cls.hardwareState.temperatures:
-            cls.hardwareState.temperatures[temp] = 0
-        for volume in cls.hardwareState.temperatures:
-            cls.hardwareState.volumes[volume] = 0
+        for temp in self.hardwareState.temperatures:
+            self.hardwareState.temperatures[temp] = 0
+        for volume in self.hardwareState.temperatures:
+            self.hardwareState.volumes[volume] = 0
 
-
-DeviceHandler._createValvePaths()

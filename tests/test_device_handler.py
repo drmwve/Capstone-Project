@@ -9,15 +9,16 @@ def devicehandler():
     yield DeviceHandler()
     DeviceHandler._refreshPins()
 
+handler = DeviceHandler()
 
 # this ugly thing creates a bunch of tests for every path assigned to each pump
 # [0,"path1],[0,"path2"],[1,"path3"] etc.
 @pytest.fixture(
     params=[
         [x, y]
-        for x in range(len(DeviceHandler.pumpvalvepathmap))
-        for y in DeviceHandler.valvepaths
-        if y in DeviceHandler.pumpvalvepathmap[x]
+        for x in range(len(handler.pumpvalvepathmap))
+        for y in handler.valvepaths
+        if y in handler.pumpvalvepathmap[x]
     ]
 )
 def indexpathpairs(request):
@@ -25,7 +26,7 @@ def indexpathpairs(request):
 
 
 class TestDeviceHandler:
-    @pytest.mark.parametrize("path", [x for x in DeviceHandler.valvepaths.keys()])
+    @pytest.mark.parametrize("path", [x for x in handler.valvepaths.keys()])
     def test_open_valve_path(self, path, devicehandler):
         devicehandler.openValvePath(path)
         for valveindex in devicehandler.valvepaths[path]["open"]:
@@ -63,7 +64,7 @@ class TestDeviceHandler:
         assert devicehandler.hardwareState.pumps[index] == True
         devicehandler.closeAllBallValves()
 
-    @pytest.mark.parametrize("index", [x for x in range(len(DeviceHandler.pumpGPIOs))])
+    @pytest.mark.parametrize("index", [x for x in range(len(Pins.pumpGPIOs))])
     def test_enable_pump_invalid(self, index, devicehandler):
         assert devicehandler.pumps[index].value == False
         with pytest.raises(ComponentControlError):
@@ -79,7 +80,7 @@ class TestDeviceHandler:
         assert devicehandler.hardwareState.pumps[index] == False
 
     @pytest.mark.parametrize(
-        "pumpindex", [x for x in range(len(DeviceHandler.pumpGPIOs))]
+        "pumpindex", [x for x in range(len(Pins.pumpGPIOs))]
     )
     def test_pump_has_open_path_false(self, pumpindex, devicehandler):
         devicehandler.closeAllBallValves()
@@ -92,7 +93,7 @@ class TestDeviceHandler:
 
     @pytest.mark.parametrize("value", [0, 1, 0.2, 0.3, 0.4, 0.5, 0.6])
     @pytest.mark.parametrize(
-        "index", [x for x in range(len(DeviceHandler.heatingElementGPIOs))]
+        "index", [x for x in range(len(Pins.heatingElementGPIOs))]
     )
     def test_set_heating_element_value(self, index, value, devicehandler):
         assert devicehandler.heatingElements[index].value == 0
