@@ -34,7 +34,9 @@ class Ui_BrewConfigWindow(object):
         self.HopCartridgeSelectEntry.setAlignment(QtCore.Qt.AlignCenter)
         self.HopCartridgeSelectEntry.setReadOnly(True)
         self.HopCartridgeSelectEntry.setObjectName("HopCartridgeSelectEntry")
-        self.HopCartridgeSelectLayout.addWidget(self.HopCartridgeSelectEntry, 1, 1, 1, 1)
+        self.HopCartridgeSelectLayout.addWidget(
+            self.HopCartridgeSelectEntry, 1, 1, 1, 1
+        )
         self.HopCartridgeSelectDecrease = QtWidgets.QPushButton(BrewConfigWindow)
         self.HopCartridgeSelectDecrease.setMinimumSize(QtCore.QSize(0, 30))
         self.HopCartridgeSelectDecrease.setMaximumSize(QtCore.QSize(16777215, 30))
@@ -42,7 +44,9 @@ class Ui_BrewConfigWindow(object):
         font.setPointSize(12)
         self.HopCartridgeSelectDecrease.setFont(font)
         self.HopCartridgeSelectDecrease.setObjectName("HopCartridgeSelectDecrease")
-        self.HopCartridgeSelectLayout.addWidget(self.HopCartridgeSelectDecrease, 1, 0, 1, 1)
+        self.HopCartridgeSelectLayout.addWidget(
+            self.HopCartridgeSelectDecrease, 1, 0, 1, 1
+        )
         self.HopCartridgeSelectIncrease = QtWidgets.QPushButton(BrewConfigWindow)
         self.HopCartridgeSelectIncrease.setMinimumSize(QtCore.QSize(0, 30))
         self.HopCartridgeSelectIncrease.setMaximumSize(QtCore.QSize(16777215, 30))
@@ -50,16 +54,22 @@ class Ui_BrewConfigWindow(object):
         font.setPointSize(12)
         self.HopCartridgeSelectIncrease.setFont(font)
         self.HopCartridgeSelectIncrease.setObjectName("HopCartridgeSelectIncrease")
-        self.HopCartridgeSelectLayout.addWidget(self.HopCartridgeSelectIncrease, 1, 2, 1, 1)
+        self.HopCartridgeSelectLayout.addWidget(
+            self.HopCartridgeSelectIncrease, 1, 2, 1, 1
+        )
         self.HopCartridgeSelectLabel = QtWidgets.QLabel(BrewConfigWindow)
         self.HopCartridgeSelectLabel.setMaximumSize(QtCore.QSize(16777215, 20))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.HopCartridgeSelectLabel.setFont(font)
         self.HopCartridgeSelectLabel.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.HopCartridgeSelectLabel.setAlignment(QtCore.Qt.AlignBottom|QtCore.Qt.AlignHCenter)
+        self.HopCartridgeSelectLabel.setAlignment(
+            QtCore.Qt.AlignBottom | QtCore.Qt.AlignHCenter
+        )
         self.HopCartridgeSelectLabel.setObjectName("HopCartridgeSelectLabel")
-        self.HopCartridgeSelectLayout.addWidget(self.HopCartridgeSelectLabel, 0, 1, 1, 1)
+        self.HopCartridgeSelectLayout.addWidget(
+            self.HopCartridgeSelectLabel, 0, 1, 1, 1
+        )
         self.gridLayout.addLayout(self.HopCartridgeSelectLayout, 0, 1, 1, 1)
         self.MashTempLayout = QtWidgets.QGridLayout()
         self.MashTempLayout.setContentsMargins(-1, 0, -1, -1)
@@ -78,7 +88,7 @@ class Ui_BrewConfigWindow(object):
         font.setPointSize(12)
         self.MashTempLabel.setFont(font)
         self.MashTempLabel.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.MashTempLabel.setAlignment(QtCore.Qt.AlignBottom|QtCore.Qt.AlignHCenter)
+        self.MashTempLabel.setAlignment(QtCore.Qt.AlignBottom | QtCore.Qt.AlignHCenter)
         self.MashTempLabel.setObjectName("MashTempLabel")
         self.MashTempLayout.addWidget(self.MashTempLabel, 0, 1, 1, 1)
         self.MashTempDecrease = QtWidgets.QPushButton(BrewConfigWindow)
@@ -278,7 +288,7 @@ class Ui_BrewConfigWindow(object):
         font = QtGui.QFont()
         font.setPointSize(12)
         self.HopLabel.setFont(font)
-        self.HopLabel.setAlignment(QtCore.Qt.AlignBottom|QtCore.Qt.AlignHCenter)
+        self.HopLabel.setAlignment(QtCore.Qt.AlignBottom | QtCore.Qt.AlignHCenter)
         self.HopLabel.setObjectName("HopLabel")
         self.HopTimingLayout.addWidget(self.HopLabel, 0, 2, 1, 1)
         self.Hop1Decrease = QtWidgets.QPushButton(BrewConfigWindow)
@@ -356,7 +366,9 @@ class Ui_BrewConfigWindow(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.QBComboBox = QtWidgets.QComboBox(BrewConfigWindow)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.QBComboBox.sizePolicy().hasHeightForWidth())
@@ -376,9 +388,13 @@ class Ui_BrewConfigWindow(object):
         self.HopCartridgeSelectEntry.setText(_translate("BrewConfigWindow", "5"))
         self.HopCartridgeSelectDecrease.setText(_translate("BrewConfigWindow", "-"))
         self.HopCartridgeSelectIncrease.setText(_translate("BrewConfigWindow", "+"))
-        self.HopCartridgeSelectLabel.setText(_translate("BrewConfigWindow", "Number of hop cartridges"))
+        self.HopCartridgeSelectLabel.setText(
+            _translate("BrewConfigWindow", "Number of hop cartridges")
+        )
         self.MashTempIncrease.setText(_translate("BrewConfigWindow", "+"))
-        self.MashTempLabel.setText(_translate("BrewConfigWindow", "Mash Temperature (°F)"))
+        self.MashTempLabel.setText(
+            _translate("BrewConfigWindow", "Mash Temperature (°F)")
+        )
         self.MashTempDecrease.setText(_translate("BrewConfigWindow", "-"))
         self.MashTempEntry.setText(_translate("BrewConfigWindow", "170"))
         self.Hop4Entry.setText(_translate("BrewConfigWindow", "15"))

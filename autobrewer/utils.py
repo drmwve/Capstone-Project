@@ -1,6 +1,20 @@
+import platform
 import time
 from functools import wraps
 from .exceptions import ComponentControlError
+
+
+def is_raspberry_pi():
+    """Checks if Raspberry PI.
+
+    Returns:
+        bool: True if Raspberry Pi
+    """
+    return platform.uname()[4].startswith("arm")
+
+
+IS_RASPBERRY_PI = is_raspberry_pi()
+
 
 class _Disabled:
     """helper class for a decorator that disables
@@ -17,8 +31,7 @@ class _Disabled:
         ==>> upon first time called, sets first_called flag to false
         """
 
-
-    def __call__(self,index):
+    def __call__(self, index):
         if self.first_call[index]:
             self.first_call[index] = False
             return False
@@ -36,14 +49,20 @@ def set_windup_time(disable_time=5, num_components=1):
     after execution, they are disabled for some time, before they can run
     again
     """
+
     def _disable_for_a_while_after_called(f):
         must_not_call_function = _Disabled(disable_time, num_components)
+
         @wraps(f)
         def wrapped(self, component_index, *args, **kwargs):
             if must_not_call_function(component_index):
-                raise ComponentControlError("Attempted to control component while changing state")
+                raise ComponentControlError(
+                    "Attempted to control component while changing state"
+                )
             else:
                 r = f(self, component_index, *args, **kwargs)
             return r
+
         return wrapped
+
     return _disable_for_a_while_after_called

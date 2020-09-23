@@ -56,11 +56,11 @@ _MODE_MASK = const(0x0100)
 _MODE_CONTIN = const(0x0000)  # Continuous conversion mode
 _MODE_SINGLE = const(0x0100)  # Power-down single-shot mode (default)
 
-_DR_MASK = const(0x00E0)     # Values ADS1015/ADS1115
-_DR_128SPS = const(0x0000)   # 128 /8 samples per second
-_DR_250SPS = const(0x0020)   # 250 /16 samples per second
-_DR_490SPS = const(0x0040)   # 490 /32 samples per second
-_DR_920SPS = const(0x0060)   # 920 /64 samples per second
+_DR_MASK = const(0x00E0)  # Values ADS1015/ADS1115
+_DR_128SPS = const(0x0000)  # 128 /8 samples per second
+_DR_250SPS = const(0x0020)  # 250 /16 samples per second
+_DR_490SPS = const(0x0040)  # 490 /32 samples per second
+_DR_920SPS = const(0x0060)  # 920 /64 samples per second
 _DR_1600SPS = const(0x0080)  # 1600/128 samples per second (default)
 _DR_2400SPS = const(0x00A0)  # 2400/250 samples per second
 _DR_3300SPS = const(0x00C0)  # 3300/475 samples per second
@@ -91,7 +91,7 @@ _GAINS = (
     _PGA_2_048V,  # 2x
     _PGA_1_024V,  # 4x
     _PGA_0_512V,  # 8x
-    _PGA_0_256V   # 16x
+    _PGA_0_256V,  # 16x
 )
 
 _GAINS_V = (
@@ -100,7 +100,7 @@ _GAINS_V = (
     2.048,  # 2x
     1.024,  # 4x
     0.512,  # 8x
-    0.256  # 16x
+    0.256,  # 16x
 )
 
 _CHANNELS = {
@@ -115,14 +115,14 @@ _CHANNELS = {
 }
 
 _RATES = (
-    _DR_128SPS,   # 128/8 samples per second
-    _DR_250SPS,   # 250/16 samples per second
-    _DR_490SPS,   # 490/32 samples per second
-    _DR_920SPS,   # 920/64 samples per second
+    _DR_128SPS,  # 128/8 samples per second
+    _DR_250SPS,  # 250/16 samples per second
+    _DR_490SPS,  # 490/32 samples per second
+    _DR_920SPS,  # 920/64 samples per second
     _DR_1600SPS,  # 1600/128 samples per second (default)
     _DR_2400SPS,  # 2400/250 samples per second
     _DR_3300SPS,  # 3300/475 samples per second
-    _DR_860SPS    # - /860 samples per Second
+    _DR_860SPS,  # - /860 samples per Second
 )
 
 
@@ -135,7 +135,7 @@ class ADS1115:
 
     def _write_register(self, register, value):
         self.temp2[0] = value >> 8
-        self.temp2[1] = value & 0xff
+        self.temp2[1] = value & 0xFF
         self.i2c.writeto_mem(self.address, register, self.temp2)
 
     def _read_register(self, register):
@@ -148,18 +148,35 @@ class ADS1115:
 
     def set_conv(self, rate=4, channel1=0, channel2=None):
         """Set mode for read_rev"""
-        self.mode = (_CQUE_NONE | _CLAT_NONLAT |
-                     _CPOL_ACTVLOW | _CMODE_TRAD | _RATES[rate] |
-                     _MODE_SINGLE | _OS_SINGLE | _GAINS[self.gain] |
-                     _CHANNELS[(channel1, channel2)])
+        self.mode = (
+            _CQUE_NONE
+            | _CLAT_NONLAT
+            | _CPOL_ACTVLOW
+            | _CMODE_TRAD
+            | _RATES[rate]
+            | _MODE_SINGLE
+            | _OS_SINGLE
+            | _GAINS[self.gain]
+            | _CHANNELS[(channel1, channel2)]
+        )
 
     def read(self, rate=4, channel1=0, channel2=None):
         """Read voltage between a channel and GND.
-           Time depends on conversion rate."""
-        self._write_register(_REGISTER_CONFIG, (_CQUE_NONE | _CLAT_NONLAT |
-                             _CPOL_ACTVLOW | _CMODE_TRAD | _RATES[rate] |
-                             _MODE_SINGLE | _OS_SINGLE | _GAINS[self.gain] |
-                             _CHANNELS[(channel1, channel2)]))
+        Time depends on conversion rate."""
+        self._write_register(
+            _REGISTER_CONFIG,
+            (
+                _CQUE_NONE
+                | _CLAT_NONLAT
+                | _CPOL_ACTVLOW
+                | _CMODE_TRAD
+                | _RATES[rate]
+                | _MODE_SINGLE
+                | _OS_SINGLE
+                | _GAINS[self.gain]
+                | _CHANNELS[(channel1, channel2)]
+            ),
+        )
         while not self._read_register(_REGISTER_CONFIG) & _OS_NOTBUSY:
             time.sleep_ms(1)
         res = self._read_register(_REGISTER_CONVERT)
@@ -167,30 +184,51 @@ class ADS1115:
 
     def read_rev(self):
         """Read voltage between a channel and GND. and then start
-           the next conversion."""
+        the next conversion."""
         res = self._read_register(_REGISTER_CONVERT)
         self._write_register(_REGISTER_CONFIG, self.mode)
         return res if res < 32768 else res - 65536
 
-    def alert_start(self, rate=4, channel1=0, channel2=None,
-                    threshold_high=0x4000, threshold_low=0, latched=False) :
+    def alert_start(
+        self,
+        rate=4,
+        channel1=0,
+        channel2=None,
+        threshold_high=0x4000,
+        threshold_low=0,
+        latched=False,
+    ):
         """Start continuous measurement, set ALERT pin on threshold."""
         self._write_register(_REGISTER_LOWTHRESH, threshold_low)
         self._write_register(_REGISTER_HITHRESH, threshold_high)
-        self._write_register(_REGISTER_CONFIG, _CQUE_1CONV |
-                             _CLAT_LATCH if latched else _CLAT_NONLAT |
-                             _CPOL_ACTVLOW | _CMODE_TRAD | _RATES[rate] |
-                             _MODE_CONTIN | _GAINS[self.gain] |
-                             _CHANNELS[(channel1, channel2)])
+        self._write_register(
+            _REGISTER_CONFIG,
+            _CQUE_1CONV | _CLAT_LATCH
+            if latched
+            else _CLAT_NONLAT
+            | _CPOL_ACTVLOW
+            | _CMODE_TRAD
+            | _RATES[rate]
+            | _MODE_CONTIN
+            | _GAINS[self.gain]
+            | _CHANNELS[(channel1, channel2)],
+        )
 
     def conversion_start(self, rate=4, channel1=0, channel2=None):
         """Start continuous measurement, trigger on ALERT/RDY pin."""
         self._write_register(_REGISTER_LOWTHRESH, 0)
         self._write_register(_REGISTER_HITHRESH, 0x8000)
-        self._write_register(_REGISTER_CONFIG, _CQUE_1CONV | _CLAT_NONLAT |
-                             _CPOL_ACTVLOW | _CMODE_TRAD | _RATES[rate] |
-                             _MODE_CONTIN | _GAINS[self.gain] |
-                             _CHANNELS[(channel1, channel2)])
+        self._write_register(
+            _REGISTER_CONFIG,
+            _CQUE_1CONV
+            | _CLAT_NONLAT
+            | _CPOL_ACTVLOW
+            | _CMODE_TRAD
+            | _RATES[rate]
+            | _MODE_CONTIN
+            | _GAINS[self.gain]
+            | _CHANNELS[(channel1, channel2)],
+        )
 
     def alert_read(self):
         """Get the last reading from the continuous measurement."""
@@ -208,7 +246,9 @@ class ADS1113(ADS1115):
     def read(self, rate=4):
         return super().read(rate, 0, 1)
 
-    def alert_start(self, rate=4, threshold_high=0x4000, threshold_low=0, latched=False):
+    def alert_start(
+        self, rate=4, threshold_high=0x4000, threshold_low=0, latched=False
+    ):
         return super().alert_start(rate, 0, 1, threshold_high, threshold_low, latched)
 
     def alert_read(self):
@@ -225,9 +265,10 @@ class ADS1114(ADS1115):
     def read(self, rate=4):
         return super().read(rate, 0, 1)
 
-    def alert_start(self, rate=4, threshold_high=0x4000, threshold_low=0, latched=False):
-        return super().alert_start(rate, 0, 1, threshold_high,
-            threshold_low, latched)
+    def alert_start(
+        self, rate=4, threshold_high=0x4000, threshold_low=0, latched=False
+    ):
+        return super().alert_start(rate, 0, 1, threshold_high, threshold_low, latched)
 
     def alert_read(self):
         return super().alert_read()
@@ -243,10 +284,18 @@ class ADS1015(ADS1115):
     def read(self, rate=4, channel1=0, channel2=None):
         return super().read(rate, channel1, channel2) >> 4
 
-    def alert_start(self, rate=4, channel1=0, channel2=None, threshold_high=0x400,
-        threshold_low=0, latched=False):
-        return super().alert_start(rate, channel1, channel2, threshold_high << 4,
-            threshold_low << 4, latched)
+    def alert_start(
+        self,
+        rate=4,
+        channel1=0,
+        channel2=None,
+        threshold_high=0x400,
+        threshold_low=0,
+        latched=False,
+    ):
+        return super().alert_start(
+            rate, channel1, channel2, threshold_high << 4, threshold_low << 4, latched
+        )
 
     def alert_read(self):
         return super().alert_read() >> 4

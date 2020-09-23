@@ -2,8 +2,8 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
 from .BrewProgressGUI import Ui_BrewStatus
 
-class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
 
+class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -11,7 +11,7 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.adjustUI()
 
     def connections(self):
-        #add any connections that are internal to the functioning of this widget only
+        # add any connections that are internal to the functioning of this widget only
         self.AbortBrewButton.clicked.connect(self.abortBrew)
         self.PauseResumeButton.clicked.connect(self.pauseResumeBrew)
 
@@ -26,7 +26,6 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.PauseResumeButton.setEnabled(False)
         self.AbortBrewButton.setEnabled(False)
         logger.info("User requested to abort brew.")
-
 
     def pauseResumeBrew(self):
         ## This should pause the current brewing process.

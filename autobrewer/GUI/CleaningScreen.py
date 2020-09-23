@@ -5,17 +5,22 @@ from datetime import timedelta
 
 
 class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
-
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.cleanRunningElements = [self.PauseResumeCleanButton, self.AbortCleanButton, self.CurrentCleanTaskLabel, self.CleanETALabel, self.CurrentCleanTaskProgressBar]
+        self.cleanRunningElements = [
+            self.PauseResumeCleanButton,
+            self.AbortCleanButton,
+            self.CurrentCleanTaskLabel,
+            self.CleanETALabel,
+            self.CurrentCleanTaskProgressBar,
+        ]
         self.adjustUI()
         self.timers = [self.updateTimer, self.actionTimer]
         self.connections()
 
     def connections(self):
-        #add any connections that are internal to the functioning of this widget only
+        # add any connections that are internal to the functioning of this widget only
         self.AbortCleanButton.clicked.connect(self.abortClean)
         self.PauseResumeCleanButton.clicked.connect(self.pauseResumeClean)
         self.StartCleaningButton.clicked.connect(self.startClean)
@@ -23,8 +28,8 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         self.updateTimer.timeout.connect(self.updateETA)
 
     def adjustUI(self):
-        self.updateTimer=QtCore.QTimer()
-        self.actionTimer=QtCore.QTimer()
+        self.updateTimer = QtCore.QTimer()
+        self.actionTimer = QtCore.QTimer()
         self.PauseResumeCleanButton.setCheckable(True)
         self.PauseResumeCleanButton.setText("Pause")
         ## Hide UI elements that don't have a purpose until cleaning starts.
@@ -42,8 +47,6 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         self.actionTimer.start(15000)
         self.CurrentCleanTaskProgressBar.setRange(-15000, 0)
         self.updateETA()
-
-
 
     def pauseResumeClean(self):
         ## This should pause the current brewing process.
@@ -71,9 +74,11 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         for i in range(len(self.cleanRunningElements)):
             self.cleanRunningElements[i].setHidden(False)
         self.StartCleaningButton.setHidden(True)
-        self.CurrentCleanTaskLabel.setText("This should update the user on what's happening . . .")
-        self.actionTimer.start(3.6e+6)
-        self.CurrentCleanTaskProgressBar.setRange(-3.6e+6, 0)
+        self.CurrentCleanTaskLabel.setText(
+            "This should update the user on what's happening . . ."
+        )
+        self.actionTimer.start(3.6e6)
+        self.CurrentCleanTaskProgressBar.setRange(-3.6e6, 0)
         self.updateETA()
 
     def resetCleanScreen(self):
@@ -90,6 +95,9 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         self.actionTimer.stop()
 
     def updateETA(self):
-        self.CleanETALabel.setText("ETA: "+str(timedelta(seconds=int(self.actionTimer.remainingTime()/1000))))
+        self.CleanETALabel.setText(
+            "ETA: "
+            + str(timedelta(seconds=int(self.actionTimer.remainingTime() / 1000)))
+        )
         self.CurrentCleanTaskProgressBar.setValue(-self.actionTimer.remainingTime())
         self.updateTimer.start(1000)

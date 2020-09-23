@@ -3,17 +3,18 @@ from PySide2 import QtCore, QtGui
 
 from .Process import BrewProcess, CleaningProcess
 
-class ExecutionHandler():
-    #I wrap the thread handling up in a neat package. The UI code creates a process and passes it to me with my startProcess(process)
-    #function and I create a new thread which this process is executed in.
+
+class ExecutionHandler:
+    # I wrap the thread handling up in a neat package. The UI code creates a process and passes it to me with my startProcess(process)
+    # function and I create a new thread which this process is executed in.
     def __init__(self):
         self.processRunning = False
 
-        #the brew controller lives in its own thread to make constantly updating sensors and changing things easier
-        #self.brewControls = ControlHandler()
-        #self.controllerThread = QtCore.QThread()
-        #self.addProcessToThread(self.brewControls, self.controllerThread)
-        #self.controllerThread.start()
+        # the brew controller lives in its own thread to make constantly updating sensors and changing things easier
+        # self.brewControls = ControlHandler()
+        # self.controllerThread = QtCore.QThread()
+        # self.addProcessToThread(self.brewControls, self.controllerThread)
+        # self.controllerThread.start()
 
     # Starts a new process on a new thread. If a thread is already running, show an error.
     def startProcess(self, process):
@@ -23,7 +24,12 @@ class ExecutionHandler():
             self.process = process
             self.addProcessToThread(self.process, self.processThread)
             self.processThread.start()
-            logger.info("Started process " + str(self.process) + " on thread " + str(self.processThread))
+            logger.info(
+                "Started process "
+                + str(self.process)
+                + " on thread "
+                + str(self.processThread)
+            )
         else:
             error = QtGui.QMessageBox()
             error.setText("A process is already running.")
@@ -48,5 +54,3 @@ class ExecutionHandler():
         process.moveToThread(thread)
         thread.started.connect(process.start())
         process.finished.connect(thread.quit())
-
-    pass

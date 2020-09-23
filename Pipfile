@@ -3,6 +3,11 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
+[dev-packages]
+pytest = "*"
+pytest-qt = "*"
+hypothesis = "*"
+
 [packages]
 pyside2 = "*"
 w1thermsensor = "*"
@@ -12,4 +17,4 @@ pytest = "*"
 black = {git = "git://github.com/psf/black"}
 
 [requires]
-python_version = "3"
+python_version = "3.7"

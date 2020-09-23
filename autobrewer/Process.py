@@ -1,5 +1,6 @@
 from PySide2 import QtCore
 
+
 class Process(QtCore.QObject):
     # I have an array of steps and an index value. Each step, I emit signals which call process functions like
     # move liquid from tank to tank, heat to certain temperature, drain boil kettle, etc. For now, I receive
@@ -25,19 +26,21 @@ class Process(QtCore.QObject):
         pass
 
     def pause(self):
-        #I pause the process in a way that somehow allows it to resume.
+        # I pause the process in a way that somehow allows it to resume.
         pass
 
     def stop(self):
         # I stop the process completely and quit executing.
         pass
 
+
 class BrewProcess(Process):
     def __init__(self, brewRecipe):
         super().__init__()
         self.brewRecipe = brewRecipe
-        #emit signal which sets target mash temp
+        # emit signal which sets target mash temp
         self.processSteps = ["brewing process step functions"]
+
 
 class CleaningProcess(Process):
     def __init__(self):
