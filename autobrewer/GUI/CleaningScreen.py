@@ -19,7 +19,7 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         self.connections()
 
     def connections(self):
-        #add any connections that are internal to the functioning of this widget only
+        # add any connections that are internal to the functioning of this widget only
         self.AbortCleanButton.clicked.connect(self.abortClean)
         self.ManualCleanButton.clicked.connect(self.manualCleaning)
         self.StartCleaningButton.clicked.connect(self.startClean)
@@ -45,7 +45,6 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         self.ManualCleanButton.setEnabled(False)
         self.AbortCleanButton.setEnabled(False)
         self.abortCleaningSignal.emit()
-
         self.actionTimer.stop()
         self.actionTimer.start(15000)
         self.CurrentCleanTaskProgressBar.setRange(-15000, 0)
@@ -69,7 +68,6 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
             self.cleanRunningElements[i].setHidden(False)
         self.StartCleaningButton.setHidden(True)
         self.startCleaningSignal.emit()
-
         self.CurrentCleanTaskLabel.setText("This should update the user on what's happening . . .")
         self.actionTimer.start(3.6e+6)
         self.CurrentCleanTaskProgressBar.setRange(-3.6e+6, 0)
@@ -89,7 +87,10 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         self.actionTimer.stop()
 
     def updateETA(self):
-        self.CleanETALabel.setText("ETA: "+str(timedelta(seconds=int(self.actionTimer.remainingTime()/1000))))
+        self.CleanETALabel.setText(
+            "ETA: "
+            + str(timedelta(seconds=int(self.actionTimer.remainingTime() / 1000)))
+        )
         self.CurrentCleanTaskProgressBar.setValue(-self.actionTimer.remainingTime())
         self.updateTimer.start(1000)
 

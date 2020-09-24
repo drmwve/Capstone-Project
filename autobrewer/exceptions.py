@@ -1,0 +1,2 @@
+class ComponentControlError(Exception):
+    pass

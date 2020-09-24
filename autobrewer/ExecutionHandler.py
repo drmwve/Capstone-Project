@@ -1,52 +1,64 @@
-from .Process import BrewProcess, CleaningProcess
-from PySide2 import QtCore, QtGui
 from loguru import logger
-#from ExecutionCode.ControlWrapper import ControlHandler
+from PySide2 import QtCore, QtGui
+from PySide2.QtWidgets import QMessageBox
 
-class ExecutionHandler():
-    #I wrap the thread handling up in a neat package. The UI code creates a process and passes it to me with my startProcess(process)
-    #function and I create a new thread which this process is executed in.
-    def __init__(self):
-        self.processRunning = False
+from .Process import *
 
-        #the brew controller lives in its own thread to make constantly updating sensors and changing things easier
-        #self.brewControls = ControlHandler()
-        #self.controllerThread = QtCore.QThread()
-        #self.addProcessToThread(self.brewControls, self.controllerThread)
-        #self.controllerThread.start()
+
+class ExecutionHandler:
+    # I wrap the thread handling up in a neat package. The UI code creates a process and passes it to me with my startProcess(process)
+    # function and I create a new thread which this process is executed in.
+
+    processRunning = False
+
+        # the brew controller lives in its own thread to make constantly updating sensors and changing things easier
+        # self.brewControls = ControlHandler()
+        # self.controllerThread = QtCore.QThread()
+        # self.addProcessToThread(self.brewControls, self.controllerThread)
+        # self.controllerThread.start()
 
     # Starts a new process on a new thread. If a thread is already running, show an error.
-    def startProcess(self, process):
-        if not self.processRunning:
-            self.processRunning = True
-            self.processThread = QtCore.QThread()
-            self.process = process
-            self.addProcessToThread(self.process, self.processThread)
-            self.processThread.start()
-            logger.info("Started process " + str(self.process) + " on thread " + str(self.processThread))
+    @classmethod
+    def startProcess(cls, process):
+        if not cls.processRunning:
+            cls.process = process
+            logger.info(
+                "Started process "
+                + str(cls.process)
+            )
+            cls.processRunning = True
+            cls.process.processfinished.connect(cls.finishedProcess)
+            cls.process.start()
         else:
-            error = QtGui.QMessageBox()
+            error = QMessageBox()
             error.setText("A process is already running.")
             error.exec()
 
-    def startBrewProcess(self, brewRecipe):
-        self.startProcess(BrewProcess(brewRecipe))
+    @classmethod
+    def startBrewProcess(cls, brewRecipe):
+        cls.startProcess(BrewProcess(brewRecipe))
 
-    def startCleaningProcess(self):
-        self.startProcess(CleaningProcess())
+    @classmethod
+    def startCleaningProcess(cls):
+        cls.startProcess(CleaningProcess())
 
     # Stops the process. The process's stop function is called, which is connected to the thread's.
     # This saves the trouble of figuring out what you can do before a thread exits when you call its
     # quit() function.
-    def stopProcess(self):
-        if self.processRunning:
-            self.process.stop()
-            self.processRunning = False
-            logger.info("Stopped process " + self.process)
+    @classmethod
+    def stopProcess(cls):
+        if cls.processRunning:
+            cls.process.stop()
+            cls.processRunning = False
+            cls.process = Process()
+            logger.info(f'Stopped process {cls.process}')
 
-    def addProcessToThread(self, process, thread):
-        process.moveToThread(thread)
-        thread.started.connect(process.start())
-        process.finished.connect(thread.quit())
+    @classmethod
+    def pauseProcess(cls):
+        if cls.processRunning:
+            cls.process.stop()
 
-    pass
+    @classmethod
+    def finishedProcess(cls):
+        cls.processRunning = False
+        logger.debug("Execution handler wrapped up progress")

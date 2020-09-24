@@ -40,7 +40,9 @@ class Ui_CleaningScreen(object):
         self.CurrentCleanTaskProgressBar.setMaximumSize(QtCore.QSize(800, 16777215))
         self.CurrentCleanTaskProgressBar.setProperty("value", 24)
         self.CurrentCleanTaskProgressBar.setObjectName("CurrentCleanTaskProgressBar")
-        self.CleaningStatusLayout.addWidget(self.CurrentCleanTaskProgressBar, 1, 0, 1, 1)
+        self.CleaningStatusLayout.addWidget(
+            self.CurrentCleanTaskProgressBar, 1, 0, 1, 1
+        )
         self.CleanScreenLayout.addLayout(self.CleaningStatusLayout, 0, 0, 1, 1)
         self.StartCleaningButtonLayout = QtWidgets.QHBoxLayout()
         self.StartCleaningButtonLayout.setObjectName("StartCleaningButtonLayout")

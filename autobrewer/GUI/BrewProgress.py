@@ -2,6 +2,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
 from .BrewProgressGUI import Ui_BrewStatus
 
+
 class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
 
     nextBrewStepSignal = QtCore.Signal()
@@ -14,7 +15,7 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.adjustUI()
 
     def connections(self):
-        #add any connections that are internal to the functioning of this widget only
+        # add any connections that are internal to the functioning of this widget only
         self.AbortBrewButton.clicked.connect(self.abortBrew)
         self.ManualBrewButton.clicked.connect(self.manualBrewing)
         self.NextBrewStepButton.clicked.connect(self.nextBrewingStep)
