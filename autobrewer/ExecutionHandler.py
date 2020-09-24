@@ -9,8 +9,7 @@ class ExecutionHandler:
     # I wrap the thread handling up in a neat package. The UI code creates a process and passes it to me with my startProcess(process)
     # function and I create a new thread which this process is executed in.
 
-    def __init__(self):
-        self.processRunning = False
+    processRunning = False
 
         # the brew controller lives in its own thread to make constantly updating sensors and changing things easier
         # self.brewControls = ControlHandler()
@@ -19,41 +18,47 @@ class ExecutionHandler:
         # self.controllerThread.start()
 
     # Starts a new process on a new thread. If a thread is already running, show an error.
-    def startProcess(self, process):
-        if not self.processRunning:
-            self.process = process
+    @classmethod
+    def startProcess(cls, process):
+        if not cls.processRunning:
+            cls.process = process
             logger.info(
                 "Started process "
-                + str(self.process)
+                + str(cls.process)
             )
-            self.processRunning = True
-            self.process.processfinished.connect(self.finishedProcess)
-            self.process.start()
+            cls.processRunning = True
+            cls.process.processfinished.connect(cls.finishedProcess)
+            cls.process.start()
         else:
             error = QMessageBox()
             error.setText("A process is already running.")
             error.exec()
 
-    def startBrewProcess(self, brewRecipe):
-        self.startProcess(BrewProcess(brewRecipe))
+    @classmethod
+    def startBrewProcess(cls, brewRecipe):
+        cls.startProcess(BrewProcess(brewRecipe))
 
-    def startCleaningProcess(self):
-        self.startProcess(CleaningProcess())
+    @classmethod
+    def startCleaningProcess(cls):
+        cls.startProcess(CleaningProcess())
 
     # Stops the process. The process's stop function is called, which is connected to the thread's.
     # This saves the trouble of figuring out what you can do before a thread exits when you call its
     # quit() function.
-    def stopProcess(self):
-        if self.processRunning:
-            self.process.stop()
-            self.processRunning = False
-            logger.info(f'Stopped process {self.process}')
+    @classmethod
+    def stopProcess(cls):
+        if cls.processRunning:
+            cls.process.stop()
+            cls.processRunning = False
+            cls.process = Process()
+            logger.info(f'Stopped process {cls.process}')
 
-    def finishedProcess(self):
-        self.processRunning = False
+    @classmethod
+    def pauseProcess(cls):
+        if cls.processRunning:
+            cls.process.stop()
+
+    @classmethod
+    def finishedProcess(cls):
+        cls.processRunning = False
         logger.debug("Execution handler wrapped up progress")
-
-    def addProcessToThread(self, process, thread):
-        process.moveToThread(thread)
-        thread.started.connect(process.start())
-        process.processfinished.connect(thread.quit())
