@@ -9,7 +9,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
     """The configuration screen from which the user sets the desired brew parameters and starts the brew process. Brew recipes
     can be saved and loaded from the file system. When a brew is started, this screen is replaced by a 'Brew Progress' screen that
     gives feedback to the user on what the brew system is doing."""
-
+    startBrewSignal = QtCore.Signal(BrewRecipe)
     HOP_TIMING_INCREMENT = 5
     HOP_TIMING_MINIMUM = 0
     HOP_TIMING_MAXIMUM = 60
@@ -180,7 +180,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
     def StartBrewing(self):
         ## This function should connect to Husam's brewing program
         self.selectedBrewRecipe = self.copyRecipeFromUI()
-        print("I need connected to the brewing program")
+        self.startBrewSignal.emit(self.selectedBrewRecipe)
         logger.info(f"Starting brew cycle with parameters: {self.selectedBrewRecipe}")
 
     def saveRecipe(self, recipeName: str):
