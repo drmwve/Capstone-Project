@@ -1,16 +1,10 @@
-from PySide2 import QtCore
 from .steps import *
 from loguru import logger
 
-class Process(QtCore.QObject):
-    # I have an array of steps and an index value. Each step, I emit signals which call process functions like
-    # move liquid from tank to tank, heat to certain temperature, drain boil kettle, etc. For now, I receive
-    # a "step completed" signal from the brew controller which calls the increment function.
-    #
-    # I emit a signal for each step in the process, and I emit a signal when I'm finished.
 
+class Process(QtCore.QObject):
     stepstarted = QtCore.Signal(str)
-    finished = QtCore.Signal()
+    processfinished = QtCore.Signal()
 
     def __init__(self):
         super(Process, self).__init__()
@@ -18,95 +12,79 @@ class Process(QtCore.QObject):
         self.processSteps = [Step()]
         self.currentindex = 0
         self.running = False
-        self.stepthread = QtCore.QThread()
 
     def initializeSteps(self):
         self.currentstep = self.processSteps[self.currentindex]
-        self.connectStep(self.currentstep)
-        self.addsteptothread(self.currentstep, self.stepthread)
 
     def start(self):
         logger.debug(f'Process {self} starting')
         self.running = True
-        self.executeStep()
-
-    def pause(self):
-        logger.debug(f'Process {self} pausing')
-        self.disconnectStep(self.currentstep)
-        self.running = False
-        pass
-
-    def resume(self):
-        logger.debug(f'Process {self} resuming')
-        pass
+        self._connectStep(self.currentstep)
+        self.executeCurrentStep()
 
     def stop(self):
-        logger.debug(f'Process {self} exiting')
-        self.stepthread.finished.connect(self.test)
-        self.stepthread.quit()
-        logger.debug(f'Thread running: {self.stepthread.isRunning()}')
+        logger.debug(f'Process {self} stopping')
+        self.running = False
+        self._disconnectStep(self.currentstep)
+        self.currentstep.stop()
 
-    def test(self):
-        logger.debug("Thread quit")
+    def executeCurrentStep(self):
+        self.currentstep.execute()
 
-    @QtCore.Slot()
-    def incrementStep(self, execute=True):
+    def executeNextStep(self):
+        self.incrementStep()
+        self.executeCurrentStep()
+
+    def incrementStep(self):
         logger.debug("Process moving to next step")
         self.currentindex += 1
-        self.setStep(self.currentindex, execute)
+        self.setStep(self.currentindex)
 
-    def decrementStep(self, execute=True):
+    def decrementStep(self):
         logger.debug("Process reverting to previous step")
         self.currentindex -= 1
-        self.setStep(self.currentindex, execute)
+        self.setStep(self.currentindex)
 
-    def setStep(self, index: int, execute: bool = True):
-        self.disconnectStep(self.currentstep)
+    def setStep(self, index: int):
+        self._disconnectStep(self.currentstep)
         self.currentindex = index
-        self.currentstep = self.processSteps[self.currentindex]
-        logger.debug(f'Process set to step {self.currentstep}')
-        self.connectStep(self.currentstep)
-        self.addsteptothread(self.currentstep, self.stepthread)
-        if execute:
-            self.executeStep(self.currentstep)
+        try:
+            self.currentstep = self.processSteps[self.currentindex]
+            logger.trace(f'Process set to step {self.currentstep}')
+            self._connectStep(self.currentstep)
 
-    def executeStep(self):
-        if not self.stepthread.isRunning():
-            logger.debug(f'Executing step {self.currentstep}')
-            self.stepthread.start()
-            logger.debug(f'Thread running: {self.stepthread.isRunning()}')
-        else:
-            logger.debug("Step already running")
+        except IndexError:
+            logger.debug("Process complete")
+            self.processfinished.emit()
 
-    def connectStep(self, step: Step):
-        logger.debug(f'Connecting signals for step {step}')
-        step.stepcomplete.connect(self.incrementStep)
-        step.stepstarted.connect(self.stepstarted)
+    def _connectStep(self, step: Step):
+        try:
+            logger.debug(f'Connecting signals for step {self.processSteps.index(step)}')
+            step.stepcomplete.connect(self.executeNextStep)
+            step.stepstarted.connect(self.stepstarted)
+        except ValueError:
+            logger.error("Step not found")
 
-    def disconnectStep(self, step: Step):
-        logger.debug(f'Disconnecting signals for step {step}')
-        step.stepcomplete.disconnect(self.incrementStep)
-        step.stepstarted.disconnect(self.stepstarted)
-
-    def addsteptothread(self, step, thread):
-        logger.debug(f'Adding step {step} to thread {thread}')
-        step.moveToThread(thread)
-        step.stepcomplete.connect(thread.quit)
-        thread.started.connect(step.execute)
-        thread.finished.connect(step.pause)
+    def _disconnectStep(self, step: Step):
+        try:
+            logger.debug(f'Disconnecting signals for step {self.processSteps.index(step)}')
+            step.stepcomplete.disconnect(self.executeNextStep)
+            step.stepstarted.disconnect(self.stepstarted)
+        except ValueError:
+            logger.error("Step not found")
 
 
 class ExampleProcess(Process):
     def __init__(self):
         super(ExampleProcess, self).__init__()
-        self.processSteps = [ExampleStep()]
+        self.processSteps = [ExampleStep(), ExampleStep()]
         self.initializeSteps()
 
 
 class BrewProcess(Process):
-    def __init__(self, brewRecipe):
+    def __init__(self, brewrecipe):
         super().__init__()
-        self.brewRecipe = brewRecipe
+        self.brewRecipe = brewrecipe
         # emit signal which sets target mash temp
         self.processSteps = ["brewing process step functions"]
 

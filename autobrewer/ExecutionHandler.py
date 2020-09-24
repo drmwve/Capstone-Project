@@ -1,5 +1,6 @@
 from loguru import logger
 from PySide2 import QtCore, QtGui
+from PySide2.QtWidgets import QMessageBox
 
 from .Process import *
 
@@ -7,6 +8,7 @@ from .Process import *
 class ExecutionHandler:
     # I wrap the thread handling up in a neat package. The UI code creates a process and passes it to me with my startProcess(process)
     # function and I create a new thread which this process is executed in.
+
     def __init__(self):
         self.processRunning = False
 
@@ -25,9 +27,10 @@ class ExecutionHandler:
                 + str(self.process)
             )
             self.processRunning = True
+            self.process.processfinished.connect(self.finishedProcess)
             self.process.start()
         else:
-            error = QtGui.QMessageBox()
+            error = QMessageBox()
             error.setText("A process is already running.")
             error.exec()
 
@@ -46,7 +49,11 @@ class ExecutionHandler:
             self.processRunning = False
             logger.info(f'Stopped process {self.process}')
 
+    def finishedProcess(self):
+        self.processRunning = False
+        logger.debug("Execution handler wrapped up progress")
+
     def addProcessToThread(self, process, thread):
         process.moveToThread(thread)
         thread.started.connect(process.start())
-        process.finished.connect(thread.quit())
+        process.processfinished.connect(thread.quit())

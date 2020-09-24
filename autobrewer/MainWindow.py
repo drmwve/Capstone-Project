@@ -15,6 +15,7 @@ from .Process import *
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
+        self.handler = ExecutionHandler()
         super().__init__()
         self.defineMainScreenUI()
         self.createStackedLayout()
@@ -77,7 +78,4 @@ class MainWindow(QtWidgets.QMainWindow):
     def goToMenu(self, menu):
         logger.info("Switched to screen " + str(menu))
         self.centralWidget().setCurrentWidget(menu)
-        handler = ExecutionHandler()
-        handler.startProcess(ExampleProcess())
-        sleep(3)
-        handler.stopProcess()
+        self.handler.startProcess(ExampleProcess())
