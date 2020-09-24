@@ -93,10 +93,8 @@ class BrewRecipePickler(object):
             logger.debug("File %s read successfully" % picklefile.name)
             readDigest = picklefile.readline().decode("utf-8").rstrip()
             readPickle = picklefile.read()
-            logger.debug("Read recipePickle: %s" % readPickle)
 
         actualDigest = self._make_digest(readPickle)
-        logger.debug("Doing hmac check: %s  %s" % (actualDigest, readDigest))
         if hmac.compare_digest(actualDigest, readDigest):
             logger.debug("hmac check passed")
             return pickle.loads(readPickle)

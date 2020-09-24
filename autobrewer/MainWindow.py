@@ -9,7 +9,9 @@ from .GUI.CleaningScreen import CleaningScreen
 from .GUI.DeviceStatus import DeviceStatus
 from .GUI.MainMenu import MainMenu
 from .utils import IS_RASPBERRY_PI
-
+from time import sleep
+from .ExecutionHandler import ExecutionHandler
+from .Process import *
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -75,3 +77,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def goToMenu(self, menu):
         logger.info("Switched to screen " + str(menu))
         self.centralWidget().setCurrentWidget(menu)
+        handler = ExecutionHandler()
+        handler.startProcess(ExampleProcess())
+        sleep(3)
+        handler.stopProcess()

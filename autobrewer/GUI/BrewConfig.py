@@ -84,7 +84,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         )
         self.QBNewButton.clicked.connect(self.enterNewRecipe)
         self.QBComboBox.currentTextChanged.connect(self.changeSelectedRecipe)
-        logger.debug("Brew config connections made")
+
 
     ## Defining button functions
     def IncreaseMashTemp(self):
