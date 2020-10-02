@@ -54,7 +54,7 @@ class DeviceHandler(QObject, Pins):
             "BKDrain": {"open": [4, 8, 9], "close": []},
         }
         self.pumpvalvepathmap = (
-            ("HLTtoMT", "MTRecirc"),
+            ("FillHLT", "HLTtoMT", "MTRecirc"),
             ("MTtoBK", "BKWhirl", "BKDrain"),
         )
 
