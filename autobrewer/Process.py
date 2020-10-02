@@ -4,6 +4,7 @@ from loguru import logger
 
 class Process(QtCore.QObject):
     stepstarted = QtCore.Signal(str)
+    processstarted = QtCore.Signal(int)
     processfinished = QtCore.Signal()
 
     def __init__(self):

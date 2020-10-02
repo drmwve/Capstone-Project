@@ -7,6 +7,7 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
 
     nextBrewStepSignal = QtCore.Signal()
     abortBrewSignal = QtCore.Signal()
+    manualOverrideSignal = QtCore.Signal()
 
     def __init__(self):
         super().__init__()
@@ -39,9 +40,11 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         if self.ManualBrewButton.isChecked():
             logger.info("User requested manual control over brewing cycle.")
             self.NextBrewStepButton.setEnabled(True)
+            self.manualOverrideSignal.emit()
         else:
             logger.info("User requested to disable manual control over brewing cycle.")
             self.NextBrewStepButton.setEnabled(False)
+            self.manualOverrideSignal.emit()
 
     def resetBrewScreen(self):
         ## This will reset the screen to the default layout.
@@ -53,4 +56,3 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
     def nextBrewingStep(self):
         logger.info("User requested to advance brewing to next step.")
         self.nextBrewStepSignal.emit()
-        pass

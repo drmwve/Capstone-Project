@@ -9,8 +9,6 @@ from .GUI.CleaningScreen import CleaningScreen
 from .GUI.DeviceStatus import DeviceStatus
 from .GUI.MainMenu import MainMenu
 from .utils import IS_RASPBERRY_PI
-from time import sleep
-from .ExecutionHandler import ExecutionHandler
 from .Process import *
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -44,7 +42,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # create instances of the screens and add them to the stacked layout here
 
     def connections(self):
-        # see "goToMenu" function below. the 'lambda: ' statement is required for arcane reasons when calling a function that takes arguments
+        # see "goToMenu" function below. the partial statement is required for arcane reasons when calling a function that takes arguments
         # in a signal-slot connection like this
         self.menus["brewConfig"].BackButton.clicked.connect(
             partial(self.goToMenu, self.menus["mainMenu"])
