@@ -36,7 +36,7 @@ class Step(QObject):
         self.stop()
 
     def resume(self):
-        self.execute()
+        self.run()
 
 
 class ExampleStep(Step):
@@ -44,7 +44,7 @@ class ExampleStep(Step):
     def __init__(self):
         super(ExampleStep, self).__init__()
         self.startingmessage = "Example step"
-        self.estimatedtime = 0
+        self.estimatedtime = 6
         self.index = 0
         self.runtimer = QtCore.QTimer()
         self.runtimer.timeout.connect(self.loop)
@@ -52,10 +52,9 @@ class ExampleStep(Step):
     def run(self):
         logger.debug(f'Running step {self}')
         self.runtimer.start(1000)
-        logger.debug(f'Started timer: {self.runtimer.isActive()}')
 
     def loop(self):
-        logger.debug("Running loop")
+        logger.debug(f'Example step running loop index {self.index}')
         self.index += 1
         if self.index > 6:
             self.stepcomplete.emit()
@@ -65,6 +64,8 @@ class ExampleStep(Step):
         self.runtimer.stop()
         self.index = 0
 
+    def pause(self):
+        self.runtimer.stop()
 
 
 class FillHTL(Step):
