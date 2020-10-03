@@ -1,6 +1,4 @@
-from loguru import logger
 from PySide2.QtWidgets import QMessageBox
-
 from .Process import *
 
 
@@ -8,7 +6,7 @@ class ExecutionHandler:
     # I wrap the thread handling up in a neat package. The UI code creates a process and passes it to me with my startProcess(process)
     # function and I create a new thread which this process is executed in.
 
-    stepstarted = QtCore.Signal(str)
+    stepstarted = Signal(str)
     processRunning = False
 
     # Starts a new process on a new thread. If a thread is already running, show an error.
@@ -21,7 +19,7 @@ class ExecutionHandler:
                 + str(cls.process)
             )
             cls.processRunning = True
-            cls.process.stepstarted.connect(cls.stepstarted)
+            #cls.process.stepstarted.connect(cls.stepstarted)
             cls.process.processfinished.connect(cls.finishedProcess)
             cls.process.start()
         else:

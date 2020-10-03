@@ -51,7 +51,7 @@ class Process(QtCore.QObject):
         self.currentindex = index
         try:
             self.currentstep = self.processSteps[self.currentindex]
-            logger.trace(f'Process set to step {self.currentstep}')
+            logger.debug(f'Process set to step {self.currentstep}')
             self._connectStep(self.currentstep)
 
         except IndexError:
@@ -87,16 +87,19 @@ class BrewProcess(Process):
         super().__init__()
         self.brewRecipe = brewrecipe
         # emit signal which sets target mash temp
-        self.processSteps = ["brewing process step functions"]
+        self.processSteps = [ExampleStep(), ExampleStep()]
+        self.initializeSteps()
 
 
 class CleaningProcess(Process):
     def __init__(self):
         super().__init__()
         self.processSteps = ["cleaning process step functions"]
+        self.initializeSteps()
 
 
 class FlushSystem(Process):
     def __init__(self):
         super(FlushSystem, self).__init__()
         self.processSteps = ["steps to flush system"]
+        self.initializeSteps()

@@ -27,7 +27,7 @@ def main():
 
 
 def connections(mainscreen: MainWindow):
-    mainscreen.menus["brewConfig"].startBrewSignal.connect(partial(ExecutionHandler.startBrewProcess, mainscreen.menus["brewConfig"].selectedBrewRecipe))
+    mainscreen.menus["brewConfig"].startBrewSignal.connect(ExecutionHandler.startBrewProcess)
 
     mainscreen.menus["brewStatus"].abortBrewSignal.connect(ExecutionHandler.stopProcess)
     mainscreen.menus["brewStatus"].nextBrewStepSignal.connect(ExecutionHandler.advanceStep)
