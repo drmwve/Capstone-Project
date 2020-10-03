@@ -77,12 +77,7 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
         self.Pump2Button.clicked.connect(lambda: self.togglePump(1))
 
     def adjustUI(self):
-        self.BallValve1Button.setMaximumSize(QtCore.QSize(1000, 85))
-        self.BallValve1Button.setMinimumSize(QtCore.QSize(0, 55))
-        self.BallValve2Button.setMaximumSize(QtCore.QSize(1000, 85))
-        self.BallValve3Button.setMaximumSize(QtCore.QSize(1000, 85))
-        self.BallValve4Button.setMaximumSize(QtCore.QSize(1000, 85))
-        self.BallValve5Button.setMaximumSize(QtCore.QSize(1000, 85))
+        pass
 
     ## Defining button functions
     def toggleBallValve(self, index):

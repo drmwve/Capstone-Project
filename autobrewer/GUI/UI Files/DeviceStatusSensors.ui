@@ -107,7 +107,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Temperature Sensor:3</string>
+           <string>Temperature Sensor: 3</string>
           </property>
          </widget>
         </item>
@@ -183,7 +183,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>40</width>
-       <height>20</height>
+       <height>5</height>
       </size>
      </property>
     </spacer>
@@ -322,6 +322,19 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <spacer name="horizontalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>250</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item>
     <widget class="QPushButton" name="GoToControlStatusButton">
