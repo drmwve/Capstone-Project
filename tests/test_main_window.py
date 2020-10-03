@@ -29,7 +29,7 @@ def test_connections(mainwindow, qtbot):
     mainwindow.centralWidget().setCurrentWidget(mainwindow.menus["test"])
 
     qtbot.mouseClick(
-        mainwindow.menus["deviceStatus"].ReturnToMenuButton, QtCore.Qt.LeftButton
+        mainwindow.menus["deviceStatusControls"].ReturnToMenuButton, QtCore.Qt.LeftButton
     )
     assert mainwindow.centralWidget().currentWidget() == mainwindow.menus["mainMenu"]
     mainwindow.centralWidget().setCurrentWidget(mainwindow.menus["test"])
@@ -64,6 +64,6 @@ def test_connections(mainwindow, qtbot):
         mainwindow.menus["mainMenu"].EnterDeviceStatusScreen, QtCore.Qt.LeftButton
     )
     assert (
-        mainwindow.centralWidget().currentWidget() == mainwindow.menus["deviceStatus"]
+        mainwindow.centralWidget().currentWidget() == mainwindow.menus["deviceStatusControls"]
     )
     mainwindow.centralWidget().setCurrentWidget(mainwindow.menus["test"])
