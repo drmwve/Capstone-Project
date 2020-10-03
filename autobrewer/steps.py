@@ -24,15 +24,19 @@ class Step(QObject):
         self.running = True
         self.run()
 
-    """Overload and implement in inherited classes"""
+    #Overload and implement in inherited classes:
 
     def run(self):
         pass
 
-    """Overload and implement in inherited classes"""
-
     def stop(self):
         pass
+
+    def pause(self):
+        self.stop()
+
+    def resume(self):
+        self.execute()
 
 
 class ExampleStep(Step):
@@ -58,6 +62,7 @@ class ExampleStep(Step):
     def stop(self):
         self.runtimer.stop()
         self.index = 0
+
 
 
 class FillHTL(Step):
