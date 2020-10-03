@@ -37,7 +37,7 @@ class ExampleStep(Step):
     def run(self):
         logger.debug(f'Running step {self}')
         self.index = 0
-        self.runtimer.start(100)
+        self.runtimer.start(1000)
         logger.debug(f'Started timer: {self.runtimer.isActive()}')
 
     def loop(self):

@@ -4,7 +4,7 @@ from functools import partial
 from loguru import logger
 from PySide2.QtWidgets import QApplication
 
-from .ExecutionHandler import ExecutionHandler
+from .ExecutionHandler import executionhandler
 from .Process import *
 from .GUI.Styler import WindowStyler
 from .MainWindow import MainWindow
@@ -27,15 +27,15 @@ def main():
 
 
 def connections(mainscreen: MainWindow):
-    mainscreen.menus["brewConfig"].startBrewSignal.connect(ExecutionHandler.startBrewProcess)
+    mainscreen.menus["brewConfig"].startBrewSignal.connect(executionhandler.startBrewProcess)
 
-    mainscreen.menus["brewStatus"].abortBrewSignal.connect(ExecutionHandler.stopProcess)
-    mainscreen.menus["brewStatus"].nextBrewStepSignal.connect(ExecutionHandler.advanceStep)
-    mainscreen.menus["brewStatus"].manualOverrideSignal.connect(ExecutionHandler.pauseProcess)
+    mainscreen.menus["brewStatus"].abortBrewSignal.connect(executionhandler.stopProcess)
+    mainscreen.menus["brewStatus"].nextBrewStepSignal.connect(executionhandler.advanceStep)
+    mainscreen.menus["brewStatus"].manualOverrideSignal.connect(executionhandler.pauseProcess)
 
-    mainscreen.menus["cleaningScreen"].startCleaningSignal.connect(ExecutionHandler.startCleaningProcess)
-    mainscreen.menus["cleaningScreen"].abortCleaningSignal.connect(ExecutionHandler.stopProcess)
-    mainscreen.menus["cleaningScreen"].nextCleaningStepSignal.connect(ExecutionHandler.advanceStep)
+    mainscreen.menus["cleaningScreen"].startCleaningSignal.connect(executionhandler.startCleaningProcess)
+    mainscreen.menus["cleaningScreen"].abortCleaningSignal.connect(executionhandler.stopProcess)
+    mainscreen.menus["cleaningScreen"].nextCleaningStepSignal.connect(executionhandler.advanceStep)
 
 
 
