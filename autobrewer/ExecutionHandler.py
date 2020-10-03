@@ -8,6 +8,7 @@ class ExecutionHandler(QtCore.QObject):
 
     stepstarted = Signal(str)
     processRunning = False
+    processPaused = False
     process = Process()
 
     # Starts a new process on a new thread. If a thread is already running, show an error.
@@ -26,9 +27,6 @@ class ExecutionHandler(QtCore.QObject):
             error = QMessageBox()
             error.setText("A process is already running.")
             error.exec()
-
-    def nextstep(self):
-        logger.info('Started next step')
 
     def startBrewProcess(self, brewRecipe):
         self.startProcess(BrewProcess(brewRecipe))
@@ -49,10 +47,22 @@ class ExecutionHandler(QtCore.QObject):
             self.process = Process()
             logger.info(f'Stopped process {self.process}')
 
+    def assumemanualcontrol(self):
+        logger.debug("Execution handler caught manual control request")
+        if self.processPaused:
+            self.resumeProcess()
+        else:
+            self.pauseProcess()
+
     def pauseProcess(self):
         if self.processRunning:
-            self.process.stop()
+            self.process.pause()
+            self.processPaused = True
             logger.info(f'Paused process {self.process}')
+
+    def resumeProcess(self):
+        self.process.resume()
+        self.processPaused = False
 
     def advanceStep(self):
         self.process.incrementStep()

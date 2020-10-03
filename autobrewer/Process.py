@@ -12,10 +12,13 @@ class Process(QtCore.QObject):
         logger.debug(f'Process created on thread {self.thread}')
         self.processSteps = [Step()]
         self.currentindex = 0
+        self.totalprocesstime = 0
         self.running = False
 
     def initializeSteps(self):
         self.currentstep = self.processSteps[self.currentindex]
+        for step in self.processSteps:
+            self.totalprocesstime += step.estimatedtime
 
     def start(self):
         logger.debug(f'Process {self} starting')
@@ -28,6 +31,14 @@ class Process(QtCore.QObject):
         self.running = False
         self._disconnectStep(self.currentstep)
         self.currentstep.stop()
+
+    def pause(self):
+        logger.debug(f'Process {self} pausing')
+        self.currentstep.pause()
+
+    def resume(self):
+        logger.debug(f'Process {self} resuming')
+        self.currentstep.resume()
 
     def executeCurrentStep(self):
         self.currentstep.execute()
@@ -94,12 +105,12 @@ class BrewProcess(Process):
 class CleaningProcess(Process):
     def __init__(self):
         super().__init__()
-        self.processSteps = ["cleaning process step functions"]
+        self.processSteps = [ExampleStep(), ExampleStep()]
         self.initializeSteps()
 
 
 class FlushSystem(Process):
     def __init__(self):
         super(FlushSystem, self).__init__()
-        self.processSteps = ["steps to flush system"]
+        self.processSteps = [ExampleStep(), ExampleStep()]
         self.initializeSteps()

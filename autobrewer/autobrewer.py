@@ -31,7 +31,7 @@ def connections(mainscreen: MainWindow):
 
     mainscreen.menus["brewStatus"].abortBrewSignal.connect(executionhandler.stopProcess)
     mainscreen.menus["brewStatus"].nextBrewStepSignal.connect(executionhandler.advanceStep)
-    mainscreen.menus["brewStatus"].manualOverrideSignal.connect(executionhandler.pauseProcess)
+    mainscreen.menus["brewStatus"].manualOverrideSignal.connect(executionhandler.assumemanualcontrol)
 
     mainscreen.menus["cleaningScreen"].startCleaningSignal.connect(executionhandler.startCleaningProcess)
     mainscreen.menus["cleaningScreen"].abortCleaningSignal.connect(executionhandler.stopProcess)
