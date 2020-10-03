@@ -24,27 +24,33 @@ class Step(QObject):
         self.running = True
         self.run()
 
-    """Overload and implement in inherited classes"""
+    #Overload and implement in inherited classes:
 
     def run(self):
         pass
 
-    """Overload and implement in inherited classes"""
-
     def stop(self):
         pass
+
+    def pause(self):
+        self.stop()
+
+    def resume(self):
+        self.execute()
 
 
 class ExampleStep(Step):
 
     def __init__(self):
         super(ExampleStep, self).__init__()
+        self.startingmessage = "Example step"
+        self.estimatedtime = 0
+        self.index = 0
         self.runtimer = QtCore.QTimer()
         self.runtimer.timeout.connect(self.loop)
 
     def run(self):
         logger.debug(f'Running step {self}')
-        self.index = 0
         self.runtimer.start(100)
         logger.debug(f'Started timer: {self.runtimer.isActive()}')
 
@@ -53,11 +59,12 @@ class ExampleStep(Step):
         self.index += 1
         if self.index > 6:
             self.stepcomplete.emit()
-            self.runtimer.stop()
+            self.stop()
 
     def stop(self):
         self.runtimer.stop()
         self.index = 0
+
 
 
 class FillHTL(Step):
@@ -83,7 +90,7 @@ class HLTtoMT(Step):
         time.sleep(1)
         self.devicehandler.enablePump(0)
         #    while True:
-        #       if devicehandler.levelsensor(1) == 4 : break
+        #       if devicehandler.hardwareState.volume[0] == 4 : break
         self.devicehandler.disablePump(0)
 
 
