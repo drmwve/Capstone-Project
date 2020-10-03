@@ -2,7 +2,6 @@ import pytest
 from PySide2 import QtCore, QtWidgets
 
 from autobrewer.MainWindow import MainWindow
-from autobrewer.utils import IS_RASPBERRY_PI
 
 
 @pytest.fixture
