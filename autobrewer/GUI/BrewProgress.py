@@ -12,19 +12,22 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.connections()
         self.adjustUI()
+        self.connections()
+        
 
     def connections(self):
         # add any connections that are internal to the functioning of this widget only
         self.AbortBrewButton.clicked.connect(self.abortBrew)
         self.ManualBrewButton.clicked.connect(self.manualBrewing)
         self.NextBrewStepButton.clicked.connect(self.nextBrewingStep)
+        self.delayTimer.timeout.connect(self.delayManualControl)
 
     def adjustUI(self):
         self.ManualBrewButton.setCheckable(True)
         self.ManualBrewButton.setText("Manual Control")
         self.NextBrewStepButton.setEnabled(False)
+        self.delayTimer=QtCore.QTimer()
 
     def abortBrew(self):
         ## This function should stop the machine, return it to a neutral state with no liquid.
@@ -34,7 +37,6 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.AbortBrewButton.setEnabled(False)
         logger.info("User requested to abort brew.")
         self.abortBrewSignal.emit()
-
 
     def manualBrewing(self):
         if self.ManualBrewButton.isChecked():
@@ -51,8 +53,14 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.ManualBrewButton.setText("Pause")
         self.ManualBrewButton.setChecked(False)
         self.ManualBrewButton.setEnabled(True)
-        self.ManualBrewButton.setEnabled(True)
 
     def nextBrewingStep(self):
         logger.info("User requested to advance brewing to next step.")
         self.nextBrewStepSignal.emit()
+        self.ManualBrewButton.setEnabled(False)
+        self.NextBrewStepButton.setEnabled(False)
+        self.delayTimer.start(2000)
+
+    def delayManualControl(self):
+        self.ManualBrewButton.setEnabled(True)
+        self.NextBrewStepButton.setEnabled(True)
