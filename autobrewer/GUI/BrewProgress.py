@@ -59,8 +59,10 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.nextBrewStepSignal.emit()
         self.ManualBrewButton.setEnabled(False)
         self.NextBrewStepButton.setEnabled(False)
+        self.AbortBrewButton.setEnabled(False)
         self.delayTimer.start(2000)
 
     def delayManualControl(self):
         self.ManualBrewButton.setEnabled(True)
         self.NextBrewStepButton.setEnabled(True)
+        self.AbortBrewButton.setEnabled(True)
