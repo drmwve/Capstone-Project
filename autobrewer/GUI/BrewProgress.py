@@ -1,6 +1,8 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
 from .BrewProgressGUI import Ui_BrewStatus
+from ..ExecutionHandler import *
+
 
 
 class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
@@ -18,7 +20,7 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
 
     def connections(self):
         # add any connections that are internal to the functioning of this widget only
-        self.AbortBrewButton.clicked.connect(self.abortBrew)
+        self.AbortBrewButton.clicked.connect(self.testETA)
         self.ManualBrewButton.clicked.connect(self.manualBrewing)
         self.NextBrewStepButton.clicked.connect(self.nextBrewingStep)
         self.delayTimer.timeout.connect(self.delayManualControl)
@@ -29,6 +31,9 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.NextBrewStepButton.setEnabled(False)
         self.delayTimer=QtCore.QTimer()
 
+    def testETA(self):
+        print(ExecutionHandler.process.currentstep.estimatedtime)
+        
     def abortBrew(self):
         ## This function should stop the machine, return it to a neutral state with no liquid.
         ## Then take the user back to the main menu when finished.
@@ -45,8 +50,9 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
             self.manualOverrideSignal.emit()
         else:
             logger.info("User requested to disable manual control over brewing cycle.")
-            self.NextBrewStepButton.setEnabled(False)
+            
             self.manualOverrideSignal.emit()
+            self.NextBrewStepButton.setEnabled(False)
 
     def resetBrewScreen(self):
         ## This will reset the screen to the default layout.
@@ -66,3 +72,4 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.ManualBrewButton.setEnabled(True)
         self.NextBrewStepButton.setEnabled(True)
         self.AbortBrewButton.setEnabled(True)
+        self.delayTimer.stop()
