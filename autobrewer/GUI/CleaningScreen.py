@@ -26,10 +26,12 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
         self.actionTimer.timeout.connect(self.resetCleanScreen)
         self.updateTimer.timeout.connect(self.updateETA)
         self.NextCleanStepButton.clicked.connect(self.nextCleaningStep)
+        self.delayTimer.timeout.connect(self.delayManualControl)
 
     def adjustUI(self):
         self.updateTimer=QtCore.QTimer()
         self.actionTimer=QtCore.QTimer()
+        self.delayTimer=QtCore.QTimer()
         self.ManualCleanButton.setCheckable(True)
         self.ManualCleanButton.setText("Manual Control")
         self.NextCleanStepButton.setEnabled(False)
@@ -96,4 +98,14 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
 
     def nextCleaningStep(self):
         logger.info("User requested to advance cleaning to next step.")
+        self.ManualCleanButton.setEnabled(False)
+        self.AbortCleanButton.setEnabled(False)
+        self.NextCleanStepButton.setEnabled(False)
         self.nextCleaningStepSignal.emit()
+        self.delayTimer.start(2000)
+
+    def delayManualControl(self):
+        self.ManualCleanButton.setEnabled(True)
+        self.AbortCleanButton.setEnabled(True)
+        self.NextCleanStepButton.setEnabled(True)
+        self.delayTimer.stop()
