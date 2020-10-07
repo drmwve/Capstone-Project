@@ -14,6 +14,7 @@ class Process(QtCore.QObject):
         self.currentindex = 0
         self.totalprocesstime = 0
         self.running = False
+        self.currentstep = Step()
 
     def initializeSteps(self):
         self.currentstep = self.processSteps[self.currentindex]
