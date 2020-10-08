@@ -42,10 +42,5 @@ def connections(mainscreen: MainWindow):
     executionhandler.processresumed.connect(mainscreen.menus["processStatus"].updateTimer.start)
     executionhandler.processcomplete.connect(mainscreen.menus["processStatus"].processComplete)
 
-
     mainscreen.menus["cleaningScreen"].startCleaningSignal.connect(executionhandler.startCleaningProcess)
-    mainscreen.menus["cleaningScreen"].abortCleaningSignal.connect(executionhandler.stopProcess)
-    mainscreen.menus["cleaningScreen"].nextCleaningStepSignal.connect(executionhandler.advanceStep)
-    mainscreen.menus["cleaningScreen"].manualOverrideSignal.connect(executionhandler.assumemanualcontrol)
-
-
+    mainscreen.menus["cleaningScreen"].flushSystemSignal.connect(executionhandler.startFlushProcess)
