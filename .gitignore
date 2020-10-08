@@ -12,3 +12,5 @@ autobrewer/GUI/UI Files/DeviceStatusControlsGUI.py
 autobrewer/GUI/UI Files/DeviceStatusSensorsGUI.py
 autobrewer/GUI/UI Files/Generate PY Files.bat
 autobrewer/GUI/UI Files/MainMenuGUI.py
+/$
+/Pipfile.lock

@@ -9,6 +9,7 @@ class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
     startCleaningSignal = QtCore.Signal()
     abortCleaningSignal = QtCore.Signal()
     nextCleaningStepSignal = QtCore.Signal()
+    manualOverrideSignal = QtCore.Signal()
 
     def __init__(self):
         super().__init__()

@@ -1,7 +1,7 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
 from .BrewProgressGUI import Ui_BrewStatus
-from ..ExecutionHandler import *
+from ..ExecutionHandler import executionhandler
 
 
 
@@ -32,7 +32,8 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.delayTimer=QtCore.QTimer()
 
     def testETA(self):
-        print(ExecutionHandler.process.currentstep.estimatedtime)
+        logger.debug(executionhandler.process.totalprocesstime)
+        logger.debug(executionhandler.process)
         
     def abortBrew(self):
         ## This function should stop the machine, return it to a neutral state with no liquid.
