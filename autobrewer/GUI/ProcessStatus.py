@@ -1,11 +1,11 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
-from .BrewProgressGUI import Ui_BrewStatus
+from .ProcessStatusGUI import Ui_ProcessStatus
 from ..ExecutionHandler import executionhandler
 from datetime import timedelta
 
 
-class ProcessStatus(QtWidgets.QWidget, Ui_BrewStatus):
+class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
 
     nextStepRequest = QtCore.Signal()
     stopProcessRequest = QtCore.Signal()
@@ -21,48 +21,47 @@ class ProcessStatus(QtWidgets.QWidget, Ui_BrewStatus):
 
     def connections(self):
         # add any connections that are internal to the functioning of this widget only
-        self.AbortBrewButton.clicked.connect(self.abortBrew)
-        self.ManualBrewButton.clicked.connect(self.manualOverride)
-        self.NextBrewStepButton.clicked.connect(self.nextStep)
+        self.AbortProcessButton.clicked.connect(self.abortProcess)
+        self.ManualControlButton.clicked.connect(self.manualOverride)
+        self.NextStepButton.clicked.connect(self.nextStep)
         self.delayTimer.timeout.connect(self.delayManualControl)
         self.updateTimer.timeout.connect(self.updateETA)
         self.abortTimer.timeout.connect(self.resetProgressScreen)
 
     def adjustUI(self):
-        self.ManualBrewButton.setCheckable(True)
-        self.ManualBrewButton.setText("Manual Control")
-        self.NextBrewStepButton.setEnabled(False)
+        self.ManualControlButton.setCheckable(True)
+        self.NextStepButton.setEnabled(False)
         self.abortTimer=QtCore.QTimer()
         self.delayTimer=QtCore.QTimer()
         self.updateTimer=QtCore.QTimer()
         
-    def abortBrew(self):
+    def abortProcess(self):
         ## This function should stop the machine, return it to a neutral state with no liquid.
         ## Then take the user back to the main menu when finished.
         self.CurrentTaskLabel.setText("Aborting Brew Cycle . . .")
-        self.ManualBrewButton.setEnabled(False)
-        self.AbortBrewButton.setEnabled(False)
-        logger.info("User requested to abort brew.")
+        self.ManualControlButton.setEnabled(False)
+        self.AbortProcessButton.setEnabled(False)
+        logger.info("User requested to abort process.")
         self.stopProcessRequest.emit()
         self.abortTimer.start(self.remainingProcessTime)
 
     def manualOverride(self):
-        if self.ManualBrewButton.isChecked():
+        if self.ManualControlButton.isChecked():
             logger.info("User requested manual control over process.")
-            self.NextBrewStepButton.setEnabled(True)
+            self.NextStepButton.setEnabled(True)
             self.manualOverrideRequest.emit()
         else:
             logger.info("User requested to disable manual control over process.")
             
             self.manualOverrideRequest.emit()
-            self.NextBrewStepButton.setEnabled(False)
+            self.NextStepButton.setEnabled(False)
 
     def resetProgressScreen(self):
         ## This will reset the screen to the default layout.
-        self.ManualBrewButton.setChecked(False)
-        self.ManualBrewButton.setEnabled(True)
-        self.NextBrewStepButton.setEnabled(False)
-        self.AbortBrewButton.setEnabled(True)
+        self.ManualControlButton.setChecked(False)
+        self.ManualControlButton.setEnabled(True)
+        self.NextStepButton.setEnabled(False)
+        self.AbortProcessButton.setEnabled(True)
         self.updateTimer.stop()
         self.abortTimer.stop()
         self.CurrentTaskProgressBar.setValue(0)
@@ -75,15 +74,15 @@ class ProcessStatus(QtWidgets.QWidget, Ui_BrewStatus):
     def nextStep(self):
         logger.info("User requested to advance process to next step.")
         self.nextStepRequest.emit()
-        self.ManualBrewButton.setEnabled(False)
-        self.NextBrewStepButton.setEnabled(False)
-        self.AbortBrewButton.setEnabled(False)
+        self.ManualControlButton.setEnabled(False)
+        self.NextStepButton.setEnabled(False)
+        self.AbortProcessButton.setEnabled(False)
         self.delayTimer.start(2000)
 
     def delayManualControl(self):
-        self.ManualBrewButton.setEnabled(True)
-        self.NextBrewStepButton.setEnabled(True)
-        self.AbortBrewButton.setEnabled(True)
+        self.ManualControlButton.setEnabled(True)
+        self.NextStepButton.setEnabled(True)
+        self.AbortProcessButton.setEnabled(True)
         self.delayTimer.stop()
 
     def startUpdateTimer(self, totalprocesstime):
