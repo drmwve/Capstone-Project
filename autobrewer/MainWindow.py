@@ -58,7 +58,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menus["cleaningScreen"].ReturnToMenuButton.clicked.connect(
             partial(self.goToMenu, self.menus["mainMenu"])
         )
-
+        self.menus["cleaningScreen"].StartCleaningButton.clicked.connect(
+            partial(self.goToMenu, self.menus["processStatus"])
+        )
+        self.menus["cleaningScreen"].FlushSystemButton.clicked.connect(
+            partial(self.goToMenu, self.menus["processStatus"])
+        )
         self.menus["brewConfig"].StartBrewButton.clicked.connect(
             partial(self.goToMenu, self.menus["processStatus"])
         )
