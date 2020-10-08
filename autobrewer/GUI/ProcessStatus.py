@@ -98,15 +98,17 @@ class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
         self.CurrentTaskProgressBar.setValue(0)
         self.CurrentTaskLabel.setText("Process Complete")
         self.ETALabel.setText("")
+        self.remainingProcessTime = 0
 
     def updateLabel(self, label: str):
         self.CurrentTaskLabel.setText(label)
 
     def updateETA(self):
-        self.remainingProcessTime -= 1
-        self.ETALabel.setText(
-            "ETA: "
-            + str(timedelta(seconds=int(self.remainingProcessTime)))
-        )
-        self.CurrentTaskProgressBar.setValue(-self.remainingProcessTime)
-        logger.debug("UPDATED ETA")
+        if self.remainingProcessTime > 0:
+            self.remainingProcessTime -= 1
+            self.ETALabel.setText(
+                "ETA: "
+                + str(timedelta(seconds=int(self.remainingProcessTime)))
+            )
+            self.CurrentTaskProgressBar.setValue(-self.remainingProcessTime)
+            logger.debug("UPDATED ETA")
