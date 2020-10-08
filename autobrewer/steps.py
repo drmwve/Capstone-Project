@@ -5,6 +5,7 @@ from PySide2.QtCore import Signal, QObject
 from PySide2 import QtCore
 from loguru import logger
 import time
+import random
 
 
 class Step(QObject):
@@ -43,20 +44,22 @@ class ExampleStep(Step):
 
     def __init__(self):
         super(ExampleStep, self).__init__()
-        self.startingmessage = "Example step"
-        self.estimatedtime = 6
+        self.max = random.randint(2,10)
+        self.startingmessage = f'Example counting to {self.max}'
+        self.estimatedtime = self.max + 1
         self.index = 0
         self.runtimer = QtCore.QTimer()
         self.runtimer.timeout.connect(self.loop)
 
     def run(self):
         logger.debug(f'Running step {self}')
+        logger.debug(self.startingmessage)
         self.runtimer.start(1000)
 
     def loop(self):
         logger.debug(f'Example step running loop index {self.index}')
         self.index += 1
-        if self.index > 6:
+        if self.index > self.max:
             self.stepcomplete.emit()
             self.stop()
 

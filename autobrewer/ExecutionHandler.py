@@ -11,6 +11,7 @@ class ExecutionHandler(QtCore.QObject):
     processpaused = Signal()
     processstopped = Signal()
     processresumed = Signal()
+    processcomplete = Signal()
     processRunning = False
     processPaused = False
     process = Process()
@@ -50,7 +51,6 @@ class ExecutionHandler(QtCore.QObject):
             self.process.stop()
             self.processstopped.emit()
             self.processRunning = False
-            self.process = Process()
             logger.info(f'Stopped process {self.process}')
 
     def assumemanualcontrol(self):
@@ -80,6 +80,7 @@ class ExecutionHandler(QtCore.QObject):
 
     def finishedProcess(self):
         self.processRunning = False
+        self.processcomplete.emit()
         logger.debug("Execution handler wrapped up process")
 
 

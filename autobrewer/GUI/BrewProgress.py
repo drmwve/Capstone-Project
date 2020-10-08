@@ -16,7 +16,6 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.setupUi(self)
         self.adjustUI()
         self.connections()
-
         
 
     def connections(self):
@@ -67,6 +66,7 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.NextBrewStepButton.setEnabled(False)
         self.AbortBrewButton.setEnabled(True)
         self.CurrentTaskLabel.setText("All done!")
+        self.updateTimer.stop()
         logger.debug("Brew Progress screen has been reset")
 
 
@@ -85,17 +85,26 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.delayTimer.stop()
 
     def startUpdateTimer(self, totalprocesstime):
-        self.totalProcessTime = totalprocesstime + 2 ## +2 is for calibration, time is usually off by a couple of seconds.
+        self.totalProcessTime = totalprocesstime ## +2 is for calibration, time is usually off by a couple of seconds.
+        self.remainingProcessTime = self.totalProcessTime
         self.CurrentTaskProgressBar.setRange(-self.totalProcessTime, 0)
         self.updateTimer.start(1000)
 
+    def processComplete(self):
+        logger.debug("Caught process complete")
+        self.updateTimer.stop()
+        self.CurrentTaskProgressBar.setValue(0)
+        self.CurrentTaskLabel.setText("Process Complete")
+        self.ETALabel.setText("")
+
+    def updateLabel(self, label: str):
+        self.CurrentTaskLabel.setText(label)
+
     def updateETA(self):
-        if executionhandler.processRunning:
-            self.totalProcessTime -= 1
-            self.ETALabel.setText(
-                "ETA: "
-                + str(timedelta(seconds=int(self.totalProcessTime)))
-            )
-            self.CurrentTaskLabel.setText(str(executionhandler.process.currentstep))
-            self.CurrentTaskProgressBar.setValue(-self.totalProcessTime)
-            logger.debug("UPDATED ETA")
+        self.remainingProcessTime -= 1
+        self.ETALabel.setText(
+            "ETA: "
+            + str(timedelta(seconds=int(self.remainingProcessTime)))
+        )
+        self.CurrentTaskProgressBar.setValue(-self.remainingProcessTime)
+        logger.debug("UPDATED ETA")

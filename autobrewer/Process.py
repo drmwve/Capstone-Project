@@ -9,7 +9,6 @@ class Process(QtCore.QObject):
 
     def __init__(self):
         super(Process, self).__init__()
-        logger.debug(f'Process created on thread {self.thread}')
         self.processSteps = [Step()]
         self.currentindex = 0
         self.totalprocesstime = 0
@@ -22,7 +21,7 @@ class Process(QtCore.QObject):
             self.totalprocesstime += step.estimatedtime
 
     def start(self):
-        logger.debug(f'Process {self} starting')
+        logger.debug(f'Process {self} starting with completion time {self.totalprocesstime}')
         self.running = True
         self._connectStep(self.currentstep)
         self.executeCurrentStep()
