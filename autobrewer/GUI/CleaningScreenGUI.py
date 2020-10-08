@@ -1,102 +1,85 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'CleaningScreen.ui'
-#
-# Created by: PyQt5 UI code generator 5.13.2
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'CleaningScreen.ui'
+##
+## Created by: Qt User Interface Compiler version 5.15.1
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
 
 
 class Ui_CleaningScreen(object):
     def setupUi(self, CleaningScreen):
-        CleaningScreen.setObjectName("CleaningScreen")
+        if not CleaningScreen.objectName():
+            CleaningScreen.setObjectName(u"CleaningScreen")
         CleaningScreen.resize(1024, 600)
-        CleaningScreen.setMinimumSize(QtCore.QSize(1024, 0))
-        CleaningScreen.setMaximumSize(QtCore.QSize(1024, 600))
-        self.CleanScreenLayout = QtWidgets.QGridLayout(CleaningScreen)
-        self.CleanScreenLayout.setObjectName("CleanScreenLayout")
-        self.CleaningStatusLayout = QtWidgets.QGridLayout()
-        self.CleaningStatusLayout.setObjectName("CleaningStatusLayout")
-        self.CurrentCleanTaskLabel = QtWidgets.QLabel(CleaningScreen)
-        self.CurrentCleanTaskLabel.setMaximumSize(QtCore.QSize(800, 40))
-        font = QtGui.QFont()
+        CleaningScreen.setMinimumSize(QSize(1024, 0))
+        CleaningScreen.setMaximumSize(QSize(1024, 600))
+        self.CleanScreenLayout = QGridLayout(CleaningScreen)
+        self.CleanScreenLayout.setObjectName(u"CleanScreenLayout")
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout.addItem(self.horizontalSpacer)
+
+        self.FlushSystemButton = QPushButton(CleaningScreen)
+        self.FlushSystemButton.setObjectName(u"FlushSystemButton")
+        self.FlushSystemButton.setMinimumSize(QSize(200, 0))
+        self.FlushSystemButton.setMaximumSize(QSize(200, 60))
+        font = QFont()
         font.setPointSize(12)
-        self.CurrentCleanTaskLabel.setFont(font)
-        self.CurrentCleanTaskLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.CurrentCleanTaskLabel.setObjectName("CurrentCleanTaskLabel")
-        self.CleaningStatusLayout.addWidget(self.CurrentCleanTaskLabel, 0, 0, 1, 1)
-        self.CleanETALabel = QtWidgets.QLabel(CleaningScreen)
-        self.CleanETALabel.setMaximumSize(QtCore.QSize(800, 20))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.CleanETALabel.setFont(font)
-        self.CleanETALabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.CleanETALabel.setObjectName("CleanETALabel")
-        self.CleaningStatusLayout.addWidget(self.CleanETALabel, 2, 0, 1, 1)
-        self.CurrentCleanTaskProgressBar = QtWidgets.QProgressBar(CleaningScreen)
-        self.CurrentCleanTaskProgressBar.setMaximumSize(QtCore.QSize(800, 16777215))
-        self.CurrentCleanTaskProgressBar.setProperty("value", 24)
-        self.CurrentCleanTaskProgressBar.setObjectName("CurrentCleanTaskProgressBar")
-        self.CleaningStatusLayout.addWidget(
-            self.CurrentCleanTaskProgressBar, 1, 0, 1, 1
-        )
-        self.CleanScreenLayout.addLayout(self.CleaningStatusLayout, 0, 0, 1, 1)
-        self.StartCleaningButtonLayout = QtWidgets.QHBoxLayout()
-        self.StartCleaningButtonLayout.setObjectName("StartCleaningButtonLayout")
-        self.StartCleaningButton = QtWidgets.QPushButton(CleaningScreen)
-        self.StartCleaningButton.setMaximumSize(QtCore.QSize(250, 60))
-        font = QtGui.QFont()
-        font.setPointSize(12)
+        self.FlushSystemButton.setFont(font)
+
+        self.horizontalLayout.addWidget(self.FlushSystemButton)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout.addItem(self.horizontalSpacer_2)
+
+        self.ReturnToMenuButton = QPushButton(CleaningScreen)
+        self.ReturnToMenuButton.setObjectName(u"ReturnToMenuButton")
+        self.ReturnToMenuButton.setMinimumSize(QSize(200, 0))
+        self.ReturnToMenuButton.setMaximumSize(QSize(200, 60))
+        self.ReturnToMenuButton.setFont(font)
+
+        self.horizontalLayout.addWidget(self.ReturnToMenuButton)
+
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout.addItem(self.horizontalSpacer_3)
+
+
+        self.CleanScreenLayout.addLayout(self.horizontalLayout, 2, 0, 1, 1)
+
+        self.LowerCleaningButtonsLayout = QGridLayout()
+        self.LowerCleaningButtonsLayout.setObjectName(u"LowerCleaningButtonsLayout")
+        self.StartCleaningButton = QPushButton(CleaningScreen)
+        self.StartCleaningButton.setObjectName(u"StartCleaningButton")
+        self.StartCleaningButton.setMaximumSize(QSize(250, 60))
         self.StartCleaningButton.setFont(font)
         self.StartCleaningButton.setAutoFillBackground(False)
-        self.StartCleaningButton.setObjectName("StartCleaningButton")
-        self.StartCleaningButtonLayout.addWidget(self.StartCleaningButton)
-        self.CleanScreenLayout.addLayout(self.StartCleaningButtonLayout, 1, 0, 1, 1)
-        self.LowerCleaningButtonsLayout = QtWidgets.QGridLayout()
-        self.LowerCleaningButtonsLayout.setObjectName("LowerCleaningButtonsLayout")
-        self.ManualCleanButton = QtWidgets.QPushButton(CleaningScreen)
-        self.ManualCleanButton.setMaximumSize(QtCore.QSize(200, 60))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.ManualCleanButton.setFont(font)
-        self.ManualCleanButton.setObjectName("ManualCleanButton")
-        self.LowerCleaningButtonsLayout.addWidget(self.ManualCleanButton, 0, 0, 1, 1)
-        self.AbortCleanButton = QtWidgets.QPushButton(CleaningScreen)
-        self.AbortCleanButton.setMaximumSize(QtCore.QSize(200, 60))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.AbortCleanButton.setFont(font)
-        self.AbortCleanButton.setObjectName("AbortCleanButton")
-        self.LowerCleaningButtonsLayout.addWidget(self.AbortCleanButton, 0, 1, 1, 1)
-        self.ReturnToMenuButton = QtWidgets.QPushButton(CleaningScreen)
-        self.ReturnToMenuButton.setMaximumSize(QtCore.QSize(200, 60))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.ReturnToMenuButton.setFont(font)
-        self.ReturnToMenuButton.setObjectName("ReturnToMenuButton")
-        self.LowerCleaningButtonsLayout.addWidget(self.ReturnToMenuButton, 0, 2, 1, 1)
-        self.NextCleanStepButton = QtWidgets.QPushButton(CleaningScreen)
-        self.NextCleanStepButton.setMaximumSize(QtCore.QSize(16777215, 40))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.NextCleanStepButton.setFont(font)
-        self.NextCleanStepButton.setObjectName("NextCleanStepButton")
-        self.LowerCleaningButtonsLayout.addWidget(self.NextCleanStepButton, 1, 0, 1, 1)
-        self.CleanScreenLayout.addLayout(self.LowerCleaningButtonsLayout, 3, 0, 1, 1)
+
+        self.LowerCleaningButtonsLayout.addWidget(self.StartCleaningButton, 1, 0, 1, 1)
+
+
+        self.CleanScreenLayout.addLayout(self.LowerCleaningButtonsLayout, 0, 0, 1, 1)
+
 
         self.retranslateUi(CleaningScreen)
-        QtCore.QMetaObject.connectSlotsByName(CleaningScreen)
+
+        QMetaObject.connectSlotsByName(CleaningScreen)
+    # setupUi
 
     def retranslateUi(self, CleaningScreen):
-        _translate = QtCore.QCoreApplication.translate
-        CleaningScreen.setWindowTitle(_translate("CleaningScreen", "Form"))
-        self.CurrentCleanTaskLabel.setText(_translate("CleaningScreen", "What am I doing?"))
-        self.CleanETALabel.setText(_translate("CleaningScreen", "ETA: 84 Years"))
-        self.StartCleaningButton.setText(_translate("CleaningScreen", "Start Cleaning Cycle"))
-        self.ManualCleanButton.setText(_translate("CleaningScreen", "Pause/Resume"))
-        self.AbortCleanButton.setText(_translate("CleaningScreen", "Abort Cleaning"))
-        self.ReturnToMenuButton.setText(_translate("CleaningScreen", "Main Menu"))
-        self.NextCleanStepButton.setText(_translate("CleaningScreen", "Next Stage"))
+        CleaningScreen.setWindowTitle(QCoreApplication.translate("CleaningScreen", u"Form", None))
+        self.FlushSystemButton.setText(QCoreApplication.translate("CleaningScreen", u"Flush System", None))
+        self.ReturnToMenuButton.setText(QCoreApplication.translate("CleaningScreen", u"Main Menu", None))
+        self.StartCleaningButton.setText(QCoreApplication.translate("CleaningScreen", u"Start Cleaning Cycle", None))
+    # retranslateUi
+

@@ -26,68 +26,100 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="CleanScreenLayout">
-   <item row="0" column="0">
-    <layout class="QGridLayout" name="CleaningStatusLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="CurrentCleanTaskLabel">
-       <property name="maximumSize">
+   <item row="2" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
         <size>
-         <width>800</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>What am I doing?</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="CleanETALabel">
-       <property name="maximumSize">
-        <size>
-         <width>800</width>
+         <width>40</width>
          <height>20</height>
         </size>
        </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="FlushSystemButton">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>60</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <pointsize>12</pointsize>
         </font>
        </property>
        <property name="text">
-        <string>ETA: 84 Years</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
+        <string>Flush System</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QProgressBar" name="CurrentCleanTaskProgressBar">
-       <property name="maximumSize">
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
         <size>
-         <width>800</width>
-         <height>16777215</height>
+         <width>40</width>
+         <height>20</height>
         </size>
        </property>
-       <property name="value">
-        <number>24</number>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="ReturnToMenuButton">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>60</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Main Menu</string>
        </property>
       </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
-    <layout class="QHBoxLayout" name="StartCleaningButtonLayout">
-     <item>
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="LowerCleaningButtonsLayout">
+     <item row="1" column="0">
       <widget class="QPushButton" name="StartCleaningButton">
        <property name="maximumSize">
         <size>
@@ -105,82 +137,6 @@
        </property>
        <property name="text">
         <string>Start Cleaning Cycle</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="3" column="0">
-    <layout class="QGridLayout" name="LowerCleaningButtonsLayout">
-     <item row="0" column="0">
-      <widget class="QPushButton" name="ManualCleanButton">
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>60</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Pause/Resume</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="AbortCleanButton">
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>60</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Abort Cleaning</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QPushButton" name="ReturnToMenuButton">
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>60</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Main Menu</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QPushButton" name="NextCleanStepButton">
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>40</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Next Stage</string>
        </property>
       </widget>
      </item>
