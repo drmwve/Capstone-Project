@@ -10,6 +10,7 @@ class ProcessStatus(QtWidgets.QWidget, Ui_BrewStatus):
     nextStepRequest = QtCore.Signal()
     stopProcessRequest = QtCore.Signal()
     manualOverrideRequest = QtCore.Signal()
+    returnUserToMenu = QtCore.Signal()
 
     def __init__(self):
         super().__init__()
@@ -34,8 +35,6 @@ class ProcessStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.abortTimer=QtCore.QTimer()
         self.delayTimer=QtCore.QTimer()
         self.updateTimer=QtCore.QTimer()
-        self.ETALabel.setText("Hold onto your biscuits")
-        self.CurrentTaskLabel.setText("Getting ready . . .")
         
     def abortBrew(self):
         ## This function should stop the machine, return it to a neutral state with no liquid.
@@ -43,9 +42,9 @@ class ProcessStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.CurrentTaskLabel.setText("Aborting Brew Cycle . . .")
         self.ManualBrewButton.setEnabled(False)
         self.AbortBrewButton.setEnabled(False)
-        self.abortTimer.start(executionhandler.process.currentstep.estimatedtime)
         logger.info("User requested to abort brew.")
         self.stopProcessRequest.emit()
+        self.abortTimer.start(self.remainingProcessTime)
 
     def manualOverride(self):
         if self.ManualBrewButton.isChecked():
@@ -60,15 +59,18 @@ class ProcessStatus(QtWidgets.QWidget, Ui_BrewStatus):
 
     def resetProgressScreen(self):
         ## This will reset the screen to the default layout.
-
         self.ManualBrewButton.setChecked(False)
         self.ManualBrewButton.setEnabled(True)
         self.NextBrewStepButton.setEnabled(False)
         self.AbortBrewButton.setEnabled(True)
-        self.CurrentTaskLabel.setText("All done!")
         self.updateTimer.stop()
+        self.abortTimer.stop()
+        self.CurrentTaskProgressBar.setValue(0)
+        self.ETALabel.setText("Hold onto your biscuits")
+        self.CurrentTaskLabel.setText("Getting ready . . .")
         logger.debug("Progress screen has been reset")
-
+        ## Returns user to the main menu after the abort process finishes.
+        self.returnUserToMenu.emit()
 
     def nextStep(self):
         logger.info("User requested to advance process to next step.")
@@ -85,8 +87,9 @@ class ProcessStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.delayTimer.stop()
 
     def startUpdateTimer(self, totalprocesstime):
-        self.totalProcessTime = totalprocesstime ## +2 is for calibration, time is usually off by a couple of seconds.
+        self.totalProcessTime = totalprocesstime
         self.remainingProcessTime = self.totalProcessTime
+        self.resetProgressScreen()
         self.CurrentTaskProgressBar.setRange(-self.totalProcessTime, 0)
         self.updateTimer.start(1000)
 

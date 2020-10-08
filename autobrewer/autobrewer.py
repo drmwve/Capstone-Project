@@ -33,6 +33,8 @@ def connections(mainscreen: MainWindow):
     mainscreen.menus["processStatus"].nextStepRequest.connect(executionhandler.advanceStep)
     mainscreen.menus["processStatus"].manualOverrideRequest.connect(executionhandler.assumemanualcontrol)
 
+    mainscreen.menus["processStatus"].returnUserToMenu.connect(partial(mainscreen.goToMenu, mainscreen.menus["mainMenu"]))
+
     executionhandler.stepstarted.connect(mainscreen.menus["processStatus"].updateLabel)
     executionhandler.processstarted.connect(mainscreen.menus["processStatus"].startUpdateTimer)
     executionhandler.processstopped.connect(mainscreen.menus["processStatus"].resetProgressScreen)
