@@ -2,6 +2,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
 from .BrewProgressGUI import Ui_BrewStatus
 from ..ExecutionHandler import *
+from datetime import timedelta
 
 
 
@@ -18,21 +19,25 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.connections()
         
 
+        
+        
+
     def connections(self):
         # add any connections that are internal to the functioning of this widget only
-        self.AbortBrewButton.clicked.connect(self.testETA)
+        self.AbortBrewButton.clicked.connect(self.abortBrew)
         self.ManualBrewButton.clicked.connect(self.manualBrewing)
         self.NextBrewStepButton.clicked.connect(self.nextBrewingStep)
         self.delayTimer.timeout.connect(self.delayManualControl)
+        self.updateTimer.timeout.connect(self.updateETA)
+        #self.abortTimer.timeout.connect(brewStatus.resetBrewScreen)
 
     def adjustUI(self):
         self.ManualBrewButton.setCheckable(True)
         self.ManualBrewButton.setText("Manual Control")
         self.NextBrewStepButton.setEnabled(False)
+        self.abortTimer=QtCore.QTimer()
         self.delayTimer=QtCore.QTimer()
-
-    def testETA(self):
-        print(ExecutionHandler.process.currentstep.estimatedtime)
+        self.updateTimer=QtCore.QTimer()
         
     def abortBrew(self):
         ## This function should stop the machine, return it to a neutral state with no liquid.
@@ -40,6 +45,7 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.CurrentTaskLabel.setText("Aborting Brew Cycle . . .")
         self.ManualBrewButton.setEnabled(False)
         self.AbortBrewButton.setEnabled(False)
+        self.abortTimer.start(ExecutionHandler.process.currentstep.estimatedtime)
         logger.info("User requested to abort brew.")
         self.abortBrewSignal.emit()
 
@@ -54,11 +60,14 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
             self.manualOverrideSignal.emit()
             self.NextBrewStepButton.setEnabled(False)
 
-    def resetBrewScreen(self):
+    def resetBrewScreen():
         ## This will reset the screen to the default layout.
-        self.ManualBrewButton.setText("Pause")
+        
         self.ManualBrewButton.setChecked(False)
         self.ManualBrewButton.setEnabled(True)
+        self.NextBrewStepButton.setEnabled(False)
+        self.AbortBrewButton.setEnabled(True)
+        
 
     def nextBrewingStep(self):
         logger.info("User requested to advance brewing to next step.")
@@ -73,3 +82,18 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.NextBrewStepButton.setEnabled(True)
         self.AbortBrewButton.setEnabled(True)
         self.delayTimer.stop()
+
+    def updateETA(self):
+        self.ETALabel.setText(
+            "ETA: "
+            + str(timedelta(seconds=int(ExecutionHandler.process.currentstep.estimatedtime / 1000)))
+        )
+        self.CurrentTaskProgressBar.setValue(-ExecutionHandler.process.currentstep.estimatedtime)
+        self.CurrentTaskLabel.setText(str(ExecutionHandler.process.currentstep))
+        self.updateTimer.start(1000)
+        print("UPDATED ETA")
+    
+
+    
+
+brewStatus = BrewStatus()
