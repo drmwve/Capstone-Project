@@ -43,6 +43,13 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             self.Hop4Decrease,
             self.Hop5Decrease,
         ]
+        self.hopLabels = [
+            self.Hop1Label,
+            self.Hop2Label,
+            self.Hop3Label,
+            self.Hop4Label,
+            self.Hop5Label
+        ]
 
         self.changeUI()
         self.initializeRecipe()
@@ -124,6 +131,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             self.hopEntry[hopcarts - 1].setHidden(False)
             self.hopIncrease[hopcarts - 1].setHidden(False)
             self.hopDecrease[hopcarts - 1].setHidden(False)
+            self.hopLabels[hopcarts - 1].setHidden(False)
             self.hopEntry[hopcarts - 1].setText(
                 str(BrewRecipe().hopTiming[hopcarts - 1])
             )
@@ -143,6 +151,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             self.hopEntry[hopcarts].setHidden(True)
             self.hopIncrease[hopcarts].setHidden(True)
             self.hopDecrease[hopcarts].setHidden(True)
+            self.hopLabels[hopcarts].setHidden(True)
             self.hopEntry[hopcarts].setText("-1")
         else:
             logger.debug(
