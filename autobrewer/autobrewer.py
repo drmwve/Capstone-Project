@@ -29,14 +29,16 @@ def main():
 def connections(mainscreen: MainWindow):
     mainscreen.menus["brewConfig"].startBrewSignal.connect(executionhandler.startBrewProcess)
 
-    mainscreen.menus["brewStatus"].abortBrewSignal.connect(executionhandler.stopProcess)
-    mainscreen.menus["brewStatus"].nextBrewStepSignal.connect(executionhandler.advanceStep)
-    mainscreen.menus["brewStatus"].manualOverrideSignal.connect(executionhandler.assumemanualcontrol)
+    mainscreen.menus["processStatus"].stopProcessRequest.connect(executionhandler.stopProcess)
+    mainscreen.menus["processStatus"].nextStepRequest.connect(executionhandler.advanceStep)
+    mainscreen.menus["processStatus"].manualOverrideRequest.connect(executionhandler.assumemanualcontrol)
 
-    executionhandler.stepstarted.connect(mainscreen.menus["brewStatus"].updateLabel)
-    executionhandler.processstarted.connect(mainscreen.menus["brewStatus"].startUpdateTimer)
-    executionhandler.processstopped.connect(mainscreen.menus["brewStatus"].resetBrewScreen)
-    executionhandler.processcomplete.connect(mainscreen.menus["brewStatus"].processComplete)
+    executionhandler.stepstarted.connect(mainscreen.menus["processStatus"].updateLabel)
+    executionhandler.processstarted.connect(mainscreen.menus["processStatus"].startUpdateTimer)
+    executionhandler.processstopped.connect(mainscreen.menus["processStatus"].resetProgressScreen)
+    executionhandler.processpaused.connect(mainscreen.menus["processStatus"].updateTimer.stop)
+    executionhandler.processresumed.connect(mainscreen.menus["processStatus"].updateTimer.start)
+    executionhandler.processcomplete.connect(mainscreen.menus["processStatus"].processComplete)
 
 
     mainscreen.menus["cleaningScreen"].startCleaningSignal.connect(executionhandler.startCleaningProcess)

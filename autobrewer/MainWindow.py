@@ -4,7 +4,7 @@ from PySide2 import QtWidgets
 from loguru import logger
 
 from .GUI.BrewConfig import BrewConfig
-from .GUI.BrewProgress import BrewStatus
+from .GUI.ProcessStatus import ProcessStatus
 from .GUI.CleaningScreen import CleaningScreen
 from .GUI.DeviceStatusControls import DeviceStatusControls
 from .GUI.DeviceStatusSensors import DeviceStatusSensors
@@ -34,7 +34,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menus = {
             "mainMenu": MainMenu(),
             "brewConfig": BrewConfig(),
-            "brewStatus": BrewStatus(),
+            "processStatus": ProcessStatus(),
             "cleaningScreen": CleaningScreen(),
             "deviceStatusControls": DeviceStatusControls(),
             "deviceStatusSensors": DeviceStatusSensors(),
@@ -49,7 +49,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menus["brewConfig"].BackButton.clicked.connect(
             partial(self.goToMenu, self.menus["mainMenu"])
         )
-        self.menus["brewStatus"].ReturnToMenuButton.clicked.connect(
+        self.menus["processStatus"].ReturnToMenuButton.clicked.connect(
             partial(self.goToMenu, self.menus["mainMenu"])
         )
         self.menus["deviceStatusControls"].ReturnToMenuButton.clicked.connect(
@@ -60,7 +60,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         self.menus["brewConfig"].StartBrewButton.clicked.connect(
-            partial(self.goToMenu, self.menus["brewStatus"])
+            partial(self.goToMenu, self.menus["processStatus"])
         )
         self.menus["mainMenu"].EnterBrewConfigButton.clicked.connect(
             partial(self.goToMenu, self.menus["brewConfig"])

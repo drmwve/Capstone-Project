@@ -5,11 +5,11 @@ from ..ExecutionHandler import executionhandler
 from datetime import timedelta
 
 
-class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
+class ProcessStatus(QtWidgets.QWidget, Ui_BrewStatus):
 
-    nextBrewStepSignal = QtCore.Signal()
-    abortBrewSignal = QtCore.Signal()
-    manualOverrideSignal = QtCore.Signal()
+    nextStepRequest = QtCore.Signal()
+    stopProcessRequest = QtCore.Signal()
+    manualOverrideRequest = QtCore.Signal()
 
     def __init__(self):
         super().__init__()
@@ -21,11 +21,11 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
     def connections(self):
         # add any connections that are internal to the functioning of this widget only
         self.AbortBrewButton.clicked.connect(self.abortBrew)
-        self.ManualBrewButton.clicked.connect(self.manualBrewing)
-        self.NextBrewStepButton.clicked.connect(self.nextBrewingStep)
+        self.ManualBrewButton.clicked.connect(self.manualOverride)
+        self.NextBrewStepButton.clicked.connect(self.nextStep)
         self.delayTimer.timeout.connect(self.delayManualControl)
         self.updateTimer.timeout.connect(self.updateETA)
-        self.abortTimer.timeout.connect(self.resetBrewScreen)
+        self.abortTimer.timeout.connect(self.resetProgressScreen)
 
     def adjustUI(self):
         self.ManualBrewButton.setCheckable(True)
@@ -45,20 +45,20 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.AbortBrewButton.setEnabled(False)
         self.abortTimer.start(executionhandler.process.currentstep.estimatedtime)
         logger.info("User requested to abort brew.")
-        self.abortBrewSignal.emit()
+        self.stopProcessRequest.emit()
 
-    def manualBrewing(self):
+    def manualOverride(self):
         if self.ManualBrewButton.isChecked():
-            logger.info("User requested manual control over brewing cycle.")
+            logger.info("User requested manual control over process.")
             self.NextBrewStepButton.setEnabled(True)
-            self.manualOverrideSignal.emit()
+            self.manualOverrideRequest.emit()
         else:
-            logger.info("User requested to disable manual control over brewing cycle.")
+            logger.info("User requested to disable manual control over process.")
             
-            self.manualOverrideSignal.emit()
+            self.manualOverrideRequest.emit()
             self.NextBrewStepButton.setEnabled(False)
 
-    def resetBrewScreen(self):
+    def resetProgressScreen(self):
         ## This will reset the screen to the default layout.
 
         self.ManualBrewButton.setChecked(False)
@@ -67,12 +67,12 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.AbortBrewButton.setEnabled(True)
         self.CurrentTaskLabel.setText("All done!")
         self.updateTimer.stop()
-        logger.debug("Brew Progress screen has been reset")
+        logger.debug("Progress screen has been reset")
 
 
-    def nextBrewingStep(self):
-        logger.info("User requested to advance brewing to next step.")
-        self.nextBrewStepSignal.emit()
+    def nextStep(self):
+        logger.info("User requested to advance process to next step.")
+        self.nextStepRequest.emit()
         self.ManualBrewButton.setEnabled(False)
         self.NextBrewStepButton.setEnabled(False)
         self.AbortBrewButton.setEnabled(False)
