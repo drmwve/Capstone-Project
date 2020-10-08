@@ -21,29 +21,29 @@ class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
 
     def connections(self):
         # add any connections that are internal to the functioning of this widget only
-        self.AbortProcessButton.clicked.connect(self.abortProcess)
+        self.StopProcessButton.clicked.connect(self.stopProcess)
         self.ManualControlButton.clicked.connect(self.manualOverride)
         self.NextStepButton.clicked.connect(self.nextStep)
         self.delayTimer.timeout.connect(self.delayManualControl)
         self.updateTimer.timeout.connect(self.updateETA)
-        self.abortTimer.timeout.connect(self.resetProgressScreen)
+        self.stopTimer.timeout.connect(self.resetProgressScreen)
 
     def adjustUI(self):
         self.ManualControlButton.setCheckable(True)
         self.NextStepButton.setEnabled(False)
-        self.abortTimer=QtCore.QTimer()
+        self.stopTimer=QtCore.QTimer()
         self.delayTimer=QtCore.QTimer()
         self.updateTimer=QtCore.QTimer()
         
-    def abortProcess(self):
+    def stopProcess(self):
         ## This function should stop the machine, return it to a neutral state with no liquid.
         ## Then take the user back to the main menu when finished.
-        self.CurrentTaskLabel.setText("Aborting Brew Cycle . . .")
+        self.CurrentTaskLabel.setText("Stopping Process . . .")
         self.ManualControlButton.setEnabled(False)
-        self.AbortProcessButton.setEnabled(False)
-        logger.info("User requested to abort process.")
+        self.StopProcessButton.setEnabled(False)
+        logger.info("User requested to stop the current process.")
         self.stopProcessRequest.emit()
-        self.abortTimer.start(self.remainingProcessTime)
+        self.stopTimer.start(self.remainingProcessTime)
 
     def manualOverride(self):
         if self.ManualControlButton.isChecked():
@@ -61,14 +61,14 @@ class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
         self.ManualControlButton.setChecked(False)
         self.ManualControlButton.setEnabled(True)
         self.NextStepButton.setEnabled(False)
-        self.AbortProcessButton.setEnabled(True)
+        self.StopProcessButton.setEnabled(True)
         self.updateTimer.stop()
-        self.abortTimer.stop()
+        self.stopTimer.stop()
         self.CurrentTaskProgressBar.setValue(0)
         self.ETALabel.setText("Hold onto your biscuits")
         self.CurrentTaskLabel.setText("Getting ready . . .")
         logger.debug("Progress screen has been reset")
-        ## Returns user to the main menu after the abort process finishes.
+        ## Returns user to the main menu after the stop process finishes.
         self.returnUserToMenu.emit()
 
     def nextStep(self):
@@ -76,13 +76,13 @@ class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
         self.nextStepRequest.emit()
         self.ManualControlButton.setEnabled(False)
         self.NextStepButton.setEnabled(False)
-        self.AbortProcessButton.setEnabled(False)
+        self.StopProcessButton.setEnabled(False)
         self.delayTimer.start(2000)
 
     def delayManualControl(self):
         self.ManualControlButton.setEnabled(True)
         self.NextStepButton.setEnabled(True)
-        self.AbortProcessButton.setEnabled(True)
+        self.StopProcessButton.setEnabled(True)
         self.delayTimer.stop()
 
     def startUpdateTimer(self, totalprocesstime):

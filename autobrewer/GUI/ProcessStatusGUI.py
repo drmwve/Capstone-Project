@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'ProcessProgress.ui'
+## Form generated from reading UI file 'ProcessStatus.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.15.0
+## Created by: Qt User Interface Compiler version 5.15.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import (QCoreApplication, QDate, QDateTime, QMetaObject,
-    QObject, QPoint, QRect, QSize, QTime, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
-    QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter,
-    QPixmap, QRadialGradient)
+from PySide2.QtCore import *
+from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
 
@@ -43,12 +40,12 @@ class Ui_ProcessStatus(object):
 
         self.LowerLayout.addWidget(self.ManualControlButton, 0, 0, 1, 1)
 
-        self.AbortProcessButton = QPushButton(ProcessStatus)
-        self.AbortProcessButton.setObjectName(u"AbortProcessButton")
-        self.AbortProcessButton.setMaximumSize(QSize(200, 60))
-        self.AbortProcessButton.setFont(font)
+        self.StopProcessButton = QPushButton(ProcessStatus)
+        self.StopProcessButton.setObjectName(u"StopProcessButton")
+        self.StopProcessButton.setMaximumSize(QSize(200, 60))
+        self.StopProcessButton.setFont(font)
 
-        self.LowerLayout.addWidget(self.AbortProcessButton, 0, 1, 1, 1)
+        self.LowerLayout.addWidget(self.StopProcessButton, 0, 1, 1, 1)
 
         self.ReturnToMenuButton = QPushButton(ProcessStatus)
         self.ReturnToMenuButton.setObjectName(u"ReturnToMenuButton")
@@ -98,7 +95,7 @@ class Ui_ProcessStatus(object):
         ProcessStatus.setWindowTitle(QCoreApplication.translate("ProcessStatus", u"Form", None))
         self.NextStepButton.setText(QCoreApplication.translate("ProcessStatus", u"Next Step", None))
         self.ManualControlButton.setText(QCoreApplication.translate("ProcessStatus", u"Manual Control", None))
-        self.AbortProcessButton.setText(QCoreApplication.translate("ProcessStatus", u"Abort Process", None))
+        self.StopProcessButton.setText(QCoreApplication.translate("ProcessStatus", u"Stop Process", None))
         self.ReturnToMenuButton.setText(QCoreApplication.translate("ProcessStatus", u"Main Menu", None))
         self.CurrentTaskLabel.setText(QCoreApplication.translate("ProcessStatus", u"What am I doing?", None))
         self.ETALabel.setText(QCoreApplication.translate("ProcessStatus", u"ETA: 84 Years", None))
