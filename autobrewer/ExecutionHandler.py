@@ -7,6 +7,10 @@ class ExecutionHandler(QtCore.QObject):
     # function and I create a new thread which this process is executed in.
 
     stepstarted = Signal(str)
+    processstarted = Signal(int)
+    processpaused = Signal()
+    processstopped = Signal()
+    processresumed = Signal()
     processRunning = False
     processPaused = False
     process = Process()
@@ -20,6 +24,7 @@ class ExecutionHandler(QtCore.QObject):
                 + str(self.process)
             )
             self.processRunning = True
+            self.processstarted.emit(self.process.totalprocesstime)
             self.process.stepstarted.connect(self.stepstarted)
             self.process.processfinished.connect(self.finishedProcess)
             self.process.start()
@@ -43,6 +48,7 @@ class ExecutionHandler(QtCore.QObject):
     def stopProcess(self):
         if self.processRunning:
             self.process.stop()
+            self.processstopped.emit()
             self.processRunning = False
             self.process = Process()
             logger.info(f'Stopped process {self.process}')
@@ -56,11 +62,13 @@ class ExecutionHandler(QtCore.QObject):
 
     def pauseProcess(self):
         if self.processRunning:
+            self.processpaused.emit()
             self.process.pause()
             self.processPaused = True
             logger.info(f'Paused process {self.process}')
 
     def resumeProcess(self):
+        self.processresumed.emit()
         self.process.resume()
         self.processPaused = False
 
@@ -73,5 +81,6 @@ class ExecutionHandler(QtCore.QObject):
     def finishedProcess(self):
         self.processRunning = False
         logger.debug("Execution handler wrapped up process")
+
 
 executionhandler = ExecutionHandler()

@@ -37,6 +37,7 @@ def connections(mainscreen: MainWindow):
     mainscreen.menus["cleaningScreen"].abortCleaningSignal.connect(executionhandler.stopProcess)
     mainscreen.menus["cleaningScreen"].nextCleaningStepSignal.connect(executionhandler.advanceStep)
     mainscreen.menus["cleaningScreen"].manualOverrideSignal.connect(executionhandler.assumemanualcontrol)
+    executionhandler.processstarted.connect(mainscreen.menus["cleaningScreen"].updateTimer.start)
 
 
 

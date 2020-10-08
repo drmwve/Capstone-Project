@@ -25,7 +25,7 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.NextBrewStepButton.clicked.connect(self.nextBrewingStep)
         self.delayTimer.timeout.connect(self.delayManualControl)
         self.updateTimer.timeout.connect(self.updateETA)
-        #self.abortTimer.timeout.connect(brewStatus.resetBrewScreen)
+        self.abortTimer.timeout.connect(self.resetBrewScreen)
 
     def adjustUI(self):
         self.ManualBrewButton.setCheckable(True)
@@ -80,16 +80,11 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.delayTimer.stop()
 
     def updateETA(self):
-        self.ETALabel.setText(
-            "ETA: "
-            + str(timedelta(seconds=int(executionhandler.process.currentstep.estimatedtime / 1000)))
-        )
-        self.CurrentTaskProgressBar.setValue(executionhandler.process.currentstep.estimatedtime)
-        self.CurrentTaskLabel.setText(str(executionhandler.process.currentstep))
-        self.updateTimer.start(1000)
-        logger.debug("UPDATED ETA")
-
-
-
-
-brewStatus = BrewStatus()
+        if executionhandler.processRunning:
+            self.ETALabel.setText(
+                "ETA: "
+                + str(timedelta(seconds=int(executionhandler.process.currentstep.estimatedtime)))
+            )
+            self.CurrentTaskProgressBar.setValue(executionhandler.process.currentstep.estimatedtime)
+            self.CurrentTaskLabel.setText(str(executionhandler.process.currentstep))
+            logger.debug("UPDATED ETA")
