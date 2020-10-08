@@ -16,6 +16,7 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.setupUi(self)
         self.adjustUI()
         self.connections()
+
         
 
     def connections(self):
@@ -34,6 +35,8 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.abortTimer=QtCore.QTimer()
         self.delayTimer=QtCore.QTimer()
         self.updateTimer=QtCore.QTimer()
+        self.ETALabel.setText("Hold onto your biscuits")
+        self.CurrentTaskLabel.setText("Getting ready . . .")
         
     def abortBrew(self):
         ## This function should stop the machine, return it to a neutral state with no liquid.
@@ -63,6 +66,8 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.ManualBrewButton.setEnabled(True)
         self.NextBrewStepButton.setEnabled(False)
         self.AbortBrewButton.setEnabled(True)
+        self.CurrentTaskLabel.setText("All done!")
+        logger.debug("Brew Progress screen has been reset")
 
 
     def nextBrewingStep(self):
@@ -79,12 +84,18 @@ class BrewStatus(QtWidgets.QWidget, Ui_BrewStatus):
         self.AbortBrewButton.setEnabled(True)
         self.delayTimer.stop()
 
+    def startUpdateTimer(self, totalprocesstime):
+        self.totalProcessTime = totalprocesstime + 2 ## +2 is for calibration, time is usually off by a couple of seconds.
+        self.CurrentTaskProgressBar.setRange(-self.totalProcessTime, 0)
+        self.updateTimer.start(1000)
+
     def updateETA(self):
         if executionhandler.processRunning:
+            self.totalProcessTime -= 1
             self.ETALabel.setText(
                 "ETA: "
-                + str(timedelta(seconds=int(executionhandler.process.currentstep.estimatedtime)))
+                + str(timedelta(seconds=int(self.totalProcessTime)))
             )
-            self.CurrentTaskProgressBar.setValue(executionhandler.process.currentstep.estimatedtime)
             self.CurrentTaskLabel.setText(str(executionhandler.process.currentstep))
+            self.CurrentTaskProgressBar.setValue(-self.totalProcessTime)
             logger.debug("UPDATED ETA")
