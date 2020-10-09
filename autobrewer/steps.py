@@ -1,4 +1,4 @@
-from .hardware.devicehandler import DeviceHandler
+from .hardware.devicehandler import devicehandler
 from .hardware import tempState
 from . import BrewRecipe
 from PySide2.QtCore import Signal, QObject
@@ -13,8 +13,8 @@ class Step(QObject):
 
     def __init__(self):
         super().__init__()
-        self.devicehandler = DeviceHandler()
         self.estimatedtime = 0
+        self.devicehandler = devicehandler
         self.startingmessage = "Started base step"
         self.running = False
 
@@ -156,7 +156,7 @@ class Drained(Step):  # wait to drain out, then reset equipments
         self.devicehandler.resetFlowControl()
         self.devicehandler.disableAllHeatingElements()
 
----------------------------------------------------------
+
 class FillHLT(Step):
 
     def __init__(self):
@@ -220,7 +220,8 @@ class HLTtoMT(Step):
     def run(self):
         logger.debug(f'Running step {self}')
         self.devicehandler.openValvePath(HLTtoMT)
-        time.sleep(1) # is it neccessary to wait for valves to turn before starting the pump? i can delete those 1 second delays if not       
+        QtCore.QTimer.singleShot(5000, self.next)
+    def next(self):
         self.devicehandler.enablePump(0)
         self.runtimer.start(100)
         logger.debug(f'Started timer: {self.runtimer.isActive()}')

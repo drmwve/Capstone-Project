@@ -171,8 +171,10 @@ class DeviceHandler(QObject, Pins):
     def _readtemperature(self, index: int):
         pass
 
-    def _readvolume(self, index: int):
-        KETTLE_DIAMETER = 0.381 # meters
+    def _readvolume(self, index: int) -> float:
+        """Reads the ADC for a particular kettle's pressure sensor and converts the pressure value into a volume
+        in gallons"""
+        KETTLE_DIAMETER = 0.320675 # meters
         LIQUID_DENSITY = 997 # kg/m3
         GRAVITY = 9.81 #m/s^2
         PI = 3.142
@@ -181,4 +183,7 @@ class DeviceHandler(QObject, Pins):
         pressurevalue = (pressurevoltage / self.ADC_VOLTAGE_SUPPLIED - 0.053) / 0.1533
         liquidheight = pressurevalue * 1000 / (LIQUID_DENSITY * GRAVITY)
         volume = PI * (KETTLE_DIAMETER/2)**2 * liquidheight #cubic meters
+        volume *= 264.172 # gallons
         return volume
+
+devicehandler = DeviceHandler()
