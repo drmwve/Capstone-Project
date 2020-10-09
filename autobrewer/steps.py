@@ -109,7 +109,6 @@ class MTtoBK(Step):
         #   while True:
         #       if devicehandler.levelsensor(1) == 6.5 : break
         self.devicehandler.disableHeatingElement(0)
-        self.devicehandler.disableHeatingElement(0)
         self.devicehandler.disablePump(1)
 
 
@@ -153,3 +152,166 @@ class Drained(Step):  # wait to drain out, then reset equipments
     def __call__(self):
         self.devicehandler.resetFlowControl()
         self.devicehandler.disableAllHeatingElements()
+
+---------------------------------------------------------
+class FillHLT(Step):
+
+    def __init__(self):
+        super().__init__()
+        self.startingmessage = "Filling Hot Liqure Tank"
+        self.estimatedtime = 180     # used seconds instead of millie assuming this will not effect excuting but rather for displaying this number
+        self.runtimer = QtCore.QTimer()
+        self.runtimer.timeout.connect(self.loop)
+
+    def run(self):
+        logger.debug(f'Running step {self}')
+        self.devicehandler.openValvePath("FillHLT")
+        self.runtimer.start(100)
+        logger.debug(f'Started timer: {self.runtimer.isActive()}')
+
+    def loop(self):
+        logger.debug("Running loop (checking level sensor at HLT)")
+        if devicehandler.hardwareState.volume[0] == 8:
+            self.devicehandler.closeBallValve(0)
+            self.stepcomplete.emit()
+            self.stop()
+
+    def stop(self):
+        self.runtimer.stop()
+
+class HeatHTL(Step):
+
+    def __init__(self):
+        super().__init__()
+        self.startingmessage = "Heating Hot Liqure Tank"
+        self.estimatedtime = 2580 #we calculated 43 minutes required time
+        self.runtimer = QtCore.QTimer()
+        self.runtimer.timeout.connect(self.loop)
+
+    def run(self):
+        logger.debug(f'Running step {self}')
+        self.devicehandler.enableHeatingElement(0)
+        self.devicehandler.enableHeatingElement(2)
+        self.runtimer.start(100)
+        logger.debug(f'Started timer: {self.runtimer.isActive()}')
+
+    def loop(self):
+        logger.debug("Running loop (Checking temperatre sensor in HLT")
+        if devicehandler.hardwareState.temperatures[0] == BrewRecipe.mashTunTemperature:
+            self.devicehandler.disableHeatingElement(2)  # i think we should only reset pumps after each step, but not heating elements and valves
+            self.stepcomplete.emit()
+            self.stop()
+
+    def stop(self):
+        self.runtimer.stop()
+
+class HLTtoMT(Step):
+
+    def __init__(self):
+        super().__init__()
+        self.startingmessage = "moving 4 gallons to mashing tun"
+        self.estimatedtime = 90
+        self.runtimer = QtCore.QTimer()
+        self.runtimer.timeout.connect(self.loop)
+
+    def run(self):
+        logger.debug(f'Running step {self}')
+        self.devicehandler.openValvePath(HLTtoMT)
+        time.sleep(1) # is it neccessary to wait for valves to turn before starting the pump? i can delete those 1 second delays if not       
+        self.devicehandler.enablePump(0)
+        self.runtimer.start(100)
+        logger.debug(f'Started timer: {self.runtimer.isActive()}')
+
+    def loop(self):
+        logger.debug("Running loop (checking level sensor at the mashing tun)")
+        if devicehandler.hardwareState.volume[1] == 4:
+            self.devicehandler.disablePump(0)
+            self.stepcomplete.emit()
+            self.stop()
+
+    def stop(self):
+        self.runtimer.stop()
+
+class MTRecirc(Step):
+
+    def __init__(self):
+        super().__init__()
+        self.startingmessage = "Mashing tun recirculation"
+        self.estimatedtime = 90
+        self.runtimer = QtCore.QTimer()
+        self.index = 0
+        self.runtimer.timeout.connect(self.loop)
+
+    def run(self):
+        logger.debug(f'Running step {self}')
+        self.devicehandler.openValvePath(MTRecirc)
+        time.sleep(1)
+        self.devicehandler.enablePump(0)
+        self.runtimer.start(1000)
+        logger.debug(f'Started timer: {self.runtimer.isActive()}')
+
+    def loop(self):
+        logger.debug("Running loop (waiting for 60 minutes for recirculation)")
+        self.index += 1
+        if self.index == 3600:        # will this method cause delays caused by the excution process time? should runtimer be set to 3600,000 instead?
+            self.devicehandler.disablePump(0)
+            self.stepcomplete.emit()
+            self.stop()
+
+    def stop(self):
+        self.runtimer.stop()
+
+class MTtoBK(Step):
+
+    def __init__(self):
+        super().__init__()
+        self.startingmessage = "moving the liquid from Mashing tun to boiling kettle"
+        self.estimatedtime = 130
+        self.runtimer = QtCore.QTimer()
+        self.runtimer.timeout.connect(self.loop)
+
+    def run(self):
+        logger.debug(f'Running step {self}')
+        self.devicehandler.openValvePath(MTtoBK)
+        self.devicehandler.enablePump(0)
+        self.devicehandler.enablePump(1)
+        self.runtimer.start(100)
+        logger.debug(f'Started timer: {self.runtimer.isActive()}')
+
+    def loop(self):
+        logger.debug("Running loop (checking level sensor at the Boiling kettle)")
+        if devicehandler.hardwareState.volume[2] == 6.5:
+            self.devicehandler.disablePump(0)
+            self.devicehandler.disablePump(1)
+            self.devicehandler.disableHeatingElement(0)
+            self.stepcomplete.emit()
+            self.stop()
+
+    def stop(self):
+        self.runtimer.stop()
+
+class BKWhirl(Step):
+
+    def __init__(self):
+        super().__init__()
+        self.startingmessage = "Whirl at the black kettle"
+        self.estimatedtime = 2580  
+        self.runtimer = QtCore.QTimer()
+        self.runtimer.timeout.connect(self.loop)
+
+    def run(self):
+        logger.debug(f'Running step {self}')
+        self.devicehandler.enableHeatingElement(0)
+        self.devicehandler.enableHeatingElement(2)
+        self.runtimer.start(100)
+        logger.debug(f'Started timer: {self.runtimer.isActive()}')
+
+    def loop(self):
+        logger.debug("Running loop (Checking temperatre sensor in HLT")
+        if tempState.tempSensor1 == BrewRecipe.mashTunTemperature:
+            self.devicehandler.disableHeatingElement(2)  # i think we should only reset pumps after each step, but not heating elements and valves
+            self.stepcomplete.emit()
+            self.stop()
+
+    def stop(self):
+        self.runtimer.stop()
