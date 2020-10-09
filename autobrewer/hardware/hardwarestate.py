@@ -19,7 +19,7 @@ class HardwareState:
             False,
         ]
         self.pumps = [False, False]
-        self.heatingElements = {"HLT": 0, "BK": 0}
+        self.heatingElements = {"HLTPrim": 0, "BKPrim": 0, "HLTSec": 0, "BKSec": 0}
         self.hopservo = 0
         self.temperatures = {"HLT": 0, "MT": 0, "BK": 0}
         self.volumes = {"HLT": 0, "MT": 0, "BK": 0}
