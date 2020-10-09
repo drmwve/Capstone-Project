@@ -26,7 +26,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.showFullScreen()
         else:
             self.setFixedSize(1024, 600)
-        self.setWindowTitle("Auto Brewser System")
+        self.setWindowTitle("Auto Brewer System")
 
     # create stacked layout for different pages, add them to central widget
     def createStackedLayout(self):
