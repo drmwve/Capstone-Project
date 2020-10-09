@@ -1,5 +1,6 @@
 from gpiozero import AngularServo, Device, OutputDevice, PWMOutputDevice, GPIOPinInUse
 
+from ..Adafruit_ADS1x15 import ADS1115
 from ..utils import IS_RASPBERRY_PI
 
 if IS_RASPBERRY_PI:
@@ -7,18 +8,24 @@ if IS_RASPBERRY_PI:
 else:
     from gpiozero.pins.mock import MockFactory, MockPWMPin
 from loguru import logger
+from pyax12.connection import Connection
 
 
 class Pins:
     """Low level class which directly interfaces with the Raspberry Pi pins. This gets passed up to the Device Handler which handles higher-level component control logic."""
 
-    ballValveGPIOs = [25, 8, 7, 12, 16, 14, 15, 18, 23, 24]
+    ballValveGPIOs = [25, 8, 7, 12, 16, 17, 27, 22, 23, 24]
     pumpGPIOs = [20, 21]
     heatingElementGPIOs = [26, 19, 13, 6]
     tempSensorGPIO = 9
-    ADCGPIO = 11
-    hopServoGPIO = 5
     pins_initialized = False
+
+    adc = ADS1115()
+    ADC_GAIN = 2/3
+    ADC_VOLTAGE_SUPPLIED = 5
+
+    servoconnection = Connection(port="/dev/ttyAMA0", baudrate=57600)
+    SERVO_ID = 1
 
     def __init__(self):
         super().__init__()
@@ -41,7 +48,6 @@ class Pins:
                 PWMOutputDevice(n, pin_factory=cls.pwmPinFactory)
                 for n in Pins.heatingElementGPIOs
             ]
-            cls.hopServo = AngularServo(Pins.ADCGPIO, pin_factory=cls.pwmPinFactory)
             cls.ballValves = [OutputDevice(n) for n in Pins.ballValveGPIOs]
             cls.pumps = [OutputDevice(n) for n in Pins.pumpGPIOs]
 

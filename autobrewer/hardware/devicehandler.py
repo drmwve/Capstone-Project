@@ -1,9 +1,6 @@
-import time
-
 from loguru import logger
-from PySide2.QtCore import QObject, Signal
+from PySide2.QtCore import QObject, Signal, QTimer
 
-from ..ads1x15 import *
 from .hardwarestate import HardwareState
 from ..exceptions import ComponentControlError
 from .pins import Pins
@@ -35,6 +32,9 @@ class DeviceHandler(QObject, Pins):
     def __init__(self):
         self._connectPins()
         self._createValvePaths()
+        self.signalemit = QTimer(1000)
+        self.signalemit.timeout.connect(self.emitState)
+        self.signalemit.start()
 
     def _createValvePaths(self):
         """Defines paths which must be open for a pump to run without forming a vacuum. The valvepaths variable is a
@@ -65,6 +65,7 @@ class DeviceHandler(QObject, Pins):
             self.closeBallValve(valveindex)
 
     def emitState(self):
+        self._readSensors()
         self.signalState.emit(self.hardwareState)
 
     def getState(self) -> HardwareState:
@@ -97,8 +98,8 @@ class DeviceHandler(QObject, Pins):
             self.closeBallValve(index)
 
     def setHopServoPosition(self, angle: int):
-        if angle in range(0, 360):
-            self.hopServo.angle = angle
+        if angle in range(-150,150):
+            self.servoconnection.goto(self.SERVO_ID, angle, speed=512, degrees=True)
             self.hardwareState.hopServo = angle
         else:
             raise ComponentControlError("Invalid servo angle selected")
@@ -163,8 +164,21 @@ class DeviceHandler(QObject, Pins):
 
     def _readSensors(self):
         # read the sensors and save the values here
-        for temp in self.hardwareState.temperatures:
-            self.hardwareState.temperatures[temp] = 0
-        for volume in self.hardwareState.temperatures:
-            self.hardwareState.volumes[volume] = 0
+        for i, _ in enumerate(self.hardwareState.temperatures):
+            self.hardwareState.temperatures[i] = self._readtemperature(i)
+            self.hardwareState.volumes[i] = self._readvolume(i)
 
+    def _readtemperature(self, index: int):
+        pass
+
+    def _readvolume(self, index: int):
+        KETTLE_DIAMETER = 0.381 # meters
+        LIQUID_DENSITY = 997 # kg/m3
+        GRAVITY = 9.81 #m/s^2
+        PI = 3.142
+        # pressure is in kPa
+        pressurevoltage = self.adc.read_adc(index, gain=self.ADC_GAIN)
+        pressurevalue = (pressurevoltage / self.ADC_VOLTAGE_SUPPLIED - 0.053) / 0.1533
+        liquidheight = pressurevalue * 1000 / (LIQUID_DENSITY * GRAVITY)
+        volume = PI * (KETTLE_DIAMETER/2)**2 * liquidheight #cubic meters
+        return volume

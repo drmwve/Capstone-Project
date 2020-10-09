@@ -3,6 +3,11 @@ from loguru import logger
 
 
 class Process(QtCore.QObject):
+    """This is a string of steps which execute a particular process. This could be brewing beer, cleaning the system,
+    or flushing the system of all liquid. This class doesn't actually do anything with the components itself but
+    provides the functionality to wrap a related series of component control steps together and start, stop, pause, and
+    resume it.
+    """
     stepstarted = QtCore.Signal(str)
     processfinished = QtCore.Signal()
 

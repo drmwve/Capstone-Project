@@ -15,6 +15,7 @@ loguru = "*"
 gpiozero = "*"
 pytest = "*"
 black = {git = "git://github.com/psf/black"}
+pyax12 = "*"
 
 [requires]
 python_version = "3.7"
