@@ -16,8 +16,8 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
     HOP_CARTRIDGES_MAXIMUM = 5
 
     MASH_TEMPERATURE_INCREMENT = 1
-    MASH_TEMPERATURE_MAXIMUM = 180
-    MASH_TEMPERATURE_MINIMUM = 140
+    MASH_TEMPERATURE_MAXIMUM = 168
+    MASH_TEMPERATURE_MINIMUM = 130
 
     def __init__(self):
         super().__init__()
