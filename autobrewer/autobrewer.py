@@ -42,5 +42,12 @@ def connections(mainscreen: MainWindow):
     executionhandler.processresumed.connect(mainscreen.menus["processStatus"].updateTimer.start)
     executionhandler.processcomplete.connect(mainscreen.menus["processStatus"].processComplete)
 
+    executionhandler.processstarted.connect(mainscreen.menus["deviceStatusSensors"].hideMainMenu)
+    executionhandler.processstarted.connect(mainscreen.menus["deviceStatusControls"].hideMainMenu)
+    executionhandler.processstopped.connect(mainscreen.menus["deviceStatusSensors"].hideProcessStatus)
+    executionhandler.processstopped.connect(mainscreen.menus["deviceStatusControls"].hideProcessStatus)
+    executionhandler.processcomplete.connect(mainscreen.menus["deviceStatusSensors"].hideProcessStatus)
+    executionhandler.processcomplete.connect(mainscreen.menus["deviceStatusControls"].hideProcessStatus)
+
     mainscreen.menus["cleaningScreen"].startCleaningSignal.connect(executionhandler.startCleaningProcess)
     mainscreen.menus["cleaningScreen"].flushSystemSignal.connect(executionhandler.startFlushProcess)
