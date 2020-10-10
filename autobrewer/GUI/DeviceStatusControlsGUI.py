@@ -467,23 +467,30 @@ class Ui_DeviceStatusControls(object):
 
         self.verticalLayout.addWidget(self.PumpsGroupBox)
 
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.GoToSensorStatusButton = QPushButton(DeviceStatusControls)
         self.GoToSensorStatusButton.setObjectName(u"GoToSensorStatusButton")
+        self.GoToSensorStatusButton.setMaximumSize(QSize(16777215, 50))
         font1 = QFont()
         font1.setPointSize(10)
         self.GoToSensorStatusButton.setFont(font1)
 
-        self.verticalLayout.addWidget(self.GoToSensorStatusButton)
+        self.horizontalLayout_3.addWidget(self.GoToSensorStatusButton)
 
         self.ReturnToMenuButton = QPushButton(DeviceStatusControls)
         self.ReturnToMenuButton.setObjectName(u"ReturnToMenuButton")
+        self.ReturnToMenuButton.setMaximumSize(QSize(16777215, 50))
         font2 = QFont()
         font2.setPointSize(10)
-        font2.setBold(True)
-        font2.setWeight(75)
+        font2.setBold(False)
+        font2.setWeight(50)
         self.ReturnToMenuButton.setFont(font2)
 
-        self.verticalLayout.addWidget(self.ReturnToMenuButton)
+        self.horizontalLayout_3.addWidget(self.ReturnToMenuButton)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
 
 
         self.retranslateUi(DeviceStatusControls)
@@ -549,6 +556,6 @@ class Ui_DeviceStatusControls(object):
         self.Pump1Button.setText(QCoreApplication.translate("DeviceStatusControls", u"Turn On", None))
         self.Pump1Label.setText(QCoreApplication.translate("DeviceStatusControls", u"Pump: 1", None))
         self.GoToSensorStatusButton.setText(QCoreApplication.translate("DeviceStatusControls", u"Sensor Status", None))
-        self.ReturnToMenuButton.setText(QCoreApplication.translate("DeviceStatusControls", u"Return to Main Menu", None))
+        self.ReturnToMenuButton.setText(QCoreApplication.translate("DeviceStatusControls", u"Main Menu", None))
     # retranslateUi
 

@@ -324,24 +324,29 @@ class Ui_BrewConfigWindow(object):
 
         self.BreweButtonLayout = QGridLayout()
         self.BreweButtonLayout.setObjectName(u"BreweButtonLayout")
-        self.BreweButtonLayout.setVerticalSpacing(30)
+        self.BreweButtonLayout.setVerticalSpacing(25)
         self.BreweButtonLayout.setContentsMargins(150, 30, 150, 0)
-        self.StartBrewButton = QPushButton(BrewConfigWindow)
-        self.StartBrewButton.setObjectName(u"StartBrewButton")
-        self.StartBrewButton.setMinimumSize(QSize(0, 50))
-        self.StartBrewButton.setMaximumSize(QSize(1000, 50))
-        self.StartBrewButton.setFont(font1)
-        self.StartBrewButton.setLayoutDirection(Qt.LeftToRight)
-        self.StartBrewButton.setFlat(False)
+        self.verticalLayout_3 = QVBoxLayout()
+        self.verticalLayout_3.setSpacing(10)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.label = QLabel(BrewConfigWindow)
+        self.label.setObjectName(u"label")
+        self.label.setFont(font)
+        self.label.setAlignment(Qt.AlignCenter)
 
-        self.BreweButtonLayout.addWidget(self.StartBrewButton, 0, 0, 1, 1)
+        self.verticalLayout_3.addWidget(self.label)
 
-        self.BackButton = QPushButton(BrewConfigWindow)
-        self.BackButton.setObjectName(u"BackButton")
-        self.BackButton.setMinimumSize(QSize(0, 50))
-        self.BackButton.setFont(font1)
+        self.QBComboBox = QComboBox(BrewConfigWindow)
+        self.QBComboBox.setObjectName(u"QBComboBox")
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.QBComboBox.sizePolicy().hasHeightForWidth())
+        self.QBComboBox.setSizePolicy(sizePolicy)
+        self.QBComboBox.setMinimumSize(QSize(0, 30))
+        self.QBComboBox.setMaximumSize(QSize(10000, 16777215))
 
-        self.BreweButtonLayout.addWidget(self.BackButton, 1, 0, 1, 1)
+        self.verticalLayout_3.addWidget(self.QBComboBox)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setSpacing(100)
@@ -368,23 +373,27 @@ class Ui_BrewConfigWindow(object):
         self.horizontalLayout_2.addWidget(self.QBSaveButton)
 
 
-        self.BreweButtonLayout.addLayout(self.horizontalLayout_2, 4, 0, 1, 1)
-
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.QBComboBox = QComboBox(BrewConfigWindow)
-        self.QBComboBox.setObjectName(u"QBComboBox")
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.QBComboBox.sizePolicy().hasHeightForWidth())
-        self.QBComboBox.setSizePolicy(sizePolicy)
-        self.QBComboBox.setMaximumSize(QSize(400, 16777215))
-
-        self.horizontalLayout.addWidget(self.QBComboBox)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_2)
 
 
-        self.BreweButtonLayout.addLayout(self.horizontalLayout, 2, 0, 1, 1)
+        self.BreweButtonLayout.addLayout(self.verticalLayout_3, 1, 0, 1, 1)
+
+        self.BackButton = QPushButton(BrewConfigWindow)
+        self.BackButton.setObjectName(u"BackButton")
+        self.BackButton.setMinimumSize(QSize(0, 50))
+        self.BackButton.setFont(font1)
+
+        self.BreweButtonLayout.addWidget(self.BackButton, 4, 0, 1, 1)
+
+        self.StartBrewButton = QPushButton(BrewConfigWindow)
+        self.StartBrewButton.setObjectName(u"StartBrewButton")
+        self.StartBrewButton.setMinimumSize(QSize(0, 50))
+        self.StartBrewButton.setMaximumSize(QSize(1000, 50))
+        self.StartBrewButton.setFont(font1)
+        self.StartBrewButton.setLayoutDirection(Qt.LeftToRight)
+        self.StartBrewButton.setFlat(False)
+
+        self.BreweButtonLayout.addWidget(self.StartBrewButton, 3, 0, 1, 1)
 
 
         self.verticalLayout.addLayout(self.BreweButtonLayout)
@@ -429,10 +438,11 @@ class Ui_BrewConfigWindow(object):
         self.Hop4Label.setText(QCoreApplication.translate("BrewConfigWindow", u"Hop #4", None))
         self.Hop3Label.setText(QCoreApplication.translate("BrewConfigWindow", u"Hop #3", None))
         self.Hop5Label.setText(QCoreApplication.translate("BrewConfigWindow", u"Hop #5", None))
-        self.StartBrewButton.setText(QCoreApplication.translate("BrewConfigWindow", u"Start brewing!", None))
-        self.BackButton.setText(QCoreApplication.translate("BrewConfigWindow", u"Back to Main Menu", None))
+        self.label.setText(QCoreApplication.translate("BrewConfigWindow", u"Quick Brew", None))
         self.QBLoadButton.setText(QCoreApplication.translate("BrewConfigWindow", u"Load Quick Brew", None))
         self.QBDeleteButton.setText(QCoreApplication.translate("BrewConfigWindow", u"Delete Quick Brew", None))
         self.QBSaveButton.setText(QCoreApplication.translate("BrewConfigWindow", u"Save Quick Brew", None))
+        self.BackButton.setText(QCoreApplication.translate("BrewConfigWindow", u"Main Menu", None))
+        self.StartBrewButton.setText(QCoreApplication.translate("BrewConfigWindow", u"Start brewing!", None))
     # retranslateUi
 

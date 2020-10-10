@@ -3,13 +3,16 @@
 ################################################################################
 ## Form generated from reading UI file 'CleaningScreen.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.15.1
+## Created by: Qt User Interface Compiler version 5.15.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import *
-from PySide2.QtGui import *
+from PySide2.QtCore import (QCoreApplication, QDate, QDateTime, QMetaObject,
+    QObject, QPoint, QRect, QSize, QTime, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
+    QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter,
+    QPixmap, QRadialGradient)
 from PySide2.QtWidgets import *
 
 
@@ -22,50 +25,50 @@ class Ui_CleaningScreen(object):
         CleaningScreen.setMaximumSize(QSize(1024, 600))
         self.CleanScreenLayout = QGridLayout(CleaningScreen)
         self.CleanScreenLayout.setObjectName(u"CleanScreenLayout")
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout.addItem(self.horizontalSpacer)
-
+        self.LowerCleaningButtonsLayout = QGridLayout()
+        self.LowerCleaningButtonsLayout.setObjectName(u"LowerCleaningButtonsLayout")
         self.FlushSystemButton = QPushButton(CleaningScreen)
         self.FlushSystemButton.setObjectName(u"FlushSystemButton")
-        self.FlushSystemButton.setMinimumSize(QSize(200, 0))
-        self.FlushSystemButton.setMaximumSize(QSize(200, 60))
+        self.FlushSystemButton.setMinimumSize(QSize(200, 60))
+        self.FlushSystemButton.setMaximumSize(QSize(800, 60))
         font = QFont()
         font.setPointSize(12)
         self.FlushSystemButton.setFont(font)
 
-        self.horizontalLayout.addWidget(self.FlushSystemButton)
+        self.LowerCleaningButtonsLayout.addWidget(self.FlushSystemButton, 3, 0, 1, 1)
 
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.horizontalLayout.addItem(self.horizontalSpacer_2)
+        self.LowerCleaningButtonsLayout.addItem(self.verticalSpacer, 0, 0, 1, 1)
 
-        self.ReturnToMenuButton = QPushButton(CleaningScreen)
-        self.ReturnToMenuButton.setObjectName(u"ReturnToMenuButton")
-        self.ReturnToMenuButton.setMinimumSize(QSize(200, 0))
-        self.ReturnToMenuButton.setMaximumSize(QSize(200, 60))
-        self.ReturnToMenuButton.setFont(font)
-
-        self.horizontalLayout.addWidget(self.ReturnToMenuButton)
-
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout.addItem(self.horizontalSpacer_3)
-
-
-        self.CleanScreenLayout.addLayout(self.horizontalLayout, 2, 0, 1, 1)
-
-        self.LowerCleaningButtonsLayout = QGridLayout()
-        self.LowerCleaningButtonsLayout.setObjectName(u"LowerCleaningButtonsLayout")
         self.StartCleaningButton = QPushButton(CleaningScreen)
         self.StartCleaningButton.setObjectName(u"StartCleaningButton")
-        self.StartCleaningButton.setMaximumSize(QSize(250, 60))
+        self.StartCleaningButton.setMinimumSize(QSize(0, 60))
+        self.StartCleaningButton.setMaximumSize(QSize(800, 60))
         self.StartCleaningButton.setFont(font)
         self.StartCleaningButton.setAutoFillBackground(False)
 
         self.LowerCleaningButtonsLayout.addWidget(self.StartCleaningButton, 1, 0, 1, 1)
+
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.LowerCleaningButtonsLayout.addItem(self.verticalSpacer_2, 6, 0, 1, 1)
+
+        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.LowerCleaningButtonsLayout.addItem(self.verticalSpacer_3, 4, 0, 1, 1)
+
+        self.ReturnToMenuButton = QPushButton(CleaningScreen)
+        self.ReturnToMenuButton.setObjectName(u"ReturnToMenuButton")
+        self.ReturnToMenuButton.setMinimumSize(QSize(200, 60))
+        self.ReturnToMenuButton.setMaximumSize(QSize(800, 60))
+        self.ReturnToMenuButton.setFont(font)
+
+        self.LowerCleaningButtonsLayout.addWidget(self.ReturnToMenuButton, 5, 0, 1, 1)
+
+        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.LowerCleaningButtonsLayout.addItem(self.verticalSpacer_4, 2, 0, 1, 1)
 
 
         self.CleanScreenLayout.addLayout(self.LowerCleaningButtonsLayout, 0, 0, 1, 1)
@@ -79,7 +82,7 @@ class Ui_CleaningScreen(object):
     def retranslateUi(self, CleaningScreen):
         CleaningScreen.setWindowTitle(QCoreApplication.translate("CleaningScreen", u"Form", None))
         self.FlushSystemButton.setText(QCoreApplication.translate("CleaningScreen", u"Flush System", None))
-        self.ReturnToMenuButton.setText(QCoreApplication.translate("CleaningScreen", u"Main Menu", None))
         self.StartCleaningButton.setText(QCoreApplication.translate("CleaningScreen", u"Start Cleaning Cycle", None))
+        self.ReturnToMenuButton.setText(QCoreApplication.translate("CleaningScreen", u"Main Menu", None))
     # retranslateUi
 

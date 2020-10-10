@@ -3,13 +3,16 @@
 ################################################################################
 ## Form generated from reading UI file 'DeviceStatusSensors.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.15.1
+## Created by: Qt User Interface Compiler version 5.15.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import *
-from PySide2.QtGui import *
+from PySide2.QtCore import (QCoreApplication, QDate, QDateTime, QMetaObject,
+    QObject, QPoint, QRect, QSize, QTime, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
+    QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter,
+    QPixmap, QRadialGradient)
 from PySide2.QtWidgets import *
 
 
@@ -146,23 +149,30 @@ class Ui_DeviceStatusSensors(object):
 
         self.verticalLayout.addItem(self.horizontalSpacer_3)
 
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.GoToControlStatusButton = QPushButton(DeviceStatusSensors)
         self.GoToControlStatusButton.setObjectName(u"GoToControlStatusButton")
+        self.GoToControlStatusButton.setMaximumSize(QSize(16777215, 50))
         font1 = QFont()
         font1.setPointSize(10)
         self.GoToControlStatusButton.setFont(font1)
 
-        self.verticalLayout.addWidget(self.GoToControlStatusButton)
+        self.horizontalLayout.addWidget(self.GoToControlStatusButton)
 
         self.ReturnToMenuButton = QPushButton(DeviceStatusSensors)
         self.ReturnToMenuButton.setObjectName(u"ReturnToMenuButton")
+        self.ReturnToMenuButton.setMaximumSize(QSize(16777215, 50))
         font2 = QFont()
         font2.setPointSize(10)
-        font2.setBold(True)
-        font2.setWeight(75)
+        font2.setBold(False)
+        font2.setWeight(50)
         self.ReturnToMenuButton.setFont(font2)
 
-        self.verticalLayout.addWidget(self.ReturnToMenuButton)
+        self.horizontalLayout.addWidget(self.ReturnToMenuButton)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout)
 
 
         self.retranslateUi(DeviceStatusSensors)
@@ -189,6 +199,6 @@ class Ui_DeviceStatusSensors(object):
         self.TankVolume3State.setText(QCoreApplication.translate("DeviceStatusSensors", u"Volume (gal):", None))
         self.TankVolume1Label.setText(QCoreApplication.translate("DeviceStatusSensors", u"Hot Liquor Tank:", None))
         self.GoToControlStatusButton.setText(QCoreApplication.translate("DeviceStatusSensors", u"Device Controls", None))
-        self.ReturnToMenuButton.setText(QCoreApplication.translate("DeviceStatusSensors", u"Return to Main Menu", None))
+        self.ReturnToMenuButton.setText(QCoreApplication.translate("DeviceStatusSensors", u"Main Menu", None))
     # retranslateUi
 
