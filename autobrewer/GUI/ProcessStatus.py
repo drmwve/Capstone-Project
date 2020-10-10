@@ -99,9 +99,7 @@ class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
         self.CurrentTaskLabel.setText("Process Complete")
         self.ETALabel.setText("")
         self.remainingProcessTime = 0
-        self.ManualControlButton.setEnabled(False)
-        self.NextStepButton.setEnabled(False)
-        self.StopProcessButton.setEnabled(False)
+        self.returnUserToMenu.emit()
 
     def updateLabel(self, label: str):
         self.CurrentTaskLabel.setText(label)
