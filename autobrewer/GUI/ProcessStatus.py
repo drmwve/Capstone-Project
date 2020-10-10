@@ -90,6 +90,7 @@ class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
         self.remainingProcessTime = self.totalProcessTime
         self.resetProgressScreen()
         self.CurrentTaskProgressBar.setRange(-self.totalProcessTime, 0)
+        self.CurrentTaskProgressBar.setValue(-self.totalProcessTime)
         self.updateTimer.start(1000)
 
     def processComplete(self):
