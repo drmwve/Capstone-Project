@@ -17,8 +17,8 @@ class BrewRecipe:
 
     name: str = "Default"
     hopCartridges: int = 5
-    mashTunTemperature: int = 160
-    hopTiming: int = field(default_factory=lambda: [0, 10, 20, 30, 40])
+    mashTunTemperature: int = 152
+    hopTiming: int = field(default_factory=lambda: [0, 15, 30, 45, 60])
 
 
 class BrewRecipePickler(object):
