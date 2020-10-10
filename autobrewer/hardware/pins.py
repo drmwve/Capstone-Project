@@ -20,6 +20,8 @@ class Pins:
     tempSensorGPIO = 9
     pins_initialized = False
 
+    TEMP_SENSOR_IDS = [0, 1, 2] # Get actual IDs and add here
+
     adc = ADS1115()
     ADC_GAIN = 2/3
     ADC_VOLTAGE_SUPPLIED = 5
