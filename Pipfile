@@ -7,6 +7,7 @@ verify_ssl = true
 pytest = "*"
 pytest-qt = "*"
 hypothesis = "*"
+matplotlib = "*"
 
 [packages]
 pyside2 = "*"
@@ -16,6 +17,7 @@ gpiozero = "*"
 pytest = "*"
 black = {git = "git://github.com/psf/black"}
 pyax12 = "*"
+simple-pid = "*"
 
 [requires]
 python_version = "3.7"

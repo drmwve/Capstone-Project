@@ -20,6 +20,8 @@ class HardwareState:
         ]
         self.pumps = [False, False]
         self.heatingElements = {"HLT": 0, "BK": 0}
+        self.kettletempsetpoints = {0, 0, 0}
+        self.kettlepidenabled = {False, False, False}
         self.hopservo = 0
         self.temperatures = {"HLT": 0, "MT": 0, "BK": 0}
         self.volumes = {"HLT": 0, "MT": 0, "BK": 0}

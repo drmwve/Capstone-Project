@@ -1,6 +1,10 @@
+from simple_pid import PID
 from loguru import logger
 from PySide2.QtCore import QObject, Signal, QTimer
-
+try:
+    import matplotlib.pyplot as plot
+except:
+    pass
 from .hardwarestate import HardwareState
 from ..exceptions import ComponentControlError
 from .pins import Pins
@@ -28,9 +32,15 @@ class DeviceHandler(QObject, Pins):
 
     signalState = Signal(HardwareState)
     hardwareState = HardwareState()
-
     HOP_SERVO_HOME = -1
     HOP_SERVO_POSITIONS = {-1: -150, 0: -90, 1: -30, 2: 30, 3: 90, 4: 150}
+    KETTLE_IDS = {"HLT": 0, "MT": 1, "BK": 2}
+    HLT_HEATING_ELEMENTS = [0,2]
+    BK_HEATING_ELEMENTS = [1,3]
+    hltpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 100), sample_time=None)
+    mtpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 100), sample_time=None)
+    bkpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 100), sample_time=None)
+    PIDS = [hltpid, mtpid, bkpid]
 
     def __init__(self):
         self._connectPins()
@@ -107,7 +117,7 @@ class DeviceHandler(QObject, Pins):
             raise ComponentControlError(f'Could not find hop servo position {index}')
 
     def setHopServoPosition(self, angle: int):
-        if angle in range(-150,150):
+        if angle in range(-150, 150):
             self.servoconnection.goto(self.SERVO_ID, angle, speed=512, degrees=True)
             self.hardwareState.hopServo = angle
         else:
@@ -124,6 +134,35 @@ class DeviceHandler(QObject, Pins):
 
     def disablePump(self, index: int):
         self._setPumpState(index, False)
+
+    def setTargetKettleTemp(self, kettle: int, target: int):
+        if target not in range(100, 211):
+            raise ComponentControlError("Cannot set a target temperature below 100 or above 211 degrees Fahrenheit")
+            return
+        else:
+            if kettle in DeviceHandler.KETTLE_IDS.values():
+                kettlename = kettle
+                for key, value in DeviceHandler.KETTLE_IDS.items():
+                    if value == kettle:
+                        kettlename = key
+                logger.info(f'Set kettle {kettlename} target temperature to {target}')
+                self.hltpid.setpoint = target
+                self.hardwareState.kettletempsetpoints[kettle] = target
+                self.setKettlePIDEnabled(kettle, True)
+            else:
+                raise ComponentControlError("Could not find given kettle")
+
+    def setKettlePIDEnabled(self, index: int, value: bool):
+        if index not in DeviceHandler.KETTLE_IDS.values():
+            raise ComponentControlError("Could not find given kettle")
+        else:
+            self.hardwareState.kettlepidenabled[index] = value
+
+    def _updatePID(self):
+        self._readSensors()
+        for kettle in DeviceHandler.KETTLE_IDS.keys():
+            if self.hardwareState.kettlepidenabled[kettle] == True:
+                self._setHeatingElementValue(self.PIDS[kettle](self.hardwareState.temperatures[kettle]), calledmanually=False)
 
     def enableHeatingElement(self, index: int):
         self._setHeatingElementValue(index, 1)
@@ -166,7 +205,12 @@ class DeviceHandler(QObject, Pins):
                 break
         return pumphasopenpath
 
-    def _setHeatingElementValue(self, index: int, value: float):
+    def _setHeatingElementValue(self, index: int, value: float, calledmanually=True):
+        if calledmanually:
+            if index in DeviceHandler.HLT_HEATING_ELEMENTS:
+                self.setKettlePIDEnabled(DeviceHandler.KETTLE_IDS["HLT"], False)
+            elif index in DeviceHandler.BK_HEATING_ELEMENTS:
+                self.setKettlePIDEnabled(DeviceHandler.KETTLE_IDS["BK"], False)
         self.heatingElements[index].value = value
         self.hardwareState.heatingElements[index] = value
         logger.debug(f"Set heating element {index} to {value}")
@@ -183,16 +227,17 @@ class DeviceHandler(QObject, Pins):
     def _readvolume(self, index: int) -> float:
         """Reads the ADC for a particular kettle's pressure sensor and converts the pressure value into a volume
         in gallons"""
-        KETTLE_DIAMETER = 0.320675 # meters
-        LIQUID_DENSITY = 997 # kg/m3
-        GRAVITY = 9.81 #m/s^2
+        KETTLE_DIAMETER = 0.320675  # meters
+        LIQUID_DENSITY = 997  # kg/m3
+        GRAVITY = 9.81  # m/s^2
         PI = 3.142
         # pressure is in kPa
         pressurevoltage = self.adc.read_adc(index, gain=self.ADC_GAIN)
         pressurevalue = (pressurevoltage / self.ADC_VOLTAGE_SUPPLIED - 0.053) / 0.1533
         liquidheight = pressurevalue * 1000 / (LIQUID_DENSITY * GRAVITY)
-        volume = PI * (KETTLE_DIAMETER/2)**2 * liquidheight #cubic meters
-        volume *= 264.172 # gallons
+        volume = PI * (KETTLE_DIAMETER / 2) ** 2 * liquidheight  # cubic meters
+        volume *= 264.172  # gallons
         return volume
+
 
 devicehandler = DeviceHandler()
