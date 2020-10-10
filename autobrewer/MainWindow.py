@@ -49,8 +49,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menus["brewConfig"].BackButton.clicked.connect(
             partial(self.goToMenu, self.menus["mainMenu"])
         )
-        self.menus["processStatus"].ReturnToMenuButton.clicked.connect(
-            partial(self.goToMenu, self.menus["mainMenu"])
+        self.menus["processStatus"].DeviceStatusButton.clicked.connect(
+            partial(self.goToMenu, self.menus["deviceStatusSensors"])
         )
         self.menus["deviceStatusControls"].ReturnToMenuButton.clicked.connect(
             partial(self.goToMenu, self.menus["mainMenu"])
@@ -81,6 +81,12 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         self.menus["deviceStatusControls"].GoToSensorStatusButton.clicked.connect(
             partial(self.goToMenu, self.menus["deviceStatusSensors"])
+        )
+        self.menus["deviceStatusControls"].ProcessStatusButton.clicked.connect(
+            partial(self.goToMenu, self.menus["processStatus"])
+        )
+        self.menus["deviceStatusSensors"].ProcessStatusButton.clicked.connect(
+            partial(self.goToMenu, self.menus["processStatus"])
         )
         self.menus["deviceStatusSensors"].GoToControlStatusButton.clicked.connect(
             partial(self.goToMenu, self.menus["deviceStatusControls"])
