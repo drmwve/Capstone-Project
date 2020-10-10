@@ -21,7 +21,7 @@ class DeviceStatusSensors(QtWidgets.QWidget, Ui_DeviceStatusSensors):
             self.TankVolume3State
         ]
         self.updateState()
-        
+
     def connections(self):
         self.updateTimer.timeout.connect(self.updateSensorsTimer)
         self.GoToControlStatusButton.clicked.connect(self.updateTimer.stop)
@@ -30,6 +30,7 @@ class DeviceStatusSensors(QtWidgets.QWidget, Ui_DeviceStatusSensors):
     def adjustUI(self):
         self.updateTimer=QtCore.QTimer()
         self.disableSensorUpdates = QtCore.Signal()
+        self.ProcessStatusButton.setHidden(True)
 
     def updateState(self):
         self.temperatureSensors[0].setText("Temperature (\u00b0F): "+str(DeviceHandler.hardwareState.temperatures["HLT"]))
@@ -44,3 +45,11 @@ class DeviceStatusSensors(QtWidgets.QWidget, Ui_DeviceStatusSensors):
         self.updateState()
         self.updateTimer.start(1000)
         logger.debug("Updated sensors UI")
+
+    def hideMainMenu(self):
+        self.ReturnToMenuButton.setHidden(True)
+        self.ProcessStatusButton.setHidden(False)
+
+    def hideProcessStatus(self):
+        self.ReturnToMenuButton.setHidden(False)
+        self.ProcessStatusButton.setHidden(True)

@@ -78,7 +78,7 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
         self.Pump2Button.clicked.connect(lambda: self.togglePump(1))
 
     def adjustUI(self):
-        pass
+        self.ProcessStatusButton.setHidden(True)
 
     def updateState(self):
         ## This function checks hardware states, adjusting the UI where needed.
@@ -177,3 +177,11 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
             logger.info("User requested pump " + str(index + 1) + " to turn off")
             self.deviceHandler.disablePump(index)
             self.updateState()
+
+    def hideMainMenu(self):
+        self.ReturnToMenuButton.setHidden(True)
+        self.ProcessStatusButton.setHidden(False)
+
+    def hideProcessStatus(self):
+        self.ReturnToMenuButton.setHidden(False)
+        self.ProcessStatusButton.setHidden(True)
