@@ -489,6 +489,13 @@ class Ui_DeviceStatusControls(object):
 
         self.horizontalLayout_3.addWidget(self.ReturnToMenuButton)
 
+        self.ProcessStatusButton = QPushButton(DeviceStatusControls)
+        self.ProcessStatusButton.setObjectName(u"ProcessStatusButton")
+        self.ProcessStatusButton.setMaximumSize(QSize(16777215, 50))
+        self.ProcessStatusButton.setFont(font1)
+
+        self.horizontalLayout_3.addWidget(self.ProcessStatusButton)
+
 
         self.verticalLayout.addLayout(self.horizontalLayout_3)
 
@@ -557,5 +564,6 @@ class Ui_DeviceStatusControls(object):
         self.Pump1Label.setText(QCoreApplication.translate("DeviceStatusControls", u"Pump: 1", None))
         self.GoToSensorStatusButton.setText(QCoreApplication.translate("DeviceStatusControls", u"Sensor Status", None))
         self.ReturnToMenuButton.setText(QCoreApplication.translate("DeviceStatusControls", u"Main Menu", None))
+        self.ProcessStatusButton.setText(QCoreApplication.translate("DeviceStatusControls", u"Process Status", None))
     # retranslateUi
 

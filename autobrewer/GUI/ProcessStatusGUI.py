@@ -50,12 +50,12 @@ class Ui_ProcessStatus(object):
 
         self.LowerLayout.addWidget(self.StopProcessButton, 0, 1, 1, 1)
 
-        self.ReturnToMenuButton = QPushButton(ProcessStatus)
-        self.ReturnToMenuButton.setObjectName(u"ReturnToMenuButton")
-        self.ReturnToMenuButton.setMaximumSize(QSize(200, 60))
-        self.ReturnToMenuButton.setFont(font)
+        self.DeviceStatusButton = QPushButton(ProcessStatus)
+        self.DeviceStatusButton.setObjectName(u"DeviceStatusButton")
+        self.DeviceStatusButton.setMaximumSize(QSize(200, 60))
+        self.DeviceStatusButton.setFont(font)
 
-        self.LowerLayout.addWidget(self.ReturnToMenuButton, 0, 2, 1, 1)
+        self.LowerLayout.addWidget(self.DeviceStatusButton, 0, 2, 1, 1)
 
 
         self.gridLayout.addLayout(self.LowerLayout, 1, 0, 1, 1)
@@ -99,7 +99,7 @@ class Ui_ProcessStatus(object):
         self.NextStepButton.setText(QCoreApplication.translate("ProcessStatus", u"Next Step", None))
         self.ManualControlButton.setText(QCoreApplication.translate("ProcessStatus", u"Manual Control", None))
         self.StopProcessButton.setText(QCoreApplication.translate("ProcessStatus", u"Stop Process", None))
-        self.ReturnToMenuButton.setText(QCoreApplication.translate("ProcessStatus", u"Main Menu", None))
+        self.DeviceStatusButton.setText(QCoreApplication.translate("ProcessStatus", u"Device Status", None))
         self.CurrentTaskLabel.setText(QCoreApplication.translate("ProcessStatus", u"What am I doing?", None))
         self.ETALabel.setText(QCoreApplication.translate("ProcessStatus", u"ETA: 84 Years", None))
     # retranslateUi

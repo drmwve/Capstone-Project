@@ -171,6 +171,13 @@ class Ui_DeviceStatusSensors(object):
 
         self.horizontalLayout.addWidget(self.ReturnToMenuButton)
 
+        self.ProcessStatusButton = QPushButton(DeviceStatusSensors)
+        self.ProcessStatusButton.setObjectName(u"ProcessStatusButton")
+        self.ProcessStatusButton.setMaximumSize(QSize(16777215, 50))
+        self.ProcessStatusButton.setFont(font1)
+
+        self.horizontalLayout.addWidget(self.ProcessStatusButton)
+
 
         self.verticalLayout.addLayout(self.horizontalLayout)
 
@@ -200,5 +207,6 @@ class Ui_DeviceStatusSensors(object):
         self.TankVolume1Label.setText(QCoreApplication.translate("DeviceStatusSensors", u"Hot Liquor Tank:", None))
         self.GoToControlStatusButton.setText(QCoreApplication.translate("DeviceStatusSensors", u"Device Controls", None))
         self.ReturnToMenuButton.setText(QCoreApplication.translate("DeviceStatusSensors", u"Main Menu", None))
+        self.ProcessStatusButton.setText(QCoreApplication.translate("DeviceStatusSensors", u"Process Status", None))
     # retranslateUi
 
