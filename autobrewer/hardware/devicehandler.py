@@ -29,6 +29,9 @@ class DeviceHandler(QObject, Pins):
     signalState = Signal(HardwareState)
     hardwareState = HardwareState()
 
+    HOP_SERVO_HOME = -1
+    HOP_SERVO_POSITIONS = {-1: -150, 0: -90, 1: -30, 2: 30, 3: 90, 4: 150}
+
     def __init__(self):
         self._connectPins()
         self._createValvePaths()
@@ -96,6 +99,12 @@ class DeviceHandler(QObject, Pins):
         logger.debug("Closing all ball valves")
         for index, _ in enumerate(self.ballValves):
             self.closeBallValve(index)
+
+    def goToHopPosition(self, index: int):
+        if index in DeviceHandler.HOP_SERVO_POSITIONS.keys():
+            self.setHopServoPosition(DeviceHandler.HOP_SERVO_POSITIONS[index])
+        else:
+            raise ComponentControlError(f'Could not find hop servo position {index}')
 
     def setHopServoPosition(self, angle: int):
         if angle in range(-150,150):
