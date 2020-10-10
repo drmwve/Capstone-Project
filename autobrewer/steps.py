@@ -53,7 +53,7 @@ class FillHLT(Step):
         logger.debug(f'Started timer: {self.runtimer.isActive()}')
 
     def loop(self):
-        logger.debug("Running loop (checking level sensor at HLT)")
+        logger.debug("Running boilComplete (checking level sensor at HLT)")
         if devicehandler.hardwareState.volume[0] == 8:
             self.devicehandler.closeBallValve(0)
             self.stepcomplete.emit()
@@ -66,7 +66,7 @@ class HeatHTL(Step):
 
     def __init__(self, HLTtemp):
         super().__init__()
-        self.startingmessage = "Heating Hot Liqure Tank"
+        self.startingmessage = "Heating Hot Liquor Tank"
         self.estimatedtime = 2580 #we calculated 43 minutes required time
         self.runtimer = QtCore.QTimer()
         self.runtimer.timeout.connect(self.loop)
@@ -193,9 +193,9 @@ class BKboiling_AddingHops(Step):
         self.numHops = numHops #number of hops
         self.timeHops = timeHops  #timing between hops
         self.runtimer = QtCore.QTimer()
-        self.runtimer.timeout.connect(self.loop)
+        self.runtimer.timeout.connect(self.boilComplete)
         self.runtimer2 = QtCore.QTimer()
-        self.runtimer2.timeout.connect(self.loop2)
+        self.runtimer2.timeout.connect(self.addHopsChain)
 
     def run(self):
         logger.debug(f'Running step {self}')
@@ -206,19 +206,23 @@ class BKboiling_AddingHops(Step):
         logger.debug(f'Started timer: {self.runtimer.isActive()}')
         logger.debug(f'Started timer 2: {self.runtimer2.isActive()}')
 
-    def loop(self):
+    def boilComplete(self):
         self.stepcomplete.emit()
         self.stop()
 
-    def loop2(self):
+    def addHopsChain(self):
+        logger.debug("Adding hops")
+        devicehandler.goToHopPosition(self.hopindex)
+        self.runtimer2.stop()
+        self.hopindex += 1
         if self.hopindex < self.numHops:
-            logger.debug("Adding hops")
-            # move servo
-            self.runtimer2.stop()
-            self.hopindex += 1
             self.runtimer2.start(self.timeHops[self.hopindex])
         else:
-            self.runtimer2.stop()
+            QtCore.QTimer.singleShot(5000, self.hopDispenseComplete)
+
+    def hopDispenseComplete(self):
+        devicehandler.goToHopPosition(devicehandler.HOP_SERVO_HOME)
+        self.runtimer2.stop()
 
     def stop(self):
         self.stepcomplete.emit()
