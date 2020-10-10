@@ -283,11 +283,13 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
                 self.hopEntry[i].setHidden(True)
                 self.hopIncrease[i].setHidden(True)
                 self.hopDecrease[i].setHidden(True)
+                self.hopLabels[i].setHidden(True)
                 self.hopEntry[i].setText("-1")
             else:
                 self.hopEntry[i].setHidden(False)
                 self.hopIncrease[i].setHidden(False)
                 self.hopDecrease[i].setHidden(False)
+                self.hopLabels[i].setHidden(False)
 
         self.HopCartridgeSelectEntry.setText(str(recipe.hopCartridges))
         self.MashTempEntry.setText(str(recipe.mashTunTemperature))
