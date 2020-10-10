@@ -1,10 +1,7 @@
 from .hardware.devicehandler import devicehandler
-from .hardware import tempState
-from . import BrewRecipe
 from PySide2.QtCore import Signal, QObject
 from PySide2 import QtCore
 from loguru import logger
-import time
 
 
 class Step(QObject):
@@ -185,9 +182,10 @@ class MTtoBK(Step):
         self.devicehandler.disableHeatingElement(0)
         self.devicehandler.disableHeatingElement(2)
 
+
 class BKboiling_AddingHops(Step):
 
-    def __init__(self,numHops, timeHops):
+    def __init__(self, numHops, timeHops):
         super().__init__()
         self.startingmessage = "Boiling the liquid in the boiling kettle and adding hops"
         self.estimatedtime = 3600 
@@ -198,40 +196,36 @@ class BKboiling_AddingHops(Step):
         self.runtimer.timeout.connect(self.loop)
         self.runtimer2 = QtCore.QTimer()
         self.runtimer2.timeout.connect(self.loop2)
-        self.runtimer3 = QtCore.QTimer()
-        self.runtimer3.timeout.connect(self.loop3)
 
     def run(self):
         logger.debug(f'Running step {self}')
         devicehandler.closeBallValve(3)
         devicehandler.closeBallValve(4)
-        self.runtimer.start(3600000)     # can more than one runtimer work at the same time?
+        self.runtimer.start(3600000)
         self.runtimer2.start(self.timeHops[self.hopindex])
         logger.debug(f'Started timer: {self.runtimer.isActive()}')
         logger.debug(f'Started timer 2: {self.runtimer2.isActive()}')
 
     def loop(self):
-        logger.debug("Running loop (waiting 60 minutes while boiling)")
         self.stepcomplete.emit()
         self.stop()
-
 
     def loop2(self):
         if self.hopindex < self.numHops:
             logger.debug("Adding hops")
             # move servo
-            self.runetimer2.stop()
+            self.runtimer2.stop()
             self.hopindex += 1
             self.runtimer2.start(self.timeHops[self.hopindex])
         else:
-            self.runetimer2.stop()
-
+            self.runtimer2.stop()
 
     def stop(self):
         self.stepcomplete.emit()
         self.runtimer.stop()
-        self.runtimer2.stop() # this should be deleted right? since its already in loop2. wouldnt be safer to leave it here aswell?
+        self.runtimer2.stop()
         self.devicehandler.disableAllHeatingElements()
+
 
 class BKWhirl(Step):
 
