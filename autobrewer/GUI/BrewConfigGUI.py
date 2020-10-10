@@ -123,80 +123,11 @@ class Ui_BrewConfigWindow(object):
 
         self.verticalLayout.addLayout(self.gridLayout)
 
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout.addItem(self.verticalSpacer_2)
-
         self.HopTimingLayout = QGridLayout()
         self.HopTimingLayout.setObjectName(u"HopTimingLayout")
         self.HopTimingLayout.setSizeConstraint(QLayout.SetDefaultConstraint)
         self.HopTimingLayout.setVerticalSpacing(10)
         self.HopTimingLayout.setContentsMargins(-1, 0, -1, -1)
-        self.Hop4Entry = QLineEdit(BrewConfigWindow)
-        self.Hop4Entry.setObjectName(u"Hop4Entry")
-        self.Hop4Entry.setMinimumSize(QSize(0, 30))
-        self.Hop4Entry.setMaximumSize(QSize(16777215, 30))
-        self.Hop4Entry.setFont(font)
-        self.Hop4Entry.setMaxLength(2)
-        self.Hop4Entry.setAlignment(Qt.AlignCenter)
-        self.Hop4Entry.setReadOnly(True)
-
-        self.HopTimingLayout.addWidget(self.Hop4Entry, 4, 2, 1, 1)
-
-        self.Hop1Entry = QLineEdit(BrewConfigWindow)
-        self.Hop1Entry.setObjectName(u"Hop1Entry")
-        self.Hop1Entry.setMinimumSize(QSize(0, 30))
-        self.Hop1Entry.setMaximumSize(QSize(16777215, 30))
-        self.Hop1Entry.setFont(font)
-        self.Hop1Entry.setMaxLength(2)
-        self.Hop1Entry.setAlignment(Qt.AlignCenter)
-        self.Hop1Entry.setReadOnly(True)
-
-        self.HopTimingLayout.addWidget(self.Hop1Entry, 1, 2, 1, 1)
-
-        self.Hop5Entry = QLineEdit(BrewConfigWindow)
-        self.Hop5Entry.setObjectName(u"Hop5Entry")
-        self.Hop5Entry.setMinimumSize(QSize(0, 30))
-        self.Hop5Entry.setMaximumSize(QSize(16777215, 30))
-        self.Hop5Entry.setFont(font)
-        self.Hop5Entry.setMaxLength(2)
-        self.Hop5Entry.setAlignment(Qt.AlignCenter)
-        self.Hop5Entry.setReadOnly(True)
-
-        self.HopTimingLayout.addWidget(self.Hop5Entry, 5, 2, 1, 1)
-
-        self.Hop3Decrease = QPushButton(BrewConfigWindow)
-        self.Hop3Decrease.setObjectName(u"Hop3Decrease")
-        self.Hop3Decrease.setMinimumSize(QSize(0, 30))
-        self.Hop3Decrease.setMaximumSize(QSize(16777215, 30))
-        self.Hop3Decrease.setFont(font1)
-
-        self.HopTimingLayout.addWidget(self.Hop3Decrease, 3, 1, 1, 1)
-
-        self.Hop3Increase = QPushButton(BrewConfigWindow)
-        self.Hop3Increase.setObjectName(u"Hop3Increase")
-        self.Hop3Increase.setMinimumSize(QSize(0, 30))
-        self.Hop3Increase.setMaximumSize(QSize(16777215, 30))
-        self.Hop3Increase.setFont(font1)
-
-        self.HopTimingLayout.addWidget(self.Hop3Increase, 3, 3, 1, 1)
-
-        self.Hop1Label = QLabel(BrewConfigWindow)
-        self.Hop1Label.setObjectName(u"Hop1Label")
-        self.Hop1Label.setMinimumSize(QSize(80, 30))
-        self.Hop1Label.setMaximumSize(QSize(16777215, 30))
-        self.Hop1Label.setFont(font1)
-
-        self.HopTimingLayout.addWidget(self.Hop1Label, 1, 0, 1, 1)
-
-        self.Hop5Increase = QPushButton(BrewConfigWindow)
-        self.Hop5Increase.setObjectName(u"Hop5Increase")
-        self.Hop5Increase.setMinimumSize(QSize(0, 30))
-        self.Hop5Increase.setMaximumSize(QSize(16777215, 30))
-        self.Hop5Increase.setFont(font1)
-
-        self.HopTimingLayout.addWidget(self.Hop5Increase, 5, 3, 1, 1)
-
         self.Hop3Entry = QLineEdit(BrewConfigWindow)
         self.Hop3Entry.setObjectName(u"Hop3Entry")
         self.Hop3Entry.setMinimumSize(QSize(0, 30))
@@ -208,32 +139,16 @@ class Ui_BrewConfigWindow(object):
 
         self.HopTimingLayout.addWidget(self.Hop3Entry, 3, 2, 1, 1)
 
-        self.Hop4Decrease = QPushButton(BrewConfigWindow)
-        self.Hop4Decrease.setObjectName(u"Hop4Decrease")
-        self.Hop4Decrease.setMinimumSize(QSize(0, 30))
-        self.Hop4Decrease.setMaximumSize(QSize(16777215, 30))
-        self.Hop4Decrease.setFont(font1)
+        self.Hop5Entry = QLineEdit(BrewConfigWindow)
+        self.Hop5Entry.setObjectName(u"Hop5Entry")
+        self.Hop5Entry.setMinimumSize(QSize(0, 30))
+        self.Hop5Entry.setMaximumSize(QSize(16777215, 30))
+        self.Hop5Entry.setFont(font)
+        self.Hop5Entry.setMaxLength(2)
+        self.Hop5Entry.setAlignment(Qt.AlignCenter)
+        self.Hop5Entry.setReadOnly(True)
 
-        self.HopTimingLayout.addWidget(self.Hop4Decrease, 4, 1, 1, 1)
-
-        self.Hop2Entry = QLineEdit(BrewConfigWindow)
-        self.Hop2Entry.setObjectName(u"Hop2Entry")
-        self.Hop2Entry.setMinimumSize(QSize(0, 30))
-        self.Hop2Entry.setMaximumSize(QSize(16777215, 30))
-        self.Hop2Entry.setFont(font)
-        self.Hop2Entry.setMaxLength(2)
-        self.Hop2Entry.setAlignment(Qt.AlignCenter)
-        self.Hop2Entry.setReadOnly(True)
-
-        self.HopTimingLayout.addWidget(self.Hop2Entry, 2, 2, 1, 1)
-
-        self.Hop4Increase = QPushButton(BrewConfigWindow)
-        self.Hop4Increase.setObjectName(u"Hop4Increase")
-        self.Hop4Increase.setMinimumSize(QSize(0, 30))
-        self.Hop4Increase.setMaximumSize(QSize(16777215, 30))
-        self.Hop4Increase.setFont(font1)
-
-        self.HopTimingLayout.addWidget(self.Hop4Increase, 4, 3, 1, 1)
+        self.HopTimingLayout.addWidget(self.Hop5Entry, 5, 2, 1, 1)
 
         self.Hop2Decrease = QPushButton(BrewConfigWindow)
         self.Hop2Decrease.setObjectName(u"Hop2Decrease")
@@ -251,14 +166,6 @@ class Ui_BrewConfigWindow(object):
 
         self.HopTimingLayout.addWidget(self.Hop5Decrease, 5, 1, 1, 1)
 
-        self.HopLabel = QLabel(BrewConfigWindow)
-        self.HopLabel.setObjectName(u"HopLabel")
-        self.HopLabel.setFont(font1)
-        self.HopLabel.setAlignment(Qt.AlignBottom|Qt.AlignHCenter)
-        self.HopLabel.setMargin(0)
-
-        self.HopTimingLayout.addWidget(self.HopLabel, 0, 2, 1, 1)
-
         self.Hop1Decrease = QPushButton(BrewConfigWindow)
         self.Hop1Decrease.setObjectName(u"Hop1Decrease")
         self.Hop1Decrease.setMinimumSize(QSize(0, 30))
@@ -267,13 +174,40 @@ class Ui_BrewConfigWindow(object):
 
         self.HopTimingLayout.addWidget(self.Hop1Decrease, 1, 1, 1, 1)
 
-        self.Hop2Increase = QPushButton(BrewConfigWindow)
-        self.Hop2Increase.setObjectName(u"Hop2Increase")
-        self.Hop2Increase.setMinimumSize(QSize(0, 30))
-        self.Hop2Increase.setMaximumSize(QSize(16777215, 30))
-        self.Hop2Increase.setFont(font1)
+        self.Hop4Increase = QPushButton(BrewConfigWindow)
+        self.Hop4Increase.setObjectName(u"Hop4Increase")
+        self.Hop4Increase.setMinimumSize(QSize(0, 30))
+        self.Hop4Increase.setMaximumSize(QSize(16777215, 30))
+        self.Hop4Increase.setFont(font1)
 
-        self.HopTimingLayout.addWidget(self.Hop2Increase, 2, 3, 1, 1)
+        self.HopTimingLayout.addWidget(self.Hop4Increase, 4, 3, 1, 1)
+
+        self.Hop1Label = QLabel(BrewConfigWindow)
+        self.Hop1Label.setObjectName(u"Hop1Label")
+        self.Hop1Label.setMinimumSize(QSize(80, 30))
+        self.Hop1Label.setMaximumSize(QSize(16777215, 30))
+        self.Hop1Label.setFont(font1)
+
+        self.HopTimingLayout.addWidget(self.Hop1Label, 1, 0, 1, 1)
+
+        self.Hop2Entry = QLineEdit(BrewConfigWindow)
+        self.Hop2Entry.setObjectName(u"Hop2Entry")
+        self.Hop2Entry.setMinimumSize(QSize(0, 30))
+        self.Hop2Entry.setMaximumSize(QSize(16777215, 30))
+        self.Hop2Entry.setFont(font)
+        self.Hop2Entry.setMaxLength(2)
+        self.Hop2Entry.setAlignment(Qt.AlignCenter)
+        self.Hop2Entry.setReadOnly(True)
+
+        self.HopTimingLayout.addWidget(self.Hop2Entry, 2, 2, 1, 1)
+
+        self.HopLabel = QLabel(BrewConfigWindow)
+        self.HopLabel.setObjectName(u"HopLabel")
+        self.HopLabel.setFont(font1)
+        self.HopLabel.setAlignment(Qt.AlignBottom|Qt.AlignHCenter)
+        self.HopLabel.setMargin(0)
+
+        self.HopTimingLayout.addWidget(self.HopLabel, 0, 2, 1, 1)
 
         self.Hop1Increase = QPushButton(BrewConfigWindow)
         self.Hop1Increase.setObjectName(u"Hop1Increase")
@@ -282,6 +216,33 @@ class Ui_BrewConfigWindow(object):
         self.Hop1Increase.setFont(font1)
 
         self.HopTimingLayout.addWidget(self.Hop1Increase, 1, 3, 1, 1)
+
+        self.Hop3Decrease = QPushButton(BrewConfigWindow)
+        self.Hop3Decrease.setObjectName(u"Hop3Decrease")
+        self.Hop3Decrease.setMinimumSize(QSize(0, 30))
+        self.Hop3Decrease.setMaximumSize(QSize(16777215, 30))
+        self.Hop3Decrease.setFont(font1)
+
+        self.HopTimingLayout.addWidget(self.Hop3Decrease, 3, 1, 1, 1)
+
+        self.Hop4Decrease = QPushButton(BrewConfigWindow)
+        self.Hop4Decrease.setObjectName(u"Hop4Decrease")
+        self.Hop4Decrease.setMinimumSize(QSize(0, 30))
+        self.Hop4Decrease.setMaximumSize(QSize(16777215, 30))
+        self.Hop4Decrease.setFont(font1)
+
+        self.HopTimingLayout.addWidget(self.Hop4Decrease, 4, 1, 1, 1)
+
+        self.Hop4Entry = QLineEdit(BrewConfigWindow)
+        self.Hop4Entry.setObjectName(u"Hop4Entry")
+        self.Hop4Entry.setMinimumSize(QSize(0, 30))
+        self.Hop4Entry.setMaximumSize(QSize(16777215, 30))
+        self.Hop4Entry.setFont(font)
+        self.Hop4Entry.setMaxLength(2)
+        self.Hop4Entry.setAlignment(Qt.AlignCenter)
+        self.Hop4Entry.setReadOnly(True)
+
+        self.HopTimingLayout.addWidget(self.Hop4Entry, 4, 2, 1, 1)
 
         self.Hop2Label = QLabel(BrewConfigWindow)
         self.Hop2Label.setObjectName(u"Hop2Label")
@@ -299,6 +260,33 @@ class Ui_BrewConfigWindow(object):
 
         self.HopTimingLayout.addWidget(self.Hop4Label, 4, 0, 1, 1)
 
+        self.Hop5Label = QLabel(BrewConfigWindow)
+        self.Hop5Label.setObjectName(u"Hop5Label")
+        self.Hop5Label.setMinimumSize(QSize(80, 30))
+        self.Hop5Label.setMaximumSize(QSize(16777215, 30))
+        self.Hop5Label.setFont(font1)
+
+        self.HopTimingLayout.addWidget(self.Hop5Label, 5, 0, 1, 1)
+
+        self.Hop3Increase = QPushButton(BrewConfigWindow)
+        self.Hop3Increase.setObjectName(u"Hop3Increase")
+        self.Hop3Increase.setMinimumSize(QSize(0, 30))
+        self.Hop3Increase.setMaximumSize(QSize(16777215, 30))
+        self.Hop3Increase.setFont(font1)
+
+        self.HopTimingLayout.addWidget(self.Hop3Increase, 3, 3, 1, 1)
+
+        self.Hop1Entry = QLineEdit(BrewConfigWindow)
+        self.Hop1Entry.setObjectName(u"Hop1Entry")
+        self.Hop1Entry.setMinimumSize(QSize(0, 30))
+        self.Hop1Entry.setMaximumSize(QSize(16777215, 30))
+        self.Hop1Entry.setFont(font)
+        self.Hop1Entry.setMaxLength(2)
+        self.Hop1Entry.setAlignment(Qt.AlignCenter)
+        self.Hop1Entry.setReadOnly(True)
+
+        self.HopTimingLayout.addWidget(self.Hop1Entry, 1, 2, 1, 1)
+
         self.Hop3Label = QLabel(BrewConfigWindow)
         self.Hop3Label.setObjectName(u"Hop3Label")
         self.Hop3Label.setMinimumSize(QSize(80, 30))
@@ -307,13 +295,21 @@ class Ui_BrewConfigWindow(object):
 
         self.HopTimingLayout.addWidget(self.Hop3Label, 3, 0, 1, 1)
 
-        self.Hop5Label = QLabel(BrewConfigWindow)
-        self.Hop5Label.setObjectName(u"Hop5Label")
-        self.Hop5Label.setMinimumSize(QSize(80, 30))
-        self.Hop5Label.setMaximumSize(QSize(16777215, 30))
-        self.Hop5Label.setFont(font1)
+        self.Hop5Increase = QPushButton(BrewConfigWindow)
+        self.Hop5Increase.setObjectName(u"Hop5Increase")
+        self.Hop5Increase.setMinimumSize(QSize(0, 30))
+        self.Hop5Increase.setMaximumSize(QSize(16777215, 30))
+        self.Hop5Increase.setFont(font1)
 
-        self.HopTimingLayout.addWidget(self.Hop5Label, 5, 0, 1, 1)
+        self.HopTimingLayout.addWidget(self.Hop5Increase, 5, 3, 1, 1)
+
+        self.Hop2Increase = QPushButton(BrewConfigWindow)
+        self.Hop2Increase.setObjectName(u"Hop2Increase")
+        self.Hop2Increase.setMinimumSize(QSize(0, 30))
+        self.Hop2Increase.setMaximumSize(QSize(16777215, 30))
+        self.Hop2Increase.setFont(font1)
+
+        self.HopTimingLayout.addWidget(self.Hop2Increase, 2, 3, 1, 1)
 
 
         self.verticalLayout.addLayout(self.HopTimingLayout)
@@ -336,6 +332,8 @@ class Ui_BrewConfigWindow(object):
 
         self.verticalLayout_3.addWidget(self.label)
 
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.QBComboBox = QComboBox(BrewConfigWindow)
         self.QBComboBox.setObjectName(u"QBComboBox")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
@@ -344,9 +342,15 @@ class Ui_BrewConfigWindow(object):
         sizePolicy.setHeightForWidth(self.QBComboBox.sizePolicy().hasHeightForWidth())
         self.QBComboBox.setSizePolicy(sizePolicy)
         self.QBComboBox.setMinimumSize(QSize(0, 30))
-        self.QBComboBox.setMaximumSize(QSize(10000, 16777215))
+        self.QBComboBox.setMaximumSize(QSize(180, 16777215))
+        font2 = QFont()
+        font2.setPointSize(10)
+        self.QBComboBox.setFont(font2)
 
-        self.verticalLayout_3.addWidget(self.QBComboBox)
+        self.horizontalLayout_3.addWidget(self.QBComboBox)
+
+
+        self.verticalLayout_3.addLayout(self.horizontalLayout_3)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setSpacing(100)
@@ -417,27 +421,27 @@ class Ui_BrewConfigWindow(object):
         self.MashTempLabel.setText(QCoreApplication.translate("BrewConfigWindow", u"Mash Temperature (\u00b0F)", None))
         self.MashTempDecrease.setText(QCoreApplication.translate("BrewConfigWindow", u"-", None))
         self.MashTempEntry.setText(QCoreApplication.translate("BrewConfigWindow", u"170", None))
-        self.Hop4Entry.setText(QCoreApplication.translate("BrewConfigWindow", u"15", None))
-        self.Hop1Entry.setText(QCoreApplication.translate("BrewConfigWindow", u"5", None))
-        self.Hop5Entry.setText(QCoreApplication.translate("BrewConfigWindow", u"30", None))
-        self.Hop3Decrease.setText(QCoreApplication.translate("BrewConfigWindow", u"-", None))
-        self.Hop3Increase.setText(QCoreApplication.translate("BrewConfigWindow", u"+", None))
-        self.Hop1Label.setText(QCoreApplication.translate("BrewConfigWindow", u"Hop #1", None))
-        self.Hop5Increase.setText(QCoreApplication.translate("BrewConfigWindow", u"+", None))
         self.Hop3Entry.setText(QCoreApplication.translate("BrewConfigWindow", u"10", None))
-        self.Hop4Decrease.setText(QCoreApplication.translate("BrewConfigWindow", u"-", None))
-        self.Hop2Entry.setText(QCoreApplication.translate("BrewConfigWindow", u"5", None))
-        self.Hop4Increase.setText(QCoreApplication.translate("BrewConfigWindow", u"+", None))
+        self.Hop5Entry.setText(QCoreApplication.translate("BrewConfigWindow", u"30", None))
         self.Hop2Decrease.setText(QCoreApplication.translate("BrewConfigWindow", u"-", None))
         self.Hop5Decrease.setText(QCoreApplication.translate("BrewConfigWindow", u"-", None))
-        self.HopLabel.setText(QCoreApplication.translate("BrewConfigWindow", u"Hop timing (minutes)", None))
         self.Hop1Decrease.setText(QCoreApplication.translate("BrewConfigWindow", u"-", None))
-        self.Hop2Increase.setText(QCoreApplication.translate("BrewConfigWindow", u"+", None))
+        self.Hop4Increase.setText(QCoreApplication.translate("BrewConfigWindow", u"+", None))
+        self.Hop1Label.setText(QCoreApplication.translate("BrewConfigWindow", u"Hop #1", None))
+        self.Hop2Entry.setText(QCoreApplication.translate("BrewConfigWindow", u"5", None))
+        self.HopLabel.setText(QCoreApplication.translate("BrewConfigWindow", u"Hop timing (minutes)", None))
         self.Hop1Increase.setText(QCoreApplication.translate("BrewConfigWindow", u"+", None))
+        self.Hop3Decrease.setText(QCoreApplication.translate("BrewConfigWindow", u"-", None))
+        self.Hop4Decrease.setText(QCoreApplication.translate("BrewConfigWindow", u"-", None))
+        self.Hop4Entry.setText(QCoreApplication.translate("BrewConfigWindow", u"15", None))
         self.Hop2Label.setText(QCoreApplication.translate("BrewConfigWindow", u"Hop #2", None))
         self.Hop4Label.setText(QCoreApplication.translate("BrewConfigWindow", u"Hop #4", None))
-        self.Hop3Label.setText(QCoreApplication.translate("BrewConfigWindow", u"Hop #3", None))
         self.Hop5Label.setText(QCoreApplication.translate("BrewConfigWindow", u"Hop #5", None))
+        self.Hop3Increase.setText(QCoreApplication.translate("BrewConfigWindow", u"+", None))
+        self.Hop1Entry.setText(QCoreApplication.translate("BrewConfigWindow", u"5", None))
+        self.Hop3Label.setText(QCoreApplication.translate("BrewConfigWindow", u"Hop #3", None))
+        self.Hop5Increase.setText(QCoreApplication.translate("BrewConfigWindow", u"+", None))
+        self.Hop2Increase.setText(QCoreApplication.translate("BrewConfigWindow", u"+", None))
         self.label.setText(QCoreApplication.translate("BrewConfigWindow", u"Quick Brew", None))
         self.QBLoadButton.setText(QCoreApplication.translate("BrewConfigWindow", u"Load Quick Brew", None))
         self.QBDeleteButton.setText(QCoreApplication.translate("BrewConfigWindow", u"Delete Quick Brew", None))
