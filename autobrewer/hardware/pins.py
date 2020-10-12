@@ -1,9 +1,9 @@
-from gpiozero import AngularServo, Device, OutputDevice, PWMOutputDevice, GPIOPinInUse
+from gpiozero import  Device, OutputDevice, PWMOutputDevice, GPIOPinInUse
 
-from ..Adafruit_ADS1x15 import ADS1115
 from ..utils import IS_RASPBERRY_PI
 
 if IS_RASPBERRY_PI:
+    from ..ads1x15.ads1x15 import ADS1115
     from w1thermsensor import W1ThermSensor
 else:
     from gpiozero.pins.mock import MockFactory, MockPWMPin
@@ -21,12 +21,16 @@ class Pins:
     pins_initialized = False
 
     TEMP_SENSOR_IDS = [0, 1, 2] # Get actual IDs and add here
-
-    adc = ADS1115()
+    if IS_RASPBERRY_PI:
+        servoconnection = Connection(port="/dev/ttyAMA0", baudrate=57600)
+        adc = ADS1115()
+    else:
+        adc = None
+        servoconnection = None
     ADC_GAIN = 2/3
     ADC_VOLTAGE_SUPPLIED = 5
 
-    servoconnection = Connection(port="/dev/ttyAMA0", baudrate=57600)
+
     SERVO_ID = 1
 
     def __init__(self):
@@ -54,7 +58,7 @@ class Pins:
             cls.pumps = [OutputDevice(n) for n in Pins.pumpGPIOs]
 
             cls.GPZeroComponents = (
-                cls.ballValves + cls.heatingElements + [cls.hopServo] + cls.pumps
+                cls.ballValves + cls.heatingElements + cls.pumps
             )
         except GPIOPinInUse:
             pass

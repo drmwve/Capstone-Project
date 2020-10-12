@@ -11,6 +11,7 @@ from .pins import Pins
 
 
 # To do: Implement hop servo and sensor code
+from ..utils import IS_RASPBERRY_PI
 
 
 class DeviceHandler(QObject, Pins):
@@ -45,9 +46,9 @@ class DeviceHandler(QObject, Pins):
     def __init__(self):
         self._connectPins()
         self._createValvePaths()
-        self.signalemit = QTimer(1000)
+        self.signalemit = QTimer()
         self.signalemit.timeout.connect(self.emitState)
-        self.signalemit.start()
+        self.signalemit.start(1000)
 
     def _createValvePaths(self):
         """Defines paths which must be open for a pump to run without forming a vacuum. The valvepaths variable is a
@@ -117,8 +118,9 @@ class DeviceHandler(QObject, Pins):
             raise ComponentControlError(f'Could not find hop servo position {index}')
 
     def setHopServoPosition(self, angle: int):
-        if angle in range(-150, 150):
-            self.servoconnection.goto(self.SERVO_ID, angle, speed=512, degrees=True)
+        if angle in range(-150,150):
+            if IS_RASPBERRY_PI:
+                self.servoconnection.goto(self.SERVO_ID, angle, speed=512, degrees=True)
             self.hardwareState.hopServo = angle
         else:
             raise ComponentControlError("Invalid servo angle selected")
@@ -227,16 +229,19 @@ class DeviceHandler(QObject, Pins):
     def _readvolume(self, index: int) -> float:
         """Reads the ADC for a particular kettle's pressure sensor and converts the pressure value into a volume
         in gallons"""
-        KETTLE_DIAMETER = 0.320675  # meters
-        LIQUID_DENSITY = 997  # kg/m3
-        GRAVITY = 9.81  # m/s^2
-        PI = 3.142
-        # pressure is in kPa
-        pressurevoltage = self.adc.read_adc(index, gain=self.ADC_GAIN)
-        pressurevalue = (pressurevoltage / self.ADC_VOLTAGE_SUPPLIED - 0.053) / 0.1533
-        liquidheight = pressurevalue * 1000 / (LIQUID_DENSITY * GRAVITY)
-        volume = PI * (KETTLE_DIAMETER / 2) ** 2 * liquidheight  # cubic meters
-        volume *= 264.172  # gallons
+        if IS_RASPBERRY_PI:
+            KETTLE_DIAMETER = 0.320675 # meters
+            LIQUID_DENSITY = 997 # kg/m3
+            GRAVITY = 9.81 #m/s^2
+            PI = 3.142
+            # pressure is in kPa
+            pressurevoltage = self.adc.read_adc(index, gain=self.ADC_GAIN)
+            pressurevalue = (pressurevoltage / self.ADC_VOLTAGE_SUPPLIED - 0.053) / 0.1533
+            liquidheight = pressurevalue * 1000 / (LIQUID_DENSITY * GRAVITY)
+            volume = PI * (KETTLE_DIAMETER/2)**2 * liquidheight #cubic meters
+            volume *= 264.172 # gallons
+        else:
+            volume = 5
         return volume
 
 
