@@ -87,16 +87,6 @@ class DeviceHandler(QObject, Pins):
         for valveindex in self.valvepaths[pathname]["close"]:
             self.closeBallValve(valveindex)
 
-    def _updatestate(self):
-        self._readSensors()
-        self.signalState.emit(self.hardwareState)
-        self._updateheatingelementPID()
-        for kettleindex, kettlename in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
-            if self.hardwareState.volumes[kettleindex] < DeviceHandler.HEATING_ELEMENT_LEVEL_LIMIT:
-                self.hardwareState.kettleheatingelementsdisabled[kettleindex] = True
-            else:
-                self.hardwareState.kettleheatingelementsdisabled[kettleindex] = False
-
     def getState(self) -> HardwareState:
         return self.hardwareState
 
@@ -152,7 +142,9 @@ class DeviceHandler(QObject, Pins):
     def disablePump(self, index: int):
         self._setPumpState(index, False)
 
-    def setTargetKettleTemp(self, kettleindex: int, target: int, disableothers:bool = True):
+    def setTargetKettleTemp(self, kettleindex: int, target: int, disableothers:bool = True, autoenable:bool = True):
+        """Sets the target temperature for a kettle's PID. This automatically enables the PID for that kettle unless
+        directed otherwise"""
         if target not in range(100, 211):
             raise ComponentControlError("Cannot set a target temperature below 100 or above 211 degrees Fahrenheit")
             return
@@ -165,11 +157,13 @@ class DeviceHandler(QObject, Pins):
                 logger.info(f'Set kettle {kettlename} target temperature to {target}')
                 self.hltpid.setpoint = target
                 self.hardwareState.kettletempsetpoints[kettleindex] = target
-                self.setKettlePIDEnabled(kettleindex, True)
+                if autoenable:
+                    self.setKettlePIDEnabled(kettleindex, True)
             else:
                 raise ComponentControlError("Could not find given kettle")
 
     def setKettlePIDEnabled(self, index: int, value: bool):
+        """Allows you to enable or disable PID without changing the temperature. Good to use to pause steps"""
         if index not in DeviceHandler.KETTLE_NAMES_GIVEN_ID.keys():
             raise ComponentControlError("Could not find given kettle")
         else:
@@ -250,7 +244,7 @@ class DeviceHandler(QObject, Pins):
         else:
             logger.critical(f'Program is attempting to enable heating element {index} without sufficient liquid level')
             raise ComponentControlError(f'Program is attempting to enable heating element {index} without sufficient liquid level')
-            sys.exit(0)
+            self.shutdown()
 
     def _readSensors(self):
         # read the sensors and save the values here
@@ -283,5 +277,14 @@ class DeviceHandler(QObject, Pins):
             volume = 5
         return volume
 
+    def _updatestate(self):
+        self._readSensors()
+        self.signalState.emit(self.hardwareState)
+        self._updateheatingelementPID()
+        for kettleindex, kettlename in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
+            if self.hardwareState.volumes[kettleindex] < DeviceHandler.HEATING_ELEMENT_LEVEL_LIMIT:
+                self.hardwareState.kettleheatingelementsdisabled[kettleindex] = True
+            else:
+                self.hardwareState.kettleheatingelementsdisabled[kettleindex] = False
 
 devicehandler = DeviceHandler()
