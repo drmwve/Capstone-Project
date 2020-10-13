@@ -31,24 +31,30 @@ class DeviceHandler(QObject, Pins):
         set*/open*/close*/enable*/disable*: Individual component control functions
     """
 
-    signalState = Signal(HardwareState)
-    hardwareState = HardwareState()
+
     HOP_SERVO_HOME = -1
     HOP_SERVO_POSITIONS = {-1: -150, 0: -90, 1: -30, 2: 30, 3: 90, 4: 150}
-    KETTLE_IDS = {"HLT": 0, "MT": 1, "BK": 2}
+    KETTLE_NAMES_GIVEN_ID = {0: "HLT", 1: "MT", 2: "BK"}
+    KETTLE_IDS_GIVEN_NAME = {"HLT": 0, "MT": 1, "BK": 2}
     HLT_HEATING_ELEMENTS = [0,2]
     BK_HEATING_ELEMENTS = [1,3]
+    HEATING_ELEMENT_LEVEL_LIMIT = 1 #gallons
+
     hltpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 100), sample_time=None)
     mtpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 100), sample_time=None)
     bkpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 100), sample_time=None)
     PIDS = [hltpid, mtpid, bkpid]
 
+    signalState = Signal(HardwareState)
+    hardwareState = HardwareState()
+    heatingelementdisabled = False
+
     def __init__(self):
         self._connectPins()
         self._createValvePaths()
         self.signalemit = QTimer()
-        self.signalemit.timeout.connect(self.emitState)
-        self.signalemit.start(1000)
+        self.signalemit.timeout.connect(self._updatestate)
+        self.signalemit.start(500)
 
     def _createValvePaths(self):
         """Defines paths which must be open for a pump to run without forming a vacuum. The valvepaths variable is a
@@ -78,9 +84,15 @@ class DeviceHandler(QObject, Pins):
         for valveindex in self.valvepaths[pathname]["close"]:
             self.closeBallValve(valveindex)
 
-    def emitState(self):
+    def _updatestate(self):
         self._readSensors()
         self.signalState.emit(self.hardwareState)
+        self._updateheatingelementPID()
+        for kettleindex, kettlename in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
+            if self.hardwareState.volumes[kettleindex] < DeviceHandler.HEATING_ELEMENT_LEVEL_LIMIT:
+                self.hardwareState.kettleheatingelementsdisabled[kettleindex] = True
+            else:
+                self.hardwareState.kettleheatingelementsdisabled[kettleindex] = False
 
     def getState(self) -> HardwareState:
         return self.hardwareState
@@ -137,34 +149,28 @@ class DeviceHandler(QObject, Pins):
     def disablePump(self, index: int):
         self._setPumpState(index, False)
 
-    def setTargetKettleTemp(self, kettle: int, target: int):
+    def setTargetKettleTemp(self, kettleindex: int, target: int, disableothers:bool = True):
         if target not in range(100, 211):
             raise ComponentControlError("Cannot set a target temperature below 100 or above 211 degrees Fahrenheit")
             return
         else:
-            if kettle in DeviceHandler.KETTLE_IDS.values():
-                kettlename = kettle
-                for key, value in DeviceHandler.KETTLE_IDS.items():
-                    if value == kettle:
-                        kettlename = key
+            if kettleindex in DeviceHandler.KETTLE_NAMES_GIVEN_ID.keys():
+                kettlename = DeviceHandler.KETTLE_NAMES_GIVEN_ID[kettleindex]
+                for index, name in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
+                    if disableothers and index != kettleindex:
+                        self.setKettlePIDEnabled(kettleindex, False)
                 logger.info(f'Set kettle {kettlename} target temperature to {target}')
                 self.hltpid.setpoint = target
-                self.hardwareState.kettletempsetpoints[kettle] = target
-                self.setKettlePIDEnabled(kettle, True)
+                self.hardwareState.kettletempsetpoints[kettleindex] = target
+                self.setKettlePIDEnabled(kettleindex, True)
             else:
                 raise ComponentControlError("Could not find given kettle")
 
     def setKettlePIDEnabled(self, index: int, value: bool):
-        if index not in DeviceHandler.KETTLE_IDS.values():
+        if index not in DeviceHandler.KETTLE_NAMES_GIVEN_ID.keys():
             raise ComponentControlError("Could not find given kettle")
         else:
             self.hardwareState.kettlepidenabled[index] = value
-
-    def _updatePID(self):
-        self._readSensors()
-        for kettle in DeviceHandler.KETTLE_IDS.keys():
-            if self.hardwareState.kettlepidenabled[kettle] == True:
-                self._setHeatingElementValue(self.PIDS[kettle](self.hardwareState.temperatures[kettle]), calledmanually=False)
 
     def enableHeatingElement(self, index: int):
         self._setHeatingElementValue(index, 1)
@@ -207,15 +213,41 @@ class DeviceHandler(QObject, Pins):
                 break
         return pumphasopenpath
 
+    def _updateheatingelementPID(self):
+        self._readSensors()
+        for kettleindex, kettlename in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
+            if self.hardwareState.kettlepidenabled[kettleindex] == True:
+                if kettlename == "HLT" or kettleindex == "MT":
+                    heatingelementindex = 0
+                elif kettlename == "BK":
+                    heatingelementindex = 1
+                self._setHeatingElementValue(heatingelementindex, self.PIDS[kettleindex](self.hardwareState.temperatures[kettleindex]), calledmanually=False)
+                lowbound = self.hardwareState.kettletempsetpoints[kettleindex] * 0.8
+                if self.hardwareState.temperatures[kettleindex] < lowbound:
+                    if kettlename == "HLT":
+                        self._setHeatingElementValue(2, 1, True)
+                    elif kettlename == "BK":
+                        self._setHeatingElementValue(3, 1, True)
+
     def _setHeatingElementValue(self, index: int, value: float, calledmanually=True):
-        if calledmanually:
-            if index in DeviceHandler.HLT_HEATING_ELEMENTS:
-                self.setKettlePIDEnabled(DeviceHandler.KETTLE_IDS["HLT"], False)
-            elif index in DeviceHandler.BK_HEATING_ELEMENTS:
-                self.setKettlePIDEnabled(DeviceHandler.KETTLE_IDS["BK"], False)
-        self.heatingElements[index].value = value
-        self.hardwareState.heatingElements[index] = value
-        logger.debug(f"Set heating element {index} to {value}")
+        disabled = False
+        if index in DeviceHandler.HLT_HEATING_ELEMENTS:
+            disabled = self.hardwareState.kettleheatingelementsdisabled[DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"]]
+        elif index in DeviceHandler.BK_HEATING_ELEMENTS:
+            disabled = self.hardwareState.kettleheatingelementsdisabled[DeviceHandler.KETTLE_IDS_GIVEN_NAME["BK"]]
+        if not disabled:
+            if calledmanually:
+                if index in DeviceHandler.HLT_HEATING_ELEMENTS:
+                    self.setKettlePIDEnabled(DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"], False)
+                elif index in DeviceHandler.BK_HEATING_ELEMENTS:
+                    self.setKettlePIDEnabled(DeviceHandler.KETTLE_IDS_GIVEN_NAME["BK"], False)
+            self.heatingElements[index].value = value
+            self.hardwareState.heatingElements[index] = value
+            logger.debug(f"Set heating element {index} to {value}")
+        else:
+            logger.critical(f'Program is attempting to enable heating element {index} without sufficient liquid level')
+            raise ComponentControlError(f'Program is attempting to enable heating element {index} without sufficient liquid level')
+            sys.exit(0)
 
     def _readSensors(self):
         # read the sensors and save the values here
