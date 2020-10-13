@@ -115,6 +115,7 @@ class HLTtoMT(Step):
             self.devicehandler.disablePump(0)
             self.stepcomplete.emit()
             self.stop()
+
         else:
             self.devicehandler._readTemperature(1)         # this read temperature sensor in the mashtun( or should the reading be for the HLTank?)
             self.devicehandler._SetTemperature(self.HLTtemp, 0)   # this loop function will make sure that the temperature stays at the goal temperature(specified by the user)
@@ -198,9 +199,15 @@ class BKboiling_AddingHops(Step):
         super().__init__()
         self.startingmessage = "Boiling the liquid in the boiling kettle and adding hops"
         self.estimatedtime = 3600 
+        self.boilingTime = 3600000
+        self.boilElapsedTime = 0
+        self.hopsElapsedTime = 0
+        self.remainingTime = self.boilingTime - self.boilElapsedTime
         self.hopindex = 0
         self.numHops = numHops #number of hops
         self.timeHops = timeHops  #timing between hops
+        self.runtimer0 = QtCore.QTimer()
+        self.runtimer0.timeout.connect(self.checkRuntimer)
         self.runtimer = QtCore.QTimer()
         self.runtimer.timeout.connect(self.boilComplete)
         self.runtimer2 = QtCore.QTimer()
@@ -210,10 +217,15 @@ class BKboiling_AddingHops(Step):
         logger.debug(f'Running step {self}')
         devicehandler.closeBallValve(3)
         devicehandler.closeBallValve(4)
-        self.runtimer.start(3600000)
+        self.runtimer0.start(1000)
+        self.runtimer.start(self.remainingTime)
         self.runtimer2.start(self.timeHops[self.hopindex])
         logger.debug(f'Started timer: {self.runtimer.isActive()}')
         logger.debug(f'Started timer 2: {self.runtimer2.isActive()}')
+
+    def checkRuntimer(self):
+        self.boilElapsedTime += 1000
+
 
     def boilComplete(self):
         self.stepcomplete.emit()
