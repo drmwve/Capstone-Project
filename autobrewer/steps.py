@@ -97,6 +97,7 @@ class HLTtoMT(Step):
         self.estimatedtime = 90
         self.runtimer = QtCore.QTimer()
         self.runtimer.timeout.connect(self.loop)
+        self.HLTtemp = HLTtemp
 
     def run(self):
         logger.debug(f'Running step {self}')
@@ -114,6 +115,9 @@ class HLTtoMT(Step):
             self.devicehandler.disablePump(0)
             self.stepcomplete.emit()
             self.stop()
+        else:
+            self.devicehandler._readTemperature(1)         # this read temperature sensor in the mashtun( or should the reading be for the HLTank?)
+            self.devicehandler._SetTemperature(self.HLTtemp, 0)   # this loop function will make sure that the temperature stays at the goal temperature(specified by the user)
 
     def stop(self):
         self.runtimer.stop()
@@ -127,6 +131,8 @@ class MTRecirc(Step):
         self.runtimer = QtCore.QTimer()
         self.index = 0
         self.runtimer.timeout.connect(self.loop)
+        self.HLTtemp = HLTtemp
+
 
     def run(self):
         logger.debug(f'Running step {self}')
@@ -141,10 +147,13 @@ class MTRecirc(Step):
     def loop(self):
         logger.debug("Running loop (waiting for 60 minutes for recirculation)")
         self.index += 1
-        if self.index == 3600:        # will this method cause delays caused by the excution process time? should runtimer be set to 3600,000 instead?
+        if self.index == 3600:
             self.devicehandler.disablePump(0)
             self.stepcomplete.emit()
             self.stop()
+        else:
+            self.devicehandler._readTemperature(1)
+            self.devicehandler._SetTemperature(self.HLTtemp, 0)
 
     def stop(self):
         self.runtimer.stop()
@@ -283,6 +292,8 @@ class Draining(Step):
     def stop(self):
         self.runtimer.stop()
         self.devicehandler.shutdown()  # Reseting everything to begining state
+
+
 
 
 
