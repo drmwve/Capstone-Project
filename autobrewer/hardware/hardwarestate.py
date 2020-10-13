@@ -19,10 +19,10 @@ class HardwareState:
             False,
         ]
         self.pumps = [False, False]
-        self.heatingElements = [0, 0, 0, 0]
+        self.heatingElements = [0.0, 0.0, 0.0, 0.0]
         self.kettletempsetpoints = [0, 0, 0]
         self.kettlepidenabled = [False, False, False]
         self.kettleheatingelementsdisabled = [False, False, False]
         self.temperatures = [0, 0, 0]
-        self.volumes = [0, 0, 0]
+        self.volumes = [0.0, 0.0, 0.0]
         self.hopservo = 0
