@@ -34,14 +34,13 @@ class TestDeviceHandler:
         for valveindex in devicehandler.valvepaths[path]["close"]:
             assert devicehandler.ballValves[valveindex].value == 0
 
-    @pytest.mark.parametrize("angle", [0, 180, 360])
+    @pytest.mark.parametrize("angle", [-140, 0, 90])
     def test_set_hop_servo_position_valid(self, angle, devicehandler):
         devicehandler.setHopServoPosition(angle)
-        assert devicehandler.hopServo.value == angle
         assert devicehandler.hardwareState.hopservo == angle
 
-    @pytest.mark.parametrize("angle", [-1, 370])
-    def test_set_hop_servo_position_valid(self, angle, devicehandler):
+    @pytest.mark.parametrize("angle", [-151, 370])
+    def test_set_hop_servo_position_invalid(self, angle, devicehandler):
         with pytest.raises(ComponentControlError):
             devicehandler.setHopServoPosition(angle)
 

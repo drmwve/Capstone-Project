@@ -4,7 +4,7 @@ from ..utils import IS_RASPBERRY_PI
 
 if IS_RASPBERRY_PI:
     from ..ads1x15.ads1x15 import ADS1115
-    from w1thermsensor import W1ThermSensor
+    from w1thermsensor import *
 else:
     from gpiozero.pins.mock import MockFactory, MockPWMPin
 from loguru import logger
@@ -24,9 +24,13 @@ class Pins:
     if IS_RASPBERRY_PI:
         servoconnection = Connection(port="/dev/ttyAMA0", baudrate=57600)
         adc = ADS1115()
+        tempsensors =  [W1ThermSensor(W1ThermSensor.DS18B20, TEMP_SENSOR_IDS[0]),
+                        W1ThermSensor(W1ThermSensor.DS18B20, TEMP_SENSOR_IDS[1]),
+                        W1ThermSensor(W1ThermSensor.DS18B20, TEMP_SENSOR_IDS[2])]
     else:
         adc = None
         servoconnection = None
+        tempsensors = None
     ADC_GAIN = 2/3
     ADC_VOLTAGE_SUPPLIED = 5
 

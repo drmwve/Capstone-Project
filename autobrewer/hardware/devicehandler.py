@@ -1,14 +1,15 @@
 from loguru import logger
 from PySide2.QtCore import QObject, Signal, QTimer
+from ..utils import IS_RASPBERRY_PI
+if IS_RASPBERRY_PI:
+    from w1thermsensor import W1ThermSensor
 
 from .hardwarestate import HardwareState
 from ..exceptions import ComponentControlError
 from .pins import Pins
-from w1thermsensor import W1ThermSensor
 
 
 # To do: Implement hop servo and sensor code
-from ..utils import IS_RASPBERRY_PI
 
 
 class DeviceHandler(QObject, Pins):
@@ -181,32 +182,11 @@ class DeviceHandler(QObject, Pins):
             self.hardwareState.volumes[i] = self._readvolume(i)
 
     def _readTemperature(self, index: int):
-        sensor = W1ThermSensor(Sensor.DS18B20, self.TEMP_SENSOR_IDS[index])
-        temperature = sensor.get_temperature(Unit.DEGREES_F)
+        if IS_RASPBERRY_PI:
+            temperature = self.tempsensors[index].get_temperature(W1ThermSensor.DEGREES_F)
+        else:
+            temperature = 70
         return temperature
-
-    def _SetTemperature(self, index, kettle: int): # index is the value gotten from the user desired temperature
-        if kettle = 0:          # this just says first kettle, to be consistent with the previous work
-            while True:
-                if temperature < index:
-                    self._setHeatingElementValue(0, 1)
-                    self._setHeatingElementValue(2, 1)
-                else
-                    self._setHeatingElementValue(0, 1)
-                    self._setHeatingElementValue(2, 0)
-        if kettle = 2:          # 3rd kettle, boiling kettle
-            while True:
-                if temperature < index:
-                    self._setHeatingElementValue(1, 1)
-                    self._setHeatingElementValue(3, 1)
-                else
-                    self._setHeatingElementValue(1, 1)
-                    self._setHeatingElementValue(3, 0)
-        else 
-            pass
-
-
-
 
     def _readvolume(self, index: int) -> float:
         """Reads the ADC for a particular kettle's pressure sensor and converts the pressure value into a volume
