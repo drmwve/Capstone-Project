@@ -236,6 +236,7 @@ class DeviceHandler(QObject, Pins):
             if calledmanually:
                 if index in DeviceHandler.HLT_HEATING_ELEMENTS:
                     self.setKettlePIDEnabled(DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"], False)
+                    self.setKettlePIDEnabled(DeviceHandler.KETTLE_IDS_GIVEN_NAME["MT"], False)
                 elif index in DeviceHandler.BK_HEATING_ELEMENTS:
                     self.setKettlePIDEnabled(DeviceHandler.KETTLE_IDS_GIVEN_NAME["BK"], False)
             self.heatingElements[index].value = value
