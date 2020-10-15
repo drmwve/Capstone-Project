@@ -9,20 +9,24 @@ class Process(QtCore.QObject):
     resume it.
     """
     stepstarted = QtCore.Signal(str)
+    processstarted = QtCore.Signal(int)
     processfinished = QtCore.Signal()
 
     def __init__(self):
         super(Process, self).__init__()
-        logger.debug(f'Process created on thread {self.thread}')
         self.processSteps = [Step()]
         self.currentindex = 0
+        self.totalprocesstime = 0
         self.running = False
+        self.currentstep = Step()
 
     def initializeSteps(self):
         self.currentstep = self.processSteps[self.currentindex]
+        for step in self.processSteps:
+            self.totalprocesstime += step.estimatedtime
 
     def start(self):
-        logger.debug(f'Process {self} starting')
+        logger.debug(f'Process {self} starting with completion time {self.totalprocesstime}')
         self.running = True
         self._connectStep(self.currentstep)
         self.executeCurrentStep()
@@ -32,6 +36,14 @@ class Process(QtCore.QObject):
         self.running = False
         self._disconnectStep(self.currentstep)
         self.currentstep.stop()
+
+    def pause(self):
+        logger.debug(f'Process {self} pausing')
+        self.currentstep.pause()
+
+    def resume(self):
+        logger.debug(f'Process {self} resuming')
+        self.currentstep.resume()
 
     def executeCurrentStep(self):
         self.currentstep.execute()
@@ -55,7 +67,7 @@ class Process(QtCore.QObject):
         self.currentindex = index
         try:
             self.currentstep = self.processSteps[self.currentindex]
-            logger.trace(f'Process set to step {self.currentstep}')
+            logger.debug(f'Process set to step {self.currentstep}')
             self._connectStep(self.currentstep)
 
         except IndexError:
@@ -91,16 +103,19 @@ class BrewProcess(Process):
         super().__init__()
         self.brewRecipe = brewrecipe
         # emit signal which sets target mash temp
-        self.processSteps = ["brewing process step functions"]
+        self.processSteps = [ExampleStep(), ExampleStep()]
+        self.initializeSteps()
 
 
 class CleaningProcess(Process):
     def __init__(self):
         super().__init__()
-        self.processSteps = ["cleaning process step functions"]
+        self.processSteps = [ExampleStep(), ExampleStep()]
+        self.initializeSteps()
 
 
 class FlushSystem(Process):
     def __init__(self):
         super(FlushSystem, self).__init__()
-        self.processSteps = ["steps to flush system"]
+        self.processSteps = [ExampleStep(), ExampleStep()]
+        self.initializeSteps()

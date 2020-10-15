@@ -1,64 +1,87 @@
-from loguru import logger
-from PySide2 import QtCore, QtGui
 from PySide2.QtWidgets import QMessageBox
-
 from .Process import *
 
 
-class ExecutionHandler:
+class ExecutionHandler(QtCore.QObject):
     # I wrap the thread handling up in a neat package. The UI code creates a process and passes it to me with my startProcess(process)
     # function and I create a new thread which this process is executed in.
 
+    stepstarted = Signal(str)
+    processstarted = Signal(int)
+    processpaused = Signal()
+    processstopped = Signal()
+    processresumed = Signal()
+    processcomplete = Signal()
     processRunning = False
-
-        # the brew controller lives in its own thread to make constantly updating sensors and changing things easier
-        # self.brewControls = ControlHandler()
-        # self.controllerThread = QtCore.QThread()
-        # self.addProcessToThread(self.brewControls, self.controllerThread)
-        # self.controllerThread.start()
+    processPaused = False
+    process = Process()
 
     # Starts a new process on a new thread. If a thread is already running, show an error.
-    @classmethod
-    def startProcess(cls, process):
-        if not cls.processRunning:
-            cls.process = process
+    def startProcess(self, process):
+        if not self.processRunning:
+            self.process = process
             logger.info(
                 "Started process "
-                + str(cls.process)
+                + str(self.process)
             )
-            cls.processRunning = True
-            cls.process.processfinished.connect(cls.finishedProcess)
-            cls.process.start()
+            self.processRunning = True
+            self.processstarted.emit(self.process.totalprocesstime)
+            self.process.stepstarted.connect(self.stepstarted)
+            self.process.processfinished.connect(self.finishedProcess)
+            self.process.start()
         else:
             error = QMessageBox()
             error.setText("A process is already running.")
             error.exec()
 
-    @classmethod
-    def startBrewProcess(cls, brewRecipe):
-        cls.startProcess(BrewProcess(brewRecipe))
+    def startBrewProcess(self, brewRecipe):
+        self.startProcess(BrewProcess(brewRecipe))
 
-    @classmethod
-    def startCleaningProcess(cls):
-        cls.startProcess(CleaningProcess())
+    def startCleaningProcess(self):
+        self.startProcess(CleaningProcess())
+
+    def startFlushProcess(self):
+        self.startProcess(FlushSystem())
 
     # Stops the process. The process's stop function is called, which is connected to the thread's.
     # This saves the trouble of figuring out what you can do before a thread exits when you call its
     # quit() function.
-    @classmethod
-    def stopProcess(cls):
-        if cls.processRunning:
-            cls.process.stop()
-            cls.processRunning = False
-            cls.process = Process()
-            logger.info(f'Stopped process {cls.process}')
+    def stopProcess(self):
+        if self.processRunning:
+            self.process.stop()
+            self.processstopped.emit()
+            self.processRunning = False
+            logger.info(f'Stopped process {self.process}')
 
-    @classmethod
-    def pauseProcess(cls):
-        if cls.processRunning:
-            cls.process.stop()
+    def assumemanualcontrol(self):
+        logger.debug("Execution handler caught manual control request")
+        if self.processPaused:
+            self.resumeProcess()
+        else:
+            self.pauseProcess()
 
-    @classmethod
-    def finishedProcess(cls):
-        cls.processRunning = False
-        logger.debug("Execution handler wrapped up progress")
+    def pauseProcess(self):
+        if self.processRunning:
+            self.processpaused.emit()
+            self.process.pause()
+            self.processPaused = True
+            logger.info(f'Paused process {self.process}')
+
+    def resumeProcess(self):
+        self.processresumed.emit()
+        self.process.resume()
+        self.processPaused = False
+
+    def advanceStep(self):
+        self.process.incrementStep()
+
+    def reverseStep(self):
+        self.process.decrementStep()
+
+    def finishedProcess(self):
+        self.processRunning = False
+        self.processcomplete.emit()
+        logger.debug("Execution handler wrapped up process")
+
+
+executionhandler = ExecutionHandler()

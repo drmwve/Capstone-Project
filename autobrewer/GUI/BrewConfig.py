@@ -9,15 +9,15 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
     """The configuration screen from which the user sets the desired brew parameters and starts the brew process. Brew recipes
     can be saved and loaded from the file system. When a brew is started, this screen is replaced by a 'Brew Progress' screen that
     gives feedback to the user on what the brew system is doing."""
-
+    startBrewSignal = QtCore.Signal(BrewRecipe)
     HOP_TIMING_INCREMENT = 5
     HOP_TIMING_MINIMUM = 0
     HOP_TIMING_MAXIMUM = 60
     HOP_CARTRIDGES_MAXIMUM = 5
 
     MASH_TEMPERATURE_INCREMENT = 1
-    MASH_TEMPERATURE_MAXIMUM = 180
-    MASH_TEMPERATURE_MINIMUM = 140
+    MASH_TEMPERATURE_MAXIMUM = 168
+    MASH_TEMPERATURE_MINIMUM = 130
 
     def __init__(self):
         super().__init__()
@@ -42,6 +42,13 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             self.Hop3Decrease,
             self.Hop4Decrease,
             self.Hop5Decrease,
+        ]
+        self.hopLabels = [
+            self.Hop1Label,
+            self.Hop2Label,
+            self.Hop3Label,
+            self.Hop4Label,
+            self.Hop5Label
         ]
 
         self.changeUI()
@@ -124,6 +131,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             self.hopEntry[hopcarts - 1].setHidden(False)
             self.hopIncrease[hopcarts - 1].setHidden(False)
             self.hopDecrease[hopcarts - 1].setHidden(False)
+            self.hopLabels[hopcarts - 1].setHidden(False)
             self.hopEntry[hopcarts - 1].setText(
                 str(BrewRecipe().hopTiming[hopcarts - 1])
             )
@@ -143,6 +151,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             self.hopEntry[hopcarts].setHidden(True)
             self.hopIncrease[hopcarts].setHidden(True)
             self.hopDecrease[hopcarts].setHidden(True)
+            self.hopLabels[hopcarts].setHidden(True)
             self.hopEntry[hopcarts].setText("-1")
         else:
             logger.debug(
@@ -180,7 +189,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
     def StartBrewing(self):
         ## This function should connect to Husam's brewing program
         self.selectedBrewRecipe = self.copyRecipeFromUI()
-        print("I need connected to the brewing program")
+        self.startBrewSignal.emit(self.selectedBrewRecipe)
         logger.info(f"Starting brew cycle with parameters: {self.selectedBrewRecipe}")
 
     def saveRecipe(self, recipeName: str):
@@ -274,11 +283,13 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
                 self.hopEntry[i].setHidden(True)
                 self.hopIncrease[i].setHidden(True)
                 self.hopDecrease[i].setHidden(True)
+                self.hopLabels[i].setHidden(True)
                 self.hopEntry[i].setText("-1")
             else:
                 self.hopEntry[i].setHidden(False)
                 self.hopIncrease[i].setHidden(False)
                 self.hopDecrease[i].setHidden(False)
+                self.hopLabels[i].setHidden(False)
 
         self.HopCartridgeSelectEntry.setText(str(recipe.hopCartridges))
         self.MashTempEntry.setText(str(recipe.mashTunTemperature))

@@ -2,6 +2,8 @@ from .hardware.devicehandler import devicehandler
 from PySide2.QtCore import Signal, QObject
 from PySide2 import QtCore
 from loguru import logger
+import time
+import random
 
 
 class Step(QObject):
@@ -33,8 +35,37 @@ class Step(QObject):
         self.stop()
 
     def resume(self):
-        self.execute()
+        self.run()
 
+class ExampleStep(Step):
+
+    def __init__(self):
+        super(ExampleStep, self).__init__()
+        self.max = random.randint(2,10)
+        self.startingmessage = f'Example counting to {self.max}'
+        self.estimatedtime = self.max + 1
+        self.index = 0
+        self.runtimer = QtCore.QTimer()
+        self.runtimer.timeout.connect(self.loop)
+
+    def run(self):
+        logger.debug(f'Running step {self}')
+        logger.debug(self.startingmessage)
+        self.runtimer.start(1000)
+
+    def loop(self):
+        logger.debug(f'Example step running loop index {self.index}')
+        self.index += 1
+        if self.index > self.max:
+            self.stepcomplete.emit()
+            self.stop()
+
+    def stop(self):
+        self.runtimer.stop()
+        self.index = 0
+
+    def pause(self):
+        self.runtimer.stop()
 
 
 class FillHLT(Step):
@@ -102,8 +133,8 @@ class HLTtoMT(Step):
     def run(self):
         logger.debug(f'Running step {self}')
         self.devicehandler.openValvePath("HLTtoMT")
-        QtCore.QTimer.singleShot(5000, self.next)      
-    
+        QtCore.QTimer.singleShot(5000, self.next)
+
     def next(self):
         self.devicehandler.enablePump(0)
         self.runtimer.start(100)
@@ -138,8 +169,8 @@ class MTRecirc(Step):
     def run(self):
         logger.debug(f'Running step {self}')
         self.devicehandler.openValvePath(MTRecirc)
-        QtCore.QTimer.singleShot(5000, self.next)      
-    
+        QtCore.QTimer.singleShot(5000, self.next)
+
     def next(self):
         self.devicehandler.enablePump(0)
         self.runtimer.start(1000)
@@ -171,8 +202,8 @@ class MTtoBK(Step):
     def run(self):
         logger.debug(f'Running step {self}')
         self.devicehandler.openValvePath("MTtoBK")
-        QtCore.QTimer.singleShot(5000, self.next)      
-    
+        QtCore.QTimer.singleShot(5000, self.next)
+
     def next(self):
         self.devicehandler.enablePump(0)
         self.devicehandler.enablePump(1)
@@ -198,7 +229,7 @@ class BKboiling_AddingHops(Step):
     def __init__(self, numHops, timeHops):
         super().__init__()
         self.startingmessage = "Boiling the liquid in the boiling kettle and adding hops"
-        self.estimatedtime = 3600 
+        self.estimatedtime = 3600
         self.boilingTime = 3600000
         self.boilElapsedTime = 0
         self.hopsElapsedTime = 0
@@ -264,8 +295,8 @@ class BKWhirl(Step):
     def run(self):
         logger.debug(f'Running step {self}')
         self.devicehandler.openValvePath("BKWhirl")
-        QtCore.QTimer.singleShot(5000, self.next)      
-    
+        QtCore.QTimer.singleShot(5000, self.next)
+
     def next(self):
         self.enablePump(1)
         self.runtimer.start(900000)
@@ -300,7 +331,7 @@ class Draining(Step):
         if devicehandler.hardwareState.volume[2] == 0:
             self.stepcomplete.emit()
             QtCore.QTimer.singleShot(5000, self.stop)
-    
+
     def stop(self):
         self.runtimer.stop()
         self.devicehandler.shutdown()  # Reseting everything to begining state
@@ -311,11 +342,11 @@ class Draining(Step):
 
 
 
-        
-
-        
-        
 
 
-    
+
+
+
+
+
 

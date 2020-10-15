@@ -4,13 +4,12 @@ from PySide2 import QtWidgets
 from loguru import logger
 
 from .GUI.BrewConfig import BrewConfig
-from .GUI.BrewProgress import BrewStatus
+from .GUI.ProcessStatus import ProcessStatus
 from .GUI.CleaningScreen import CleaningScreen
-from .GUI.DeviceStatus import DeviceStatus
+from .GUI.DeviceStatusControls import DeviceStatusControls
+from .GUI.DeviceStatusSensors import DeviceStatusSensors
 from .GUI.MainMenu import MainMenu
 from .utils import IS_RASPBERRY_PI
-from time import sleep
-from .ExecutionHandler import ExecutionHandler
 from .Process import *
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -27,7 +26,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.showFullScreen()
         else:
             self.setFixedSize(1024, 600)
-        self.setWindowTitle("Auto Brewser System")
+        self.setWindowTitle("Auto Brewer System")
 
     # create stacked layout for different pages, add them to central widget
     def createStackedLayout(self):
@@ -35,32 +34,38 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menus = {
             "mainMenu": MainMenu(),
             "brewConfig": BrewConfig(),
-            "brewStatus": BrewStatus(),
+            "processStatus": ProcessStatus(),
             "cleaningScreen": CleaningScreen(),
-            "deviceStatus": DeviceStatus(),
+            "deviceStatusControls": DeviceStatusControls(),
+            "deviceStatusSensors": DeviceStatusSensors(),
         }
         for menu in self.menus.values():
             self.centralWidget().addWidget(menu)
         # create instances of the screens and add them to the stacked layout here
 
     def connections(self):
-        # see "goToMenu" function below. the 'lambda: ' statement is required for arcane reasons when calling a function that takes arguments
+        # see "goToMenu" function below. the partial statement is required for arcane reasons when calling a function that takes arguments
         # in a signal-slot connection like this
         self.menus["brewConfig"].BackButton.clicked.connect(
             partial(self.goToMenu, self.menus["mainMenu"])
         )
-        self.menus["brewStatus"].ReturnToMenuButton.clicked.connect(
-            partial(self.goToMenu, self.menus["mainMenu"])
+        self.menus["processStatus"].DeviceStatusButton.clicked.connect(
+            partial(self.goToMenu, self.menus["deviceStatusSensors"])
         )
-        self.menus["deviceStatus"].ReturnToMenuButton.clicked.connect(
+        self.menus["deviceStatusControls"].ReturnToMenuButton.clicked.connect(
             partial(self.goToMenu, self.menus["mainMenu"])
         )
         self.menus["cleaningScreen"].ReturnToMenuButton.clicked.connect(
             partial(self.goToMenu, self.menus["mainMenu"])
         )
-
+        self.menus["cleaningScreen"].StartCleaningButton.clicked.connect(
+            partial(self.goToMenu, self.menus["processStatus"])
+        )
+        self.menus["cleaningScreen"].FlushSystemButton.clicked.connect(
+            partial(self.goToMenu, self.menus["processStatus"])
+        )
         self.menus["brewConfig"].StartBrewButton.clicked.connect(
-            partial(self.goToMenu, self.menus["brewStatus"])
+            partial(self.goToMenu, self.menus["processStatus"])
         )
         self.menus["mainMenu"].EnterBrewConfigButton.clicked.connect(
             partial(self.goToMenu, self.menus["brewConfig"])
@@ -69,7 +74,22 @@ class MainWindow(QtWidgets.QMainWindow):
             partial(self.goToMenu, self.menus["cleaningScreen"])
         )
         self.menus["mainMenu"].EnterDeviceStatusScreen.clicked.connect(
-            partial(self.goToMenu, self.menus["deviceStatus"])
+            partial(self.goToMenu, self.menus["deviceStatusControls"])
+        )
+        self.menus["deviceStatusSensors"].ReturnToMenuButton.clicked.connect(
+            partial(self.goToMenu, self.menus["mainMenu"])
+        )
+        self.menus["deviceStatusControls"].GoToSensorStatusButton.clicked.connect(
+            partial(self.goToMenu, self.menus["deviceStatusSensors"])
+        )
+        self.menus["deviceStatusControls"].ProcessStatusButton.clicked.connect(
+            partial(self.goToMenu, self.menus["processStatus"])
+        )
+        self.menus["deviceStatusSensors"].ProcessStatusButton.clicked.connect(
+            partial(self.goToMenu, self.menus["processStatus"])
+        )
+        self.menus["deviceStatusSensors"].GoToControlStatusButton.clicked.connect(
+            partial(self.goToMenu, self.menus["deviceStatusControls"])
         )
         logger.debug("Menu navigation buttons connected")
 

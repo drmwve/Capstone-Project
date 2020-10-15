@@ -1,14 +1,15 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
-from .DeviceStatusGUI import Ui_DeviceStatus
+from .DeviceStatusControlsGUI import Ui_DeviceStatusControls
+from ..hardware.devicehandler import DeviceHandler
 
 
-class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
+class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
         self.connections()
-
+        self.deviceHandler = DeviceHandler()
         self.ballValveButton = [
             self.BallValve1Button,
             self.BallValve2Button,
@@ -53,7 +54,7 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
         self.pumpState = [self.Pump1State, self.Pump2State]
 
         self.adjustUI()
-
+        self.updateState()
     def connections(self):
         # add any connections that are internal to the functioning of this widget only
         self.BallValve1Button.clicked.connect(lambda: self.toggleBallValve(0))
@@ -77,59 +78,110 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
         self.Pump2Button.clicked.connect(lambda: self.togglePump(1))
 
     def adjustUI(self):
-        pass
+        self.ProcessStatusButton.setHidden(True)
+
+    def updateState(self):
+        ## This function checks hardware states, adjusting the UI where needed.
+        ## Ball Valves
+        for i in range(0, 5):
+            if DeviceHandler.hardwareState.ballValves[i] == True:
+                ## Set state to open
+                self.ballValveButton[i].setText("Close")
+                self.ballValveState[i].setText("State: Open")
+            elif DeviceHandler.hardwareState.ballValves[i] == False:
+                ## Set state to closed
+                self.ballValveButton[i].setText("Open")
+                self.ballValveState[i].setText("State: Closed")
+        ## Three way valves
+        for i in range(5,10):
+            if DeviceHandler.hardwareState.ballValves[i] == True:
+                ## Set state to direction 2
+                self.threeWayValveState[i-5].setText("State: Direction 2")
+            elif DeviceHandler.hardwareState.ballValves[i] == False:
+                ## Set state to direction 1
+                self.threeWayValveState[i-5].setText("State: Direction 1")
+        ## Pumps
+        for i in range(0,2):
+            if DeviceHandler.hardwareState.pumps[i] == True:
+                ## Set state to on
+                self.pumpButton[i].setText("Turn Off")
+                self.pumpState[i].setText("State: On")
+            elif DeviceHandler.hardwareState.pumps[i] == False:
+                ## Set state to off
+                self.pumpButton[i].setText("Turn On")
+                self.pumpState[i].setText("State: Off")
+        ## Heaters
+        for i in range(0,4):
+            if DeviceHandler.hardwareState.heatingElements[i] == True:
+                ## Set state to on
+                self.heaterButton[i].setText("Turn Off")
+                self.heaterState[i].setText("State: On")
+            elif DeviceHandler.hardwareState.heatingElements[i] == False:
+                ## Set state to off
+                self.heaterButton[i].setText("Turn On")
+                self.heaterState[i].setText("State: Off")
 
     ## Defining button functions
     def toggleBallValve(self, index):
-        if self.ballValveButton[index].isChecked():
+        if self.ballValveState[index].text() == "State: Closed":
             ## Open ball valve
             logger.info("User requested ball valve " + str(index + 1) + " to open")
-            self.ballValveButton[index].setText("Close")
-            self.ballValveState[index].setText("State: Open")
-        else:
+            self.deviceHandler.openBallValve(index)
+            self.updateState()
+        elif self.ballValveState[index].text() == "State: Open":
             ## Close ball valve
             logger.info("User requested ball valve " + str(index + 1) + " to close")
-            self.ballValveButton[index].setText("Open")
-            self.ballValveState[index].setText("State: Closed")
+            self.deviceHandler.closeBallValve(index)
+            self.updateState()
 
     def toggleThreeWay(self, index):
-        if self.threeWayValveButton[index].isChecked():
+        if self.threeWayValveState[index].text() == "State: Direction 1":
             ## Change to direction 2
             logger.info(
                 "User requested three way valve "
                 + str(index + 1)
                 + " to change to direction 2"
             )
-            self.threeWayValveState[index].setText("State: Direction 2")
-        else:
+            self.deviceHandler.openBallValve(index+5)
+            self.updateState()
+        elif self.threeWayValveState[index].text() == "State: Direction 2":
             ## Change to direction 1
             logger.info(
                 "User requested three way valve "
                 + str(index + 1)
                 + " to change to direction 1"
             )
-            self.threeWayValveState[index].setText("State: Direction 1")
+            self.deviceHandler.closeBallValve(index+5)
+            self.updateState()
 
     def toggleHeater(self, index):
-        if self.heaterButton[index].isChecked():
+        if self.heaterState[index].text() == "State: Off":
             ## Turn heater on
             logger.info("User requested heater " + str(index + 1) + " to turn on")
             self.heaterButton[index].setText("Turn Off")
             self.heaterState[index].setText("State: On")
-        else:
+        elif self.heaterState[index].text() == "State: On":
             ##  Turn heater off
             logger.info("User requested heater " + str(index + 1) + " to turn off")
             self.heaterButton[index].setText("Turn On")
             self.heaterState[index].setText("State: Off")
 
     def togglePump(self, index):
-        if self.pumpButton[index].isChecked():
+        if self.pumpState[index].text() == "State: Off":
             ## Turn pump on
             logger.info("User requested pump " + str(index + 1) + " to turn on")
-            self.pumpButton[index].setText("Turn Off")
-            self.pumpState[index].setText("State: On")
-        else:
+            self.deviceHandler.enablePump(index)
+            self.updateState()
+        elif self.pumpState[index].text() == "State: On":
             ## Turn pump off
             logger.info("User requested pump " + str(index + 1) + " to turn off")
-            self.pumpButton[index].setText("Turn On")
-            self.pumpState[index].setText("State: Off")
+            self.deviceHandler.disablePump(index)
+            self.updateState()
+
+    def hideMainMenu(self):
+        self.ReturnToMenuButton.setHidden(True)
+        self.ProcessStatusButton.setHidden(False)
+
+    def hideProcessStatus(self):
+        self.ReturnToMenuButton.setHidden(False)
+        self.ProcessStatusButton.setHidden(True)
