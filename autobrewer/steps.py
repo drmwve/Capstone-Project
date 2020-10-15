@@ -58,25 +58,19 @@ class FillHLT(Step):
             self.devicehandler.closeBallValve(0)
             self.stepcomplete.emit()
             self.stop()
-        else if devicehandler.hardwareState.PauseAndResume = True: # this should be stored value by default is False, when pause button press it should change to True
-            self.pause()
 
     def pause(self):
         logger.debug("Filling hot liqure tank step is paused")
-            self.runtimer.stop()
-            self.devicehandler.closeBallValve(0)
-            self.devicehandler.closeBallValve(1)
-            while True:
-                if devicehandler.hardwareState.PauseAndResume = False:
-                    self.resume()
+        self.runtimer.stop()
+        self.devicehandler.closeBallValve(0)
+        self.devicehandler.closeBallValve(1)
     
     def resume(self):
         logger.debug("Filling hot liqure tank step is resumed")
         self.run()
 
-        
-
     def stop(self):
+        self.stepcomplete.emit()
         self.runtimer.stop()
 
 class HeatHTL(Step):
@@ -102,17 +96,12 @@ class HeatHTL(Step):
             self.devicehandler.disableHeatingElement(2)  # i think we should only reset pumps after each step, but not heating elements and valves
             self.stepcomplete.emit()
             self.stop()
-        else if devicehandler.hardwareState.PauseAndResume = True:
-            self.resume()
 
     def pause(self):
         logger.debug("Heating hot liqure tank step is paused")
         self.runtimer.stop()
         self.devicehandler.disableHeatingElement(0)
         self.devicehandler.disableHeatingElement(2)
-        while True:
-            else if devicehandler.hardwareState.PauseAndResume = False:
-                self.resume()
     
     def resume(self):
         logger.debug("Heating hot liqure tank step is resumed")
@@ -122,6 +111,7 @@ class HeatHTL(Step):
         self.devicehandler.disableHeatingElement(0)
         self.devicehandler.disableHeatingElement(2)
         self.runtimer.stop()
+        self.stepcomplete.emit()
 
 class HLTtoMT(Step):
 
@@ -141,6 +131,7 @@ class HLTtoMT(Step):
     def next(self):
         self.devicehandler.enablePump(0)
         self.runtimer.start(100)
+        self.devicehandler.setTargetKettleTemp(0, self.HLTtemp)
         logger.debug(f'Started timer: {self.runtimer.isActive()}')
 
     def loop(self):
@@ -149,27 +140,22 @@ class HLTtoMT(Step):
             self.devicehandler.disablePump(0)
             self.stepcomplete.emit()
             self.stop()
-        
-        else if devicehandler.hardwareState.PauseAndResume = True:
-            self.pause()
-
-        else:
-        self.devicehandler.setTargetKettleTemp(0, self.HLTtemp)
     
     def pause(self):
         logger.debug("Hot liqure tank to mashtun step is paused")
         self.runtimer.stop()
         self.devicehandler.disablePump(0)
-        while True:
-            devicehandler.hardwareState.PauseAndResume = False:
-            self.resume()
+        self.devicehandler.disableAllHeatingElements()
+        self.devicehandler.closeBallValve(1)
 
     def resume(self):
         logger.debug("Hot liqure tank to mashtun step is resumed")
+        self.devicehandler.openBallValve(1)
         self.next()
 
     def stop(self):
         self.runtimer.stop()
+        self.stepcomplete.emit()
 
 class MTRecirc(Step):
 
@@ -178,9 +164,6 @@ class MTRecirc(Step):
         self.startingmessage = "Mashing tun recirculation"
         self.estimatedtime = 90
         self.runtimer = QtCore.QTimer()
-        self.runtimer2 = QtCore.QTimer()
-        self.runtimer2.timeout.connect(self.tempControl)
-        self.index = 0
         self.runtimer.timeout.connect(self.loop)
         self.HLTtemp = HLTtemp
 
@@ -193,9 +176,8 @@ class MTRecirc(Step):
     def next(self):
         self.devicehandler.enablePump(0)
         self.runtimer.start(1000)
-        self.runtimer2.start(100)
+        self.devicehandler.setTargetKettleTemp(1, self.HLTtemp)
         logger.debug(f'Started timer: {self.runtimer.isActive()}')
-        logger.debug(f'Started timer 2: {self.runtimer2.isActive()}')
 
     def loop(self):
         logger.debug("Running loop (waiting for 60 minutes for recirculation)")
@@ -204,27 +186,18 @@ class MTRecirc(Step):
             self.devicehandler.disablePump(0)
             self.stepcomplete.emit()
             self.stop()
-        else if devicehandler.hardwareState.PauseAndResume = True:
-            self.pause()
-
-    def tempControl(self):
-        self.devicehandler.setTargetKettleTemp(1, self.HLTtemp)
-
-    
+   
     def pause(self):
         self.devicehandler.disablePump(0)
         self.runtimer.stop()
         self.runtimer2.stop()
-        while True:
-            devicehandler.hardwareState.PauseAndResume = False:
-                self.resume()
 
     def resume(self):
         self.next() 
 
     def stop(self):
         self.runtimer.stop()
-        self.runtimer2.stop()
+        self.stepcomplete.emit()
 
 class MTtoBK(Step):
 
@@ -251,17 +224,12 @@ class MTtoBK(Step):
         if devicehandler.hardwareState.volume[2] == 6.5:
             self.stepcomplete.emit()
             self.stop()
-        else if devicehandler.hardwareState.PauseAndResume = True:
-            self.pause()
     
     def pause(self):
         logger.debug("mashtun to boiling kettle step is paused")
         self.runtimer.stop()
         self.devicehandler.disablePump(0)
         self.devicehandler.disablePump(1)
-        while True:
-            if devicehandler.hardwareState.PauseAndResume = False:
-                self.resume()
     
     def resume(self):
         logger.debug("mashtun to boiling kettle step is resumed")
@@ -274,6 +242,7 @@ class MTtoBK(Step):
         self.devicehandler.disablePump(1)
         self.devicehandler.disableHeatingElement(0)
         self.devicehandler.disableHeatingElement(2)
+        self.stepcomplete.emit()
 
 
 class BKboiling_AddingHops(Step):
@@ -285,15 +254,11 @@ class BKboiling_AddingHops(Step):
         self.boilTime = 3600000
         self.hopindex = 0
         self.numHops = numHops #number of hops
-        self.timeHops = timeHops  #timing between hops
-        self.runtimer0 = QtCore.QTimer()     #temperature control
-        self.runtimer0.timeout.connect(self.tempControl)  
+        self.timeHops = timeHops  #timing between hops  
         self.runtimer = QtCore.QTimer()
         self.runtimer.timeout.connect(self.boilComplete)
         self.runtimer2 = QtCore.QTimer()
         self.runtimer2.timeout.connect(self.addHopsChain)
-        self.runtimer3 = QtCore.QTimer()      #check if user paused
-        self.runtimer3.timeout.connect(self.checkIfPaused)  
 
     def run(self):
         logger.debug(f'Running step {self}')
@@ -301,28 +266,15 @@ class BKboiling_AddingHops(Step):
         devicehandler.closeBallValve(4)
         self.runtimer.start(self.boilTime)
         self.runtimer2.start(self.timeHops[self.hopindex])
-        self.runtimer0.start(100)
-        self.runetimer3.start(100)
         logger.debug(f'Started timer: {self.runtimer.isActive()}')
         logger.debug(f'Started timer 2: {self.runtimer2.isActive()}')
-        logger.debug(f'Started timer 0: {self.runtimer0.isActive()}')
-    
-    def checkIfPaused(self):
-        if devicehandler.hardwareState.PauseAndResume = True:
-            self.pause()
-        
-    
+       
     def pause(self):
         logger.debug("boiling and adding hops step is paused")
         self.boilTime = self.runtimer.remainingTime("i dont know how to get the timer id")
         self.timeHops = self.runtimer2.remainingTime("i dont know how to get the timer id")
         self.runtimer.stop()
         self.runtimer2.stop()
-        self.runtimer0.stop()
-        self.runtimer3.stop()
-            while True:
-                if devicehandler.hardwareState.PauseAndResume = False:
-                    self.resume()
             
     def resume(self):
         logger.debug("boiling and adding hops step is resumed")
@@ -360,8 +312,6 @@ class BKboiling_AddingHops(Step):
         self.stepcomplete.emit()
         self.runtimer.stop()
         self.runtimer2.stop()
-        self.runtimer0.stop()
-        self.runtimer3.stop()
         self.devicehandler.disableAllHeatingElements()
 
 
@@ -374,8 +324,6 @@ class BKWhirl(Step):
         self.whirlTime = 900000
         self.runtimer = QtCore.QTimer()
         self.runtimer.timeout.connect(self.stop)
-        self.runtimer2 = QtCore.QTimer()
-        self.runtimer2.timeout.connect(self.checkIfPaused)
 
     def run(self):
         logger.debug(f'Running step {self}')
@@ -388,10 +336,6 @@ class BKWhirl(Step):
         self.runtimer.start(self.whirlTime)
         self.runtimer2.start(100)
         logger.debug(f'Started timer: {self.runtimer.isActive()}')
-
-    def checkIfPaused(self):
-        if devicehandler.hardwareState.PauseAndResume = True:
-            self.pause()
     
     def pause(self):
         logger.debug("Boiling kettle whirl step is paused")
@@ -399,10 +343,7 @@ class BKWhirl(Step):
         self.whirlTime = self.runtimer.remainingTime("timer ID")
         self.runtimer.stop()
         self.runtimer2.stop()
-            while True:
-                if devicehandler.hardwareState.PauseAndResume = False:
-                    self.resume()
-    
+   
     def resume(self):
         logger.debug("Boiling kettle whirl step is resumed")
         self.next()
@@ -436,18 +377,12 @@ class Draining(Step):
         if devicehandler.hardwareState.volume[2] == 0:
             self.stepcomplete.emit()
             QtCore.QTimer.singleShot(5000, self.stop)
-        
-        else if devicehandler.hardwareState.PauseAndResume = True:
-            self.pause()
     
     def pause(self):
         logger.debug("Draining step is paused")
         self.devicehandler.disablePump(1)
         self.devicehandler.closeBallValve(4)
         self.runtimer.stop()
-            while True:
-                if devicehandler.hardwareState.PauseAndResume = False:
-                    self.resume()
         
     def resume(self):
         logger.debug("Draining step is resumed")
