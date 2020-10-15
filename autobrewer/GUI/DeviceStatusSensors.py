@@ -33,12 +33,12 @@ class DeviceStatusSensors(QtWidgets.QWidget, Ui_DeviceStatusSensors):
         self.ProcessStatusButton.setHidden(True)
 
     def updateState(self):
-        self.temperatureSensors[0].setText("Temperature (\u00b0F): "+str(DeviceHandler.hardwareState.temperatures["HLT"]))
-        self.temperatureSensors[1].setText("Temperature (\u00b0F): "+str(DeviceHandler.hardwareState.temperatures["MT"]))
-        self.temperatureSensors[2].setText("Temperature (\u00b0F): "+str(DeviceHandler.hardwareState.temperatures["BK"]))
-        self.tankVolumes[0].setText("Volume (gal): "+str(DeviceHandler.hardwareState.volumes["HLT"]))
-        self.tankVolumes[1].setText("Volume (gal): "+str(DeviceHandler.hardwareState.volumes["MT"]))
-        self.tankVolumes[2].setText("Volume (gal): "+str(DeviceHandler.hardwareState.volumes["BK"]))
+        self.temperatureSensors[0].setText("Temperature (\u00b0F): "+str(DeviceHandler.hardwareState.temperatures[DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"]]))
+        self.temperatureSensors[1].setText("Temperature (\u00b0F): "+str(DeviceHandler.hardwareState.temperatures[DeviceHandler.KETTLE_IDS_GIVEN_NAME["MT"]]))
+        self.temperatureSensors[2].setText("Temperature (\u00b0F): "+str(DeviceHandler.hardwareState.temperatures[DeviceHandler.KETTLE_IDS_GIVEN_NAME["BK"]]))
+        self.tankVolumes[0].setText("Volume (gal): "+str(DeviceHandler.hardwareState.volumes[DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"]]))
+        self.tankVolumes[1].setText("Volume (gal): "+str(DeviceHandler.hardwareState.volumes[DeviceHandler.KETTLE_IDS_GIVEN_NAME["MT"]]))
+        self.tankVolumes[2].setText("Volume (gal): "+str(DeviceHandler.hardwareState.volumes[DeviceHandler.KETTLE_IDS_GIVEN_NAME["BK"]]))
 
     def updateSensorsTimer(self):
         ## This timer runs while the user is on the sensors page and updates the UI every 1 second.

@@ -53,6 +53,7 @@ class DeviceHandler(QObject, Pins):
     heatingelementdisabled = False
 
     def __init__(self):
+        super().__init__()
         self._connectPins()
         self._createValvePaths()
         self.signalemit = QTimer()
@@ -250,7 +251,7 @@ class DeviceHandler(QObject, Pins):
     def _readSensors(self):
         # read the sensors and save the values here
         for i, _ in enumerate(self.hardwareState.temperatures):
-            self.hardwareState.temperatures[i] = self._readtemperature(i)
+            self.hardwareState.temperatures[i] = self._readTemperature(i)
             self.hardwareState.volumes[i] = self._readvolume(i)
 
     def _readTemperature(self, index: int):
