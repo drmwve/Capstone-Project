@@ -158,13 +158,13 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
         if self.heaterState[index].text() == "State: Off":
             ## Turn heater on
             logger.info("User requested heater " + str(index + 1) + " to turn on")
-            self.heaterButton[index].setText("Turn Off")
-            self.heaterState[index].setText("State: On")
+            self.deviceHandler.enableHeatingElement(index)
+            self.updateState()
         elif self.heaterState[index].text() == "State: On":
             ##  Turn heater off
             logger.info("User requested heater " + str(index + 1) + " to turn off")
-            self.heaterButton[index].setText("Turn On")
-            self.heaterState[index].setText("State: Off")
+            self.deviceHandler.disableHeatingElement(index)
+            self.updateState()
 
     def togglePump(self, index):
         if self.pumpState[index].text() == "State: Off":
