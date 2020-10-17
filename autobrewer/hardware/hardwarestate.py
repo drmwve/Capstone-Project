@@ -23,6 +23,6 @@ class HardwareState:
         self.kettletempsetpoints = [0, 0, 0]
         self.kettlepidenabled = [False, False, False]
         self.kettleheatingelementsdisabled = [False, False, False]
-        self.temperatures = [0, 0, 0]
+        self.temperatures = [0.0, 0.0, 0.0]
         self.volumes = [0.0, 0.0, 0.0]
-        self.hopservo = 0
+        self.hopservoangle = 0

@@ -102,7 +102,6 @@ class BrewProcess(Process):
     def __init__(self, brewrecipe):
         super().__init__()
         self.brewRecipe = brewrecipe
-        # emit signal which sets target mash temp
         self.processSteps = [ExampleStep(), ExampleStep()]
         self.initializeSteps()
 

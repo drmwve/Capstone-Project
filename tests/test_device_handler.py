@@ -37,7 +37,7 @@ class TestDeviceHandler:
     @pytest.mark.parametrize("angle", [-140, 0, 90])
     def test_set_hop_servo_position_valid(self, angle, devicehandler):
         devicehandler.setHopServoPosition(angle)
-        assert devicehandler.hardwareState.hopservo == angle
+        assert devicehandler.hardwareState.hopservoangle == angle
 
     @pytest.mark.parametrize("angle", [-151, 370])
     def test_set_hop_servo_position_invalid(self, angle, devicehandler):
