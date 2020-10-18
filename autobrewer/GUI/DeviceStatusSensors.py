@@ -1,4 +1,4 @@
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtWidgets
 from loguru import logger
 from .DeviceStatusSensorsGUI import Ui_DeviceStatusSensors
 from ..hardware.devicehandler import DeviceHandler
@@ -20,31 +20,21 @@ class DeviceStatusSensors(QtWidgets.QWidget, Ui_DeviceStatusSensors):
             self.TankVolume2State,
             self.TankVolume3State
         ]
-        self.updateState()
 
     def connections(self):
-        self.updateTimer.timeout.connect(self.updateSensorsTimer)
-        self.GoToControlStatusButton.clicked.connect(self.updateTimer.stop)
-        self.ReturnToMenuButton.clicked.connect(self.updateTimer.stop)
+        pass
 
     def adjustUI(self):
-        self.updateTimer=QtCore.QTimer()
-        self.disableSensorUpdates = QtCore.Signal()
         self.ProcessStatusButton.setHidden(True)
 
-    def updateState(self):
-        self.temperatureSensors[0].setText("Temperature (\u00b0F): "+str(DeviceHandler.hardwareState.temperatures[DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"]]))
-        self.temperatureSensors[1].setText("Temperature (\u00b0F): "+str(DeviceHandler.hardwareState.temperatures[DeviceHandler.KETTLE_IDS_GIVEN_NAME["MT"]]))
-        self.temperatureSensors[2].setText("Temperature (\u00b0F): "+str(DeviceHandler.hardwareState.temperatures[DeviceHandler.KETTLE_IDS_GIVEN_NAME["BK"]]))
-        self.tankVolumes[0].setText("Volume (gal): "+str(DeviceHandler.hardwareState.volumes[DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"]]))
-        self.tankVolumes[1].setText("Volume (gal): "+str(DeviceHandler.hardwareState.volumes[DeviceHandler.KETTLE_IDS_GIVEN_NAME["MT"]]))
-        self.tankVolumes[2].setText("Volume (gal): "+str(DeviceHandler.hardwareState.volumes[DeviceHandler.KETTLE_IDS_GIVEN_NAME["BK"]]))
-
-    def updateSensorsTimer(self):
-        ## This timer runs while the user is on the sensors page and updates the UI every 1 second.
-        self.updateState()
-        self.updateTimer.start(1000)
-        logger.debug("Updated sensors UI")
+    def updateState(self, hardwarestate):
+        self.hardwarestate = hardwarestate
+        self.temperatureSensors[0].setText("Temperature (\u00b0F): " + str(self.hardwarestate.temperatures[DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"]]))
+        self.temperatureSensors[1].setText("Temperature (\u00b0F): " + str(self.hardwarestate.temperatures[DeviceHandler.KETTLE_IDS_GIVEN_NAME["MT"]]))
+        self.temperatureSensors[2].setText("Temperature (\u00b0F): " + str(self.hardwarestate.temperatures[DeviceHandler.KETTLE_IDS_GIVEN_NAME["BK"]]))
+        self.tankVolumes[0].setText("Volume (gal): " + str(self.hardwarestate.volumes[DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"]]))
+        self.tankVolumes[1].setText("Volume (gal): " + str(self.hardwarestate.volumes[DeviceHandler.KETTLE_IDS_GIVEN_NAME["MT"]]))
+        self.tankVolumes[2].setText("Volume (gal): " + str(self.hardwarestate.volumes[DeviceHandler.KETTLE_IDS_GIVEN_NAME["BK"]]))
 
     def hideMainMenu(self):
         self.ReturnToMenuButton.setHidden(True)

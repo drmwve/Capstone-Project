@@ -1,3 +1,4 @@
+from PySide2 import QtCore
 from simple_pid import PID
 from loguru import logger
 from PySide2.QtCore import QObject, Signal, QTimer
@@ -55,12 +56,14 @@ class DeviceHandler(QObject, Pins):
     HLTfilldisabled = False
 
     def __init__(self):
-        super().__init__()
+        super().__init__()  # this calls all constructors up to Foo
+        super(QObject, self).__init__()
         self._connectPins()
         self._createValvePaths()
         self.signalemit = QTimer()
         self.signalemit.timeout.connect(self._updatestate)
-        self.signalemit.start(250)
+        logger.warning("Initializing device handler")
+        logger.warning(self.signalemit.isActive())
 
     def _createValvePaths(self):
         """Defines paths which must be open for a pump to run without forming a vacuum. The valvepaths variable is a
