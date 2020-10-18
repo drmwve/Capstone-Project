@@ -54,7 +54,7 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
         self.pumpState = [self.Pump1State, self.Pump2State]
 
         self.adjustUI()
-        self.updateState()
+        #self.updateState()
     def connections(self):
         # add any connections that are internal to the functioning of this widget only
         self.BallValve1Button.clicked.connect(lambda: self.toggleBallValve(0))
@@ -83,6 +83,9 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
     def updateState(self):
         ## This function checks hardware states, adjusting the UI where needed.
         ## Ball Valves
+        self.deviceHandler._updatestate()
+        self.deviceState = HardwareState
+
         for i in range(0, 5):
             if DeviceHandler.hardwareState.ballValves[i] == True:
                 ## Set state to open
@@ -127,12 +130,12 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
             ## Open ball valve
             logger.info("User requested ball valve " + str(index + 1) + " to open")
             self.deviceHandler.openBallValve(index)
-            self.updateState()
+            #self.updateState()
         elif self.ballValveState[index].text() == "State: Open":
             ## Close ball valve
             logger.info("User requested ball valve " + str(index + 1) + " to close")
             self.deviceHandler.closeBallValve(index)
-            self.updateState()
+            #self.updateState()
 
     def toggleThreeWay(self, index):
         if self.threeWayValveState[index].text() == "State: Direction 1":

@@ -9,6 +9,7 @@ from .Process import *
 from .GUI.Styler import WindowStyler
 from .MainWindow import MainWindow
 from .utils import IS_RASPBERRY_PI
+from .hardware.devicehandler import *
 
 
 def main():
@@ -51,3 +52,5 @@ def connections(mainscreen: MainWindow):
 
     mainscreen.menus["cleaningScreen"].startCleaningSignal.connect(executionhandler.startCleaningProcess)
     mainscreen.menus["cleaningScreen"].flushSystemSignal.connect(executionhandler.startFlushProcess)
+
+    devicehandler.signalState.connect(mainscreen.menus["deviceStatusControls"].updateState)
