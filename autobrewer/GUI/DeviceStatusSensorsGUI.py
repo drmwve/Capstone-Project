@@ -3,13 +3,16 @@
 ################################################################################
 ## Form generated from reading UI file 'DeviceStatusSensors.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.15.1
+## Created by: Qt User Interface Compiler version 5.15.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import *
-from PySide2.QtGui import *
+from PySide2.QtCore import (QCoreApplication, QDate, QDateTime, QMetaObject,
+    QObject, QPoint, QRect, QSize, QTime, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
+    QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter,
+    QPixmap, QRadialGradient)
 from PySide2.QtWidgets import *
 
 
@@ -20,8 +23,8 @@ class Ui_DeviceStatusSensors(object):
         DeviceStatusSensors.resize(1024, 600)
         DeviceStatusSensors.setMinimumSize(QSize(1024, 600))
         DeviceStatusSensors.setMaximumSize(QSize(1024, 600))
-        self.verticalLayout = QVBoxLayout(DeviceStatusSensors)
-        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.gridLayout = QGridLayout(DeviceStatusSensors)
+        self.gridLayout.setObjectName(u"gridLayout")
         self.HeatersGroupBox = QGroupBox(DeviceStatusSensors)
         self.HeatersGroupBox.setObjectName(u"HeatersGroupBox")
         font = QFont()
@@ -29,6 +32,10 @@ class Ui_DeviceStatusSensors(object):
         self.HeatersGroupBox.setFont(font)
         self.verticalLayout_2 = QVBoxLayout(self.HeatersGroupBox)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalSpacer_7 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_2.addItem(self.verticalSpacer_7)
+
         self.HeaterLayout = QGridLayout()
         self.HeaterLayout.setObjectName(u"HeaterLayout")
         self.HeaterLayout.setContentsMargins(-1, 2, -1, 2)
@@ -101,6 +108,8 @@ class Ui_DeviceStatusSensors(object):
 
         self.HeaterPIDIncrease1 = QPushButton(self.HeatersGroupBox)
         self.HeaterPIDIncrease1.setObjectName(u"HeaterPIDIncrease1")
+        self.HeaterPIDIncrease1.setMinimumSize(QSize(0, 30))
+        self.HeaterPIDIncrease1.setMaximumSize(QSize(16777215, 30))
         self.HeaterPIDIncrease1.setFont(font)
 
         self.horizontalLayout_4.addWidget(self.HeaterPIDIncrease1)
@@ -112,12 +121,16 @@ class Ui_DeviceStatusSensors(object):
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
         self.HeaterPIDDecrease2 = QPushButton(self.HeatersGroupBox)
         self.HeaterPIDDecrease2.setObjectName(u"HeaterPIDDecrease2")
+        self.HeaterPIDDecrease2.setMinimumSize(QSize(0, 30))
+        self.HeaterPIDDecrease2.setMaximumSize(QSize(16777215, 30))
         self.HeaterPIDDecrease2.setFont(font)
 
         self.horizontalLayout_5.addWidget(self.HeaterPIDDecrease2)
 
         self.HeaterPIDIncrease2 = QPushButton(self.HeatersGroupBox)
         self.HeaterPIDIncrease2.setObjectName(u"HeaterPIDIncrease2")
+        self.HeaterPIDIncrease2.setMinimumSize(QSize(0, 30))
+        self.HeaterPIDIncrease2.setMaximumSize(QSize(16777215, 30))
         self.HeaterPIDIncrease2.setFont(font)
 
         self.horizontalLayout_5.addWidget(self.HeaterPIDIncrease2)
@@ -129,12 +142,16 @@ class Ui_DeviceStatusSensors(object):
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
         self.HeaterPIDDecrease3 = QPushButton(self.HeatersGroupBox)
         self.HeaterPIDDecrease3.setObjectName(u"HeaterPIDDecrease3")
+        self.HeaterPIDDecrease3.setMinimumSize(QSize(0, 30))
+        self.HeaterPIDDecrease3.setMaximumSize(QSize(16777215, 30))
         self.HeaterPIDDecrease3.setFont(font)
 
         self.horizontalLayout_6.addWidget(self.HeaterPIDDecrease3)
 
         self.HeaterPIDIncrease3 = QPushButton(self.HeatersGroupBox)
         self.HeaterPIDIncrease3.setObjectName(u"HeaterPIDIncrease3")
+        self.HeaterPIDIncrease3.setMinimumSize(QSize(0, 30))
+        self.HeaterPIDIncrease3.setMaximumSize(QSize(16777215, 30))
         self.HeaterPIDIncrease3.setFont(font)
 
         self.horizontalLayout_6.addWidget(self.HeaterPIDIncrease3)
@@ -146,12 +163,16 @@ class Ui_DeviceStatusSensors(object):
         self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
         self.HeaterPIDDecrease4 = QPushButton(self.HeatersGroupBox)
         self.HeaterPIDDecrease4.setObjectName(u"HeaterPIDDecrease4")
+        self.HeaterPIDDecrease4.setMinimumSize(QSize(0, 30))
+        self.HeaterPIDDecrease4.setMaximumSize(QSize(16777215, 30))
         self.HeaterPIDDecrease4.setFont(font)
 
         self.horizontalLayout_7.addWidget(self.HeaterPIDDecrease4)
 
         self.HeaterPIDIncrease4 = QPushButton(self.HeatersGroupBox)
         self.HeaterPIDIncrease4.setObjectName(u"HeaterPIDIncrease4")
+        self.HeaterPIDIncrease4.setMinimumSize(QSize(0, 30))
+        self.HeaterPIDIncrease4.setMaximumSize(QSize(16777215, 30))
         self.HeaterPIDIncrease4.setFont(font)
 
         self.horizontalLayout_7.addWidget(self.HeaterPIDIncrease4)
@@ -162,61 +183,31 @@ class Ui_DeviceStatusSensors(object):
 
         self.verticalLayout_2.addLayout(self.HeaterLayout)
 
+        self.verticalSpacer_8 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.verticalLayout.addWidget(self.HeatersGroupBox)
+        self.verticalLayout_2.addItem(self.verticalSpacer_8)
+
+
+        self.gridLayout.addWidget(self.HeatersGroupBox, 0, 0, 1, 1)
 
         self.TemperatureGroupBox = QGroupBox(DeviceStatusSensors)
         self.TemperatureGroupBox.setObjectName(u"TemperatureGroupBox")
         self.TemperatureGroupBox.setFont(font)
-        self.horizontalLayout_2 = QHBoxLayout(self.TemperatureGroupBox)
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.verticalLayout_6 = QVBoxLayout(self.TemperatureGroupBox)
+        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.verticalSpacer_5 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_6.addItem(self.verticalSpacer_5)
+
         self.HeaterTargetLayout = QGridLayout()
         self.HeaterTargetLayout.setObjectName(u"HeaterTargetLayout")
         self.HeaterTargetLayout.setContentsMargins(-1, 2, -1, 2)
-        self.HLTLabel = QLabel(self.TemperatureGroupBox)
-        self.HLTLabel.setObjectName(u"HLTLabel")
-        self.HLTLabel.setMaximumSize(QSize(16777215, 20))
-        self.HLTLabel.setFont(font)
+        self.BKTargetTemp = QLabel(self.TemperatureGroupBox)
+        self.BKTargetTemp.setObjectName(u"BKTargetTemp")
+        self.BKTargetTemp.setMaximumSize(QSize(16777215, 20))
+        self.BKTargetTemp.setFont(font)
 
-        self.HeaterTargetLayout.addWidget(self.HLTLabel, 0, 0, 1, 1)
-
-        self.MTCurrentTemp = QLabel(self.TemperatureGroupBox)
-        self.MTCurrentTemp.setObjectName(u"MTCurrentTemp")
-        self.MTCurrentTemp.setFont(font)
-
-        self.HeaterTargetLayout.addWidget(self.MTCurrentTemp, 1, 2, 1, 1)
-
-        self.HLTTargetTemp = QLabel(self.TemperatureGroupBox)
-        self.HLTTargetTemp.setObjectName(u"HLTTargetTemp")
-        self.HLTTargetTemp.setMaximumSize(QSize(16777215, 20))
-        self.HLTTargetTemp.setFont(font)
-
-        self.HeaterTargetLayout.addWidget(self.HLTTargetTemp, 2, 0, 1, 1)
-
-        self.MTLabel = QLabel(self.TemperatureGroupBox)
-        self.MTLabel.setObjectName(u"MTLabel")
-        self.MTLabel.setFont(font)
-
-        self.HeaterTargetLayout.addWidget(self.MTLabel, 0, 2, 1, 1)
-
-        self.horizontalLayout_8 = QHBoxLayout()
-        self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
-        self.DecreaseMT = QPushButton(self.TemperatureGroupBox)
-        self.DecreaseMT.setObjectName(u"DecreaseMT")
-        self.DecreaseMT.setMaximumSize(QSize(16777215, 30))
-        self.DecreaseMT.setFont(font)
-
-        self.horizontalLayout_8.addWidget(self.DecreaseMT)
-
-        self.IncreaseMT = QPushButton(self.TemperatureGroupBox)
-        self.IncreaseMT.setObjectName(u"IncreaseMT")
-        self.IncreaseMT.setMaximumSize(QSize(16777215, 30))
-        self.IncreaseMT.setFont(font)
-
-        self.horizontalLayout_8.addWidget(self.IncreaseMT)
-
-
-        self.HeaterTargetLayout.addLayout(self.horizontalLayout_8, 3, 2, 1, 1)
+        self.HeaterTargetLayout.addWidget(self.BKTargetTemp, 2, 3, 1, 1)
 
         self.HLTCurrentTemp = QLabel(self.TemperatureGroupBox)
         self.HLTCurrentTemp.setObjectName(u"HLTCurrentTemp")
@@ -225,53 +216,12 @@ class Ui_DeviceStatusSensors(object):
 
         self.HeaterTargetLayout.addWidget(self.HLTCurrentTemp, 1, 0, 1, 1)
 
-        self.horizontalLayout_10 = QHBoxLayout()
-        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
-        self.DecreaseHLT = QPushButton(self.TemperatureGroupBox)
-        self.DecreaseHLT.setObjectName(u"DecreaseHLT")
-        self.DecreaseHLT.setMinimumSize(QSize(0, 30))
-        self.DecreaseHLT.setMaximumSize(QSize(16777215, 30))
-        self.DecreaseHLT.setFont(font)
-
-        self.horizontalLayout_10.addWidget(self.DecreaseHLT)
-
-        self.IncreaseHLT = QPushButton(self.TemperatureGroupBox)
-        self.IncreaseHLT.setObjectName(u"IncreaseHLT")
-        self.IncreaseHLT.setMinimumSize(QSize(0, 30))
-        self.IncreaseHLT.setMaximumSize(QSize(16777215, 30))
-        self.IncreaseHLT.setFont(font)
-
-        self.horizontalLayout_10.addWidget(self.IncreaseHLT)
-
-
-        self.HeaterTargetLayout.addLayout(self.horizontalLayout_10, 3, 0, 1, 1)
-
-        self.MTTargetTemp = QLabel(self.TemperatureGroupBox)
-        self.MTTargetTemp.setObjectName(u"MTTargetTemp")
-        self.MTTargetTemp.setFont(font)
-
-        self.HeaterTargetLayout.addWidget(self.MTTargetTemp, 2, 2, 1, 1)
-
-        self.BKTargetTemp = QLabel(self.TemperatureGroupBox)
-        self.BKTargetTemp.setObjectName(u"BKTargetTemp")
-        self.BKTargetTemp.setMaximumSize(QSize(16777215, 20))
-        self.BKTargetTemp.setFont(font)
-
-        self.HeaterTargetLayout.addWidget(self.BKTargetTemp, 2, 3, 1, 1)
-
         self.BKCurrentTemp = QLabel(self.TemperatureGroupBox)
         self.BKCurrentTemp.setObjectName(u"BKCurrentTemp")
         self.BKCurrentTemp.setMaximumSize(QSize(16777215, 20))
         self.BKCurrentTemp.setFont(font)
 
         self.HeaterTargetLayout.addWidget(self.BKCurrentTemp, 1, 3, 1, 1)
-
-        self.BKLabel = QLabel(self.TemperatureGroupBox)
-        self.BKLabel.setObjectName(u"BKLabel")
-        self.BKLabel.setMaximumSize(QSize(16777215, 20))
-        self.BKLabel.setFont(font)
-
-        self.HeaterTargetLayout.addWidget(self.BKLabel, 0, 3, 1, 1)
 
         self.horizontalLayout_9 = QHBoxLayout()
         self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
@@ -294,18 +244,105 @@ class Ui_DeviceStatusSensors(object):
 
         self.HeaterTargetLayout.addLayout(self.horizontalLayout_9, 3, 3, 1, 1)
 
+        self.horizontalLayout_10 = QHBoxLayout()
+        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
+        self.DecreaseHLT = QPushButton(self.TemperatureGroupBox)
+        self.DecreaseHLT.setObjectName(u"DecreaseHLT")
+        self.DecreaseHLT.setMinimumSize(QSize(0, 30))
+        self.DecreaseHLT.setMaximumSize(QSize(16777215, 30))
+        self.DecreaseHLT.setFont(font)
 
-        self.horizontalLayout_2.addLayout(self.HeaterTargetLayout)
+        self.horizontalLayout_10.addWidget(self.DecreaseHLT)
+
+        self.IncreaseHLT = QPushButton(self.TemperatureGroupBox)
+        self.IncreaseHLT.setObjectName(u"IncreaseHLT")
+        self.IncreaseHLT.setMinimumSize(QSize(0, 30))
+        self.IncreaseHLT.setMaximumSize(QSize(16777215, 30))
+        self.IncreaseHLT.setFont(font)
+
+        self.horizontalLayout_10.addWidget(self.IncreaseHLT)
 
 
-        self.verticalLayout.addWidget(self.TemperatureGroupBox)
+        self.HeaterTargetLayout.addLayout(self.horizontalLayout_10, 3, 0, 1, 1)
+
+        self.HLTTargetTemp = QLabel(self.TemperatureGroupBox)
+        self.HLTTargetTemp.setObjectName(u"HLTTargetTemp")
+        self.HLTTargetTemp.setMaximumSize(QSize(16777215, 20))
+        self.HLTTargetTemp.setFont(font)
+
+        self.HeaterTargetLayout.addWidget(self.HLTTargetTemp, 2, 0, 1, 1)
+
+        self.MTCurrentTemp = QLabel(self.TemperatureGroupBox)
+        self.MTCurrentTemp.setObjectName(u"MTCurrentTemp")
+        self.MTCurrentTemp.setFont(font)
+
+        self.HeaterTargetLayout.addWidget(self.MTCurrentTemp, 1, 2, 1, 1)
+
+        self.MTTargetTemp = QLabel(self.TemperatureGroupBox)
+        self.MTTargetTemp.setObjectName(u"MTTargetTemp")
+        self.MTTargetTemp.setFont(font)
+
+        self.HeaterTargetLayout.addWidget(self.MTTargetTemp, 2, 2, 1, 1)
+
+        self.horizontalLayout_8 = QHBoxLayout()
+        self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
+        self.DecreaseMT = QPushButton(self.TemperatureGroupBox)
+        self.DecreaseMT.setObjectName(u"DecreaseMT")
+        self.DecreaseMT.setMaximumSize(QSize(16777215, 30))
+        self.DecreaseMT.setFont(font)
+
+        self.horizontalLayout_8.addWidget(self.DecreaseMT)
+
+        self.IncreaseMT = QPushButton(self.TemperatureGroupBox)
+        self.IncreaseMT.setObjectName(u"IncreaseMT")
+        self.IncreaseMT.setMaximumSize(QSize(16777215, 30))
+        self.IncreaseMT.setFont(font)
+
+        self.horizontalLayout_8.addWidget(self.IncreaseMT)
+
+
+        self.HeaterTargetLayout.addLayout(self.horizontalLayout_8, 3, 2, 1, 1)
+
+        self.BKLabel = QLabel(self.TemperatureGroupBox)
+        self.BKLabel.setObjectName(u"BKLabel")
+        self.BKLabel.setMaximumSize(QSize(16777215, 20))
+        self.BKLabel.setFont(font)
+
+        self.HeaterTargetLayout.addWidget(self.BKLabel, 0, 3, 1, 1)
+
+        self.HLTLabel = QLabel(self.TemperatureGroupBox)
+        self.HLTLabel.setObjectName(u"HLTLabel")
+        self.HLTLabel.setMaximumSize(QSize(16777215, 20))
+        self.HLTLabel.setFont(font)
+
+        self.HeaterTargetLayout.addWidget(self.HLTLabel, 0, 0, 1, 1)
+
+        self.MTLabel = QLabel(self.TemperatureGroupBox)
+        self.MTLabel.setObjectName(u"MTLabel")
+        self.MTLabel.setFont(font)
+
+        self.HeaterTargetLayout.addWidget(self.MTLabel, 0, 2, 1, 1)
+
+
+        self.verticalLayout_6.addLayout(self.HeaterTargetLayout)
+
+        self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_6.addItem(self.verticalSpacer_6)
+
+
+        self.gridLayout.addWidget(self.TemperatureGroupBox, 1, 0, 1, 1)
 
         self.ServoMotorGroupBox = QGroupBox(DeviceStatusSensors)
         self.ServoMotorGroupBox.setObjectName(u"ServoMotorGroupBox")
         self.ServoMotorGroupBox.setFont(font)
         self.ServoMotorGroupBox.setStyleSheet(u"QGroupBox {border: 1px solid black}")
-        self.horizontalLayout_3 = QHBoxLayout(self.ServoMotorGroupBox)
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.verticalLayout_4 = QVBoxLayout(self.ServoMotorGroupBox)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_4.addItem(self.verticalSpacer_2)
+
         self.ServoLayout = QGridLayout()
         self.ServoLayout.setObjectName(u"ServoLayout")
         self.ServoLayout.setContentsMargins(-1, 2, -1, 2)
@@ -387,16 +424,24 @@ class Ui_DeviceStatusSensors(object):
         self.ServoLayout.addWidget(self.DecreaseServo, 0, 3, 1, 1)
 
 
-        self.horizontalLayout_3.addLayout(self.ServoLayout)
+        self.verticalLayout_4.addLayout(self.ServoLayout)
+
+        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_4.addItem(self.verticalSpacer_4)
 
 
-        self.verticalLayout.addWidget(self.ServoMotorGroupBox)
+        self.gridLayout.addWidget(self.ServoMotorGroupBox, 2, 0, 1, 1)
 
         self.TankVolumeGroupBox = QGroupBox(DeviceStatusSensors)
         self.TankVolumeGroupBox.setObjectName(u"TankVolumeGroupBox")
         self.TankVolumeGroupBox.setFont(font)
         self.verticalLayout_5 = QVBoxLayout(self.TankVolumeGroupBox)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_5.addItem(self.verticalSpacer)
+
         self.TankVolumeLayout = QGridLayout()
         self.TankVolumeLayout.setObjectName(u"TankVolumeLayout")
         self.TankVolumeLayout.setContentsMargins(-1, 2, -1, 2)
@@ -445,14 +490,19 @@ class Ui_DeviceStatusSensors(object):
 
         self.verticalLayout_5.addLayout(self.TankVolumeLayout)
 
+        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.verticalLayout.addWidget(self.TankVolumeGroupBox)
+        self.verticalLayout_5.addItem(self.verticalSpacer_3)
+
+
+        self.gridLayout.addWidget(self.TankVolumeGroupBox, 3, 0, 1, 1)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.GoToControlStatusButton = QPushButton(DeviceStatusSensors)
         self.GoToControlStatusButton.setObjectName(u"GoToControlStatusButton")
-        self.GoToControlStatusButton.setMaximumSize(QSize(16777215, 50))
+        self.GoToControlStatusButton.setMinimumSize(QSize(0, 30))
+        self.GoToControlStatusButton.setMaximumSize(QSize(16777215, 30))
         font1 = QFont()
         font1.setPointSize(10)
         self.GoToControlStatusButton.setFont(font1)
@@ -461,7 +511,8 @@ class Ui_DeviceStatusSensors(object):
 
         self.ReturnToMenuButton = QPushButton(DeviceStatusSensors)
         self.ReturnToMenuButton.setObjectName(u"ReturnToMenuButton")
-        self.ReturnToMenuButton.setMaximumSize(QSize(16777215, 50))
+        self.ReturnToMenuButton.setMinimumSize(QSize(0, 30))
+        self.ReturnToMenuButton.setMaximumSize(QSize(16777215, 30))
         font2 = QFont()
         font2.setPointSize(10)
         font2.setBold(False)
@@ -472,13 +523,14 @@ class Ui_DeviceStatusSensors(object):
 
         self.ProcessStatusButton = QPushButton(DeviceStatusSensors)
         self.ProcessStatusButton.setObjectName(u"ProcessStatusButton")
-        self.ProcessStatusButton.setMaximumSize(QSize(16777215, 50))
+        self.ProcessStatusButton.setMinimumSize(QSize(0, 30))
+        self.ProcessStatusButton.setMaximumSize(QSize(16777215, 30))
         self.ProcessStatusButton.setFont(font1)
 
         self.horizontalLayout.addWidget(self.ProcessStatusButton)
 
 
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.gridLayout.addLayout(self.horizontalLayout, 4, 0, 1, 1)
 
 
         self.retranslateUi(DeviceStatusSensors)
@@ -489,7 +541,7 @@ class Ui_DeviceStatusSensors(object):
     def retranslateUi(self, DeviceStatusSensors):
         DeviceStatusSensors.setWindowTitle(QCoreApplication.translate("DeviceStatusSensors", u"Form", None))
         self.HeatersGroupBox.setStyleSheet(QCoreApplication.translate("DeviceStatusSensors", u"QGroupBox {border: 1px solid black}", None))
-        self.HeatersGroupBox.setTitle(QCoreApplication.translate("DeviceStatusSensors", u"Heaters PID", None))
+        self.HeatersGroupBox.setTitle(QCoreApplication.translate("DeviceStatusSensors", u"Heaters PWM", None))
         self.HeaterPID1.setText(QCoreApplication.translate("DeviceStatusSensors", u"State: Off", None))
         self.HeaterPID4.setText(QCoreApplication.translate("DeviceStatusSensors", u"State: Off", None))
         self.Heater1Label.setText(QCoreApplication.translate("DeviceStatusSensors", u"Heater: 1", None))
@@ -508,21 +560,21 @@ class Ui_DeviceStatusSensors(object):
         self.HeaterPIDIncrease4.setText(QCoreApplication.translate("DeviceStatusSensors", u"+", None))
         self.TemperatureGroupBox.setStyleSheet(QCoreApplication.translate("DeviceStatusSensors", u"QGroupBox {border: 1px solid black}", None))
         self.TemperatureGroupBox.setTitle(QCoreApplication.translate("DeviceStatusSensors", u"Heater Target Temperature", None))
-        self.HLTLabel.setText(QCoreApplication.translate("DeviceStatusSensors", u"Hot Liquor Tank", None))
-        self.MTCurrentTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Current Temperature (\u00b0F): 20", None))
-        self.HLTTargetTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Target Temperature (\u00b0F): 20", None))
-        self.MTLabel.setText(QCoreApplication.translate("DeviceStatusSensors", u"Mash Tun", None))
-        self.DecreaseMT.setText(QCoreApplication.translate("DeviceStatusSensors", u"-", None))
-        self.IncreaseMT.setText(QCoreApplication.translate("DeviceStatusSensors", u"+", None))
-        self.HLTCurrentTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Current Temperature (\u00b0F): 20", None))
-        self.DecreaseHLT.setText(QCoreApplication.translate("DeviceStatusSensors", u"-", None))
-        self.IncreaseHLT.setText(QCoreApplication.translate("DeviceStatusSensors", u"+", None))
-        self.MTTargetTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Target Temperature (\u00b0F): 20", None))
         self.BKTargetTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Target Temperature (\u00b0F): 20", None))
+        self.HLTCurrentTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Current Temperature (\u00b0F): 20", None))
         self.BKCurrentTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Current Temperature (\u00b0F): 20", None))
-        self.BKLabel.setText(QCoreApplication.translate("DeviceStatusSensors", u"Boil Kettle", None))
         self.DecreaseBK.setText(QCoreApplication.translate("DeviceStatusSensors", u"-", None))
         self.IncreaseBK.setText(QCoreApplication.translate("DeviceStatusSensors", u"+", None))
+        self.DecreaseHLT.setText(QCoreApplication.translate("DeviceStatusSensors", u"-", None))
+        self.IncreaseHLT.setText(QCoreApplication.translate("DeviceStatusSensors", u"+", None))
+        self.HLTTargetTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Target Temperature (\u00b0F): 20", None))
+        self.MTCurrentTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Current Temperature (\u00b0F): 20", None))
+        self.MTTargetTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Target Temperature (\u00b0F): 20", None))
+        self.DecreaseMT.setText(QCoreApplication.translate("DeviceStatusSensors", u"-", None))
+        self.IncreaseMT.setText(QCoreApplication.translate("DeviceStatusSensors", u"+", None))
+        self.BKLabel.setText(QCoreApplication.translate("DeviceStatusSensors", u"Boil Kettle", None))
+        self.HLTLabel.setText(QCoreApplication.translate("DeviceStatusSensors", u"Hot Liquor Tank", None))
+        self.MTLabel.setText(QCoreApplication.translate("DeviceStatusSensors", u"Mash Tun", None))
         self.ServoMotorGroupBox.setTitle(QCoreApplication.translate("DeviceStatusSensors", u"Servo Motor", None))
         self.IncreaseServo.setText(QCoreApplication.translate("DeviceStatusSensors", u"+", None))
         self.HopServo3.setText(QCoreApplication.translate("DeviceStatusSensors", u"Hop Cup 3", None))
