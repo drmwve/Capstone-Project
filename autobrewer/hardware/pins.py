@@ -14,13 +14,14 @@ from pyax12.connection import Connection
 class Pins:
     """Low level class which directly interfaces with the Raspberry Pi pins. This gets passed up to the Device Handler which handles higher-level component control logic."""
 
-    ballValveGPIOs = [25, 8, 7, 12, 16, 17, 27, 22, 23, 24]
-    pumpGPIOs = [20, 21]
-    heatingElementGPIOs = [26, 19, 13, 6]
+    ballValveGPIOs = [4, 27, 22, 19, 26, 23, 24, 25, 20, 21]
+    pumpGPIOs = [18, 17]
+    heatingElementGPIOs = [12, 13]
+    heatingElementSwitchGPIO = 16
     tempSensorGPIO = 9
     pins_initialized = False
 
-    TEMP_SENSOR_IDS = [0, 1, 2] # Get actual IDs and add here
+    TEMP_SENSOR_IDS = [0, 1, 2]  # Get actual IDs and add here
     if IS_RASPBERRY_PI:
         servoconnection = Connection(port="/dev/ttyAMA0", baudrate=57600)
         adc = ADS1115()
@@ -55,8 +56,9 @@ class Pins:
 
             cls.heatingElements = [
                 PWMOutputDevice(n, pin_factory=cls.pwmPinFactory)
-                for n in Pins.heatingElementGPIOs
-            ]
+                for n in Pins.heatingElementGPIOs]
+
+            cls.heatingElementSwitch = OutputDevice(Pins.heatingElementSwitchGPIO)
             cls.ballValves = [OutputDevice(n) for n in Pins.ballValveGPIOs]
             cls.pumps = [OutputDevice(n) for n in Pins.pumpGPIOs]
 

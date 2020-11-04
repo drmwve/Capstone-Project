@@ -303,9 +303,24 @@ class DeviceHandler(QObject, Pins):
                     self.hardwareState.kettlepidenabled[DeviceHandler.KETTLE_IDS_GIVEN_NAME["MT"]] = False
                 elif index in DeviceHandler.BK_HEATING_ELEMENTS:
                     self.hardwareState.kettlepidenabled[DeviceHandler.KETTLE_IDS_GIVEN_NAME["BK"]] = False
-            self.heatingElements[index].value = value
-            self.hardwareState.heatingElements[index] = value
-            logger.debug(f"Set heating element {index} to {value}")
+            if index in DeviceHandler.HLT_HEATING_ELEMENTS:
+                if self.heatingElementSwitch.value != 1:
+                    self.heatingElementSwitch.value = 0
+                    self.heatingElements[DeviceHandler.HLT_HEATING_ELEMENTS.index(index)].value = value
+                    self.hardwareState.heatingElements[index] = value
+                    logger.debug(f"Set heating element {index} to {value}")
+                else:
+                    logger.critical("Attempted to turn on HLT heating elements while BK heating elements are on")
+                    raise ComponentControlError("Attempted to turn on HLT heating elements while BK heating elements are on")
+            elif index in DeviceHandler.BK_HEATING_ELEMENTS:
+                if self.heatingElementSwitch.value != 0:
+                    self.heatingElementSwitch = 1
+                    self.heatingElements[DeviceHandler.BK_HEATING_ELEMENTS.index(index)].value = value
+                    self.hardwareState.heatingElements[index] = value
+                    logger.debug(f"Set heating element {index} to {value}")
+                else:
+                    logger.critical("Attempted to turn on BK heating elements while HLT heating elements are on")
+                    raise ComponentControlError("Attempted to turn on BK heating elements while HLT heating elements are on")
         elif value != 0:
                 logger.critical(f'Program is attempting to enable heating element {index} without sufficient liquid level')
                 raise ComponentControlError(f'Program is attempting to enable heating element {index} without sufficient liquid level')
