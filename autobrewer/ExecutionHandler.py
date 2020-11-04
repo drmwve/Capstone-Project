@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QMessageBox
-from Process import *
+from .Process import *
 
 
 class ExecutionHandler(QtCore.QObject):

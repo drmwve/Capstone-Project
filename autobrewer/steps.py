@@ -135,7 +135,8 @@ class HLTtoMT(Step):
         for heatingelement in devicehandler.BK_HEATING_ELEMENTS:
             devicehandler.disableHeatingElement(heatingelement)
         devicehandler.openValvePath("HLTtoMT")
-        devicehandler.setTargetKettleTemp(devicehandler.KETTLE_IDS_GIVEN_NAME["HLT"], self.HLTtemp)
+        if self.HLTtemp > 0:
+            devicehandler.setTargetKettleTemp(devicehandler.KETTLE_IDS_GIVEN_NAME["HLT"], self.HLTtemp)
         QtCore.QTimer.singleShot(5000, self.next)      
     
     def next(self):

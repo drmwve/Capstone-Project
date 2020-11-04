@@ -102,7 +102,14 @@ class BrewProcess(Process):
     def __init__(self, brewrecipe):
         super().__init__()
         self.brewRecipe = brewrecipe
-        self.processSteps = [ExampleStep(), ExampleStep()]
+        self.processSteps = [FillHLT(),
+                             HeatHTL(brewrecipe.mashTunTemperature),
+                             HLTtoMT(brewrecipe.mashTunTemperature),
+                             MTRecirc(brewrecipe.mashTunTemperature),
+                             MTtoBK(),
+                             BKboiling_AddingHops(brewrecipe.hopCartridges, brewrecipe.hopTiming),
+                             BKWhirl(),
+                             Draining()]
         self.initializeSteps()
 
 
@@ -116,5 +123,10 @@ class CleaningProcess(Process):
 class FlushSystem(Process):
     def __init__(self):
         super(FlushSystem, self).__init__()
-        self.processSteps = [ExampleStep(), ExampleStep()]
+        self.processSteps = [Draining(),
+                             MTtoBK(-1),
+                             Draining(),
+                             HLTtoMT(),
+                             MTtoBK(),
+                             Draining()]
         self.initializeSteps()

@@ -78,21 +78,22 @@ class BrewRecipePickler(object):
             logger.warning("Could not load hardware state. A reset hardware state is being loaded")
             return HardwareState()
 
-    def _savePickleToFile(self, objectToPickle: object, picklefile: str):
+    def _savePickleToFile(self, objectToPickle: object, picklefile: str, verbose = False):
         """Saves a given object to a file with hmac encryption to validate data integrity and prevent security threats.
 
         Args:
             objectToPickle (object): The Python object to be pickled
             picklefile (str): The filepath of the file to save the pickle to"""
-
-        logger.debug("Pickling object: %s" % objectToPickle)
+        if verbose:
+            logger.debug("Pickling object: %s" % objectToPickle)
         pickledObject = pickle.dumps(objectToPickle)
         digest = self._make_digest(pickledObject)
         # hmac code is written as UTF-8 header, pickle is written as bytes
         with open(picklefile, "wb") as picklefile:
-            logger.debug("Writing digest to file %s" % digest)
+            if verbose:
+                logger.debug("Writing digest to file %s" % digest)
+                logger.debug("Wrote pickle object: %s" % pickledObject)
             picklefile.write(("%s\n" % digest).encode("utf-8"))
-            logger.debug("Wrote pickle object: %s" % pickledObject)
             picklefile.write(pickledObject)
 
     def _readPickleFromFile(self, picklefile: str):
