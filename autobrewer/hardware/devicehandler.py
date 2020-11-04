@@ -10,6 +10,7 @@ if IS_RASPBERRY_PI:
     from w1thermsensor import W1ThermSensor
 
 from .hardwarestate import HardwareState
+from ..BrewRecipe import BrewRecipePickler
 from ..exceptions import ComponentControlError
 from .pins import Pins
 
@@ -61,6 +62,7 @@ class DeviceHandler(QObject, Pins):
         self.signalemit = QTimer()
         self.signalemit.timeout.connect(self._updatestate)
         self.signalemit.start(250)
+        DeviceHandler.hardwareState = BrewRecipePickler.loadHardwareState()
 
     def _createValvePaths(self):
         """Defines paths which must be open for a pump to run without forming a vacuum. The valvepaths variable is a
@@ -316,7 +318,8 @@ class DeviceHandler(QObject, Pins):
 
     def _updatestate(self):
         self._readSensors()
-        self.signalState.emit(self.hardwareState)
+        BrewRecipePickler.saveHardwareState(self.hardwareState)
+        self.signalState.emit(DeviceHandler.hardwareState)
         self._updateheatingelementPID()
         for kettleindex, kettlename in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
             if self.hardwareState.volumes[kettleindex] < DeviceHandler.HEATING_ELEMENT_MIN_VOLUME:

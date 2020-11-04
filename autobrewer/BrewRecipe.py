@@ -1,3 +1,5 @@
+from autobrewer.hardware.hardwarestate import HardwareState
+
 try:
     import cPickle as pickle
 except:
@@ -26,6 +28,7 @@ class BrewRecipePickler(object):
 
     _instance = None
     _picklefile = "brewrecipes.pkl"
+    _hardwarefile = "hardwarestate.pkl"
 
     # All instances of this class point to the same object since you only really need one
     def __new__(cls):
@@ -62,6 +65,18 @@ class BrewRecipePickler(object):
             erased the next time the dictionary is loaded."""
 
         self._savePickleToFile(recipes, BrewRecipePickler._picklefile)
+
+    def saveHardwareState(self, hardwarestate: dict):
+        self._savePickleToFile(hardwarestate, BrewRecipePickler._hardwarefile)
+
+    def loadHardwareState(self) -> dict:
+        try:
+            loadedstate = self._readPickleFromFile(BrewRecipePickler._hardwarefile)
+            logger.debug(f'Loading {loadedstate}')
+            return loadedstate
+        except:
+            logger.warning("Could not load hardware state. A reset hardware state is being loaded")
+            return HardwareState()
 
     def _savePickleToFile(self, objectToPickle: object, picklefile: str):
         """Saves a given object to a file with hmac encryption to validate data integrity and prevent security threats.
