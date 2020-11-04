@@ -24,16 +24,15 @@ class Pins:
     if IS_RASPBERRY_PI:
         servoconnection = Connection(port="/dev/ttyAMA0", baudrate=57600)
         adc = ADS1115()
-        tempsensors =  [W1ThermSensor(W1ThermSensor.DS18B20, TEMP_SENSOR_IDS[0]),
-                        W1ThermSensor(W1ThermSensor.DS18B20, TEMP_SENSOR_IDS[1]),
-                        W1ThermSensor(W1ThermSensor.DS18B20, TEMP_SENSOR_IDS[2])]
+        tempsensors =  [W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, TEMP_SENSOR_IDS[0]),
+                        W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, TEMP_SENSOR_IDS[1]),
+                        W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, TEMP_SENSOR_IDS[2])]
     else:
         adc = None
         servoconnection = None
         tempsensors = None
     ADC_GAIN = 2/3
     ADC_VOLTAGE_SUPPLIED = 5
-
 
     SERVO_ID = 1
 
