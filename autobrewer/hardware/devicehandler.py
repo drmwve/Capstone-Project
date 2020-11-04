@@ -243,13 +243,21 @@ class DeviceHandler(QObject, Pins):
             logger.critical("HLT is full, cannot add any more water")
             raise ComponentControlError("HLT is full, cannot add any more water")
         else:
-            self.ballValves[index].value = state
-            self.hardwareState.ballValves[index] = state
-            logger.debug(f'Set ball valve {index} to {"On" if state else "Off"}')
+            try:
+                tempstate = self.hardwareState.ballValves[index]
+                self.hardwareState.ballValves[index] = state
+                for i in range(len(self.hardwareState.pumps)):
+                    if self.hardwareState.pumps[i] == 1 and not self._pumpHasOpenPath(i):
+                        self.hardwareState.ballValves[index] = tempstate
+                        raise ComponentControlError(f'Cannot close valve path while pump {index} is running')
+                self.ballValves[index].value = state
+                logger.debug(f'Set ball valve {index} to {"On" if state else "Off"}')
+            except:
+                logger.critical(f'Cannot close valve path while pump {index} is running')
 
     def _setPumpState(self, pumpindex: int, state: bool):
         # check if a valid path is open for either pump
-        if (not state) or (state and self._pumpHasOpenPath(pumpindex)):
+        if (state == False) or (state and self._pumpHasOpenPath(pumpindex)):
             self.pumps[pumpindex].value = state
             self.hardwareState.pumps[pumpindex] = state
             logger.debug(f'Set pump {pumpindex} to {"On" if state else "Off"}')
@@ -264,10 +272,10 @@ class DeviceHandler(QObject, Pins):
         for valvepath in self.pumpvalvepathmap[pumpindex]:
             pathopen = True
             for valveindex in self.valvepaths[valvepath]["open"]:
-                if self.ballValves[valveindex].value != 1:
+                if DeviceHandler.hardwareState.ballValves[valveindex] != 1:
                     pathopen = False
             for valveindex in self.valvepaths[valvepath]["close"]:
-                if self.ballValves[valveindex].value != 0:
+                if DeviceHandler.hardwareState.ballValves[valveindex] != 0:
                     pathopen = False
             if pathopen:
                 pumphasopenpath = True
@@ -336,15 +344,29 @@ class DeviceHandler(QObject, Pins):
         BrewRecipePickler.saveHardwareState(self.hardwareState)
         self.signalState.emit(DeviceHandler.hardwareState)
         self._updateheatingelementPID()
+
+        #check that kettle volume is high enough to cover heating elements, otherwise disable them
         for kettleindex, kettlename in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
             if self.hardwareState.volumes[kettleindex] < DeviceHandler.HEATING_ELEMENT_MIN_VOLUME:
+                if not self.hardwareState.kettleheatingelementsdisabled[kettleindex]:
+                    logger.critical(f'Kettle {kettlename} heating elements disabled due to insufficient liquid volume')
                 self.hardwareState.kettleheatingelementsdisabled[kettleindex] = True
             else:
                 self.hardwareState.kettleheatingelementsdisabled[kettleindex] = False
+
+        #check that HLT isn't about to flood, otherwise disable valve that adds water
         if self.hardwareState.volumes[DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"]] > DeviceHandler.KETTLE_MAX_VOLUME:
             self.closeBallValve(0)
+            if not DeviceHandler.HLTfilldisabled:
+                logger.critical("Fresh water flow to HLT disabled due to excess volume")
             DeviceHandler.HLTfilldisabled = True
         else:
             DeviceHandler.HLTfilldisabled = False
+
+        #check that pumps still have
+        for index, pump in enumerate(self.hardwareState.pumps):
+            if pump == 1 and not self._pumpHasOpenPath(index):
+                self._setPumpState(index, False)
+                logger.critical("Pump caught running without valid ball valve path")
 
 devicehandler = DeviceHandler()
