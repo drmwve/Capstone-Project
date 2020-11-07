@@ -214,7 +214,10 @@ class DeviceHandler(QObject, Pins):
 
     def readTemperature(self, index: int):
         if IS_RASPBERRY_PI:
-            temperature = self.tempsensors[index].get_temperature(W1ThermSensor.DEGREES_F)
+            try:
+                temperature = self.tempsensors[index].get_temperature(W1ThermSensor.DEGREES_F)
+            except:
+                temperature = 0
         else:
             temperature = 70
         return temperature
@@ -228,7 +231,10 @@ class DeviceHandler(QObject, Pins):
             GRAVITY = 9.81 #m/s^2
             PI = 3.142
             # pressure is in kPa
-            pressurevoltage = self.adc.read_adc(index, gain=self.ADC_GAIN)
+            try:
+                pressurevoltage = self.adc.read(channel1=index)
+            except:
+                pressurevoltage = 0
             pressurevalue = (pressurevoltage / self.ADC_VOLTAGE_SUPPLIED - 0.053) / 0.1533
             liquidheight = pressurevalue * 1000 / (LIQUID_DENSITY * GRAVITY)
             volume = PI * (KETTLE_DIAMETER/2)**2 * liquidheight #cubic meters
@@ -240,7 +246,7 @@ class DeviceHandler(QObject, Pins):
     ## Under the hood controls
 
     def _setBallValveState(self, index: int, state: bool):
-        if index == 0 and DeviceHandler.HLTfilldisabled:
+        if index == 0 and DeviceHandler.HLTfilldisabled and state == True:
             logger.critical("HLT is full, cannot add any more water")
             raise ComponentControlError("HLT is full, cannot add any more water")
         else:
@@ -323,7 +329,7 @@ class DeviceHandler(QObject, Pins):
                     raise ComponentControlError("Attempted to turn on HLT heating elements while BK heating elements are on")
             elif index in DeviceHandler.BK_HEATING_ELEMENTS:
                 if self.heatingElementSwitch.value != 0:
-                    self.heatingElementSwitch = 1
+                    self.heatingElementSwitch.value = 1
                     self.heatingElements[DeviceHandler.BK_HEATING_ELEMENTS.index(index)].value = value
                     self.hardwareState.heatingElements[index] = value
                     logger.debug(f"Set heating element {index} to {value}")
@@ -345,6 +351,7 @@ class DeviceHandler(QObject, Pins):
         self.pickler.saveHardwareState(self.hardwareState)
         self.signalState.emit(DeviceHandler.hardwareState)
         self._updateheatingelementPID()
+        logger.info(self.hardwareState.ballValves)
 
         #check that kettle volume is high enough to cover heating elements, otherwise disable them
         for kettleindex, kettlename in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
@@ -357,7 +364,8 @@ class DeviceHandler(QObject, Pins):
 
         #check that HLT isn't about to flood, otherwise disable valve that adds water
         if self.hardwareState.volumes[DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"]] > DeviceHandler.KETTLE_MAX_VOLUME:
-            self.closeBallValve(0)
+            if self.hardwareState.ballValves[0] == True:
+                self.closeBallValve(0)
             if not DeviceHandler.HLTfilldisabled:
                 logger.critical("Fresh water flow to HLT disabled due to excess volume")
             DeviceHandler.HLTfilldisabled = True

@@ -140,8 +140,8 @@ class ADS1115:
     def _write_register(self, register, value):
         self.temp2[0] = value >> 8
         self.temp2[1] = value & 0xff
-        self.bus.write_i2c_block_data(self.address, register, self.temp2)
-        #self.i2c.writeto_mem(self.address, register, self.temp2)
+        self.bus.write_i2c_block_data(self.address, register, [self.temp2[0], self.temp2[1]])
+
 
     def _read_register(self, register):
         self.temp2 = self.bus.read_i2c_block_data(self.address, register)
@@ -167,7 +167,7 @@ class ADS1115:
                              _MODE_SINGLE | _OS_SINGLE | _GAINS[self.gain] |
                              _CHANNELS[(channel1, channel2)]))
         while not self._read_register(_REGISTER_CONFIG) & _OS_NOTBUSY:
-            time.sleep_ms(1)
+            time.sleep(0.001)
         res = self._read_register(_REGISTER_CONVERT)
         return res if res < 32768 else res - 65536
 

@@ -9,12 +9,12 @@ else:
     from gpiozero.pins.mock import MockFactory, MockPWMPin
 from loguru import logger
 from pyax12.connection import Connection
-
+from loguru import logger
 
 class Pins:
     """Low level class which directly interfaces with the Raspberry Pi pins. This gets passed up to the Device Handler which handles higher-level component control logic."""
 
-    ballValveGPIOs = [4, 27, 22, 19, 26, 23, 24, 25, 20, 21]
+    ballValveGPIOs = [5, 27, 22, 19, 26, 23, 24, 25, 20, 21]
     pumpGPIOs = [18, 17]
     heatingElementGPIOs = [12, 13]
     heatingElementSwitchGPIO = 16
@@ -22,16 +22,7 @@ class Pins:
     pins_initialized = False
 
     TEMP_SENSOR_IDS = [0, 1, 2]  # Get actual IDs and add here
-    if IS_RASPBERRY_PI:
-        servoconnection = Connection(port="/dev/ttyAMA0", baudrate=57600)
-        adc = ADS1115()
-        tempsensors =  [W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, TEMP_SENSOR_IDS[0]),
-                        W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, TEMP_SENSOR_IDS[1]),
-                        W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, TEMP_SENSOR_IDS[2])]
-    else:
-        adc = None
-        servoconnection = None
-        tempsensors = None
+
     ADC_GAIN = 2/3
     ADC_VOLTAGE_SUPPLIED = 5
 
@@ -49,6 +40,17 @@ class Pins:
         try:
             # this little bit of weirdness is a consequence of gpiozero's fake pin code being goofy
             logger.debug("Connecting Pins")
+            if IS_RASPBERRY_PI:
+                logger.info(W1ThermSensor.get_available_sensors())
+                cls.servoconnection = Connection(port="/dev/ttyAMA0", baudrate=57600)
+                cls.adc = ADS1115()
+                cls.tempsensors =  [sensor for sensor in W1ThermSensor.get_available_sensors()]
+                for sensor in cls.tempsensors:
+                    logger.info(f'Sensor ID: {sensor.id}')
+            else:
+                adc = None
+                servoconnection = None
+                tempsensors = None
             cls.pwmPinFactory = Device.pin_factory
             if not IS_RASPBERRY_PI:
                 Device.pin_factory = MockFactory()
