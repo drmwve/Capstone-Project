@@ -61,7 +61,7 @@ class DeviceHandler(QObject, Pins):
         self._createValvePaths()
         self.signalemit = QTimer()
         self.signalemit.timeout.connect(self._updatestate)
-        self.signalemit.start(250)
+        self.signalemit.start(1000)
         self.pickler = BrewRecipePickler()
         DeviceHandler.hardwareState = self.pickler.loadHardwareState()
 
