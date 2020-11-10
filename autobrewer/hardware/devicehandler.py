@@ -265,7 +265,10 @@ class DeviceHandler(QObject, Pins):
     def _setPumpState(self, pumpindex: int, state: bool):
         # check if a valid path is open for either pump
         if (state == False) or (state and self._pumpHasOpenPath(pumpindex)):
-            self.pumps[pumpindex].value = state
+            if state == True:
+                self.pumps[pumpindex].on()
+            else:
+                self.pumps[pumpindex].off()
             self.hardwareState.pumps[pumpindex] = state
             logger.debug(f'Set pump {pumpindex} to {"On" if state else "Off"}')
         # raise an error otherwise

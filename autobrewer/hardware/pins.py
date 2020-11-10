@@ -62,7 +62,7 @@ class Pins:
 
             cls.heatingElementSwitch = OutputDevice(Pins.heatingElementSwitchGPIO)
             cls.ballValves = [OutputDevice(n) for n in Pins.ballValveGPIOs]
-            cls.pumps = [OutputDevice(n) for n in Pins.pumpGPIOs]
+            cls.pumps = [OutputDevice(n, active_high = False, initial_value = True) for n in Pins.pumpGPIOs]
 
             cls.GPZeroComponents = (
                 cls.ballValves + cls.heatingElements + cls.pumps
