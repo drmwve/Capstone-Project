@@ -3,7 +3,7 @@ from loguru import logger
 from .DeviceStatusControlsGUI import Ui_DeviceStatusControls
 from ..hardware.devicehandler import devicehandler
 from ..hardware.hardwarestate import HardwareState
-
+from ..exceptions import ComponentControlError
 
 class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
     def __init__(self):
@@ -127,11 +127,17 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
         if self.deviceState.ballValves[index] == 0:
             ## Open ball valve
             logger.info("User requested ball valve " + str(index + 1) + " to open")
-            devicehandler.openBallValve(index)
-        elif self.deviceState.ballValves[index+5] == 1:
+            try:
+                devicehandler.openBallValve(index)
+            except:
+                QtWidgets.QMessageBox.information(self, "Error", "When I grow up, I want to be an error message.")
+        elif self.deviceState.ballValves[index] == 1:
             ## Close ball valve
             logger.info("User requested ball valve " + str(index + 1) + " to close")
-            devicehandler.closeBallValve(index)
+            try:
+                devicehandler.closeBallValve(index)
+            except:
+                QtWidgets.QMessageBox.information(self, "Error", "When I grow up, I want to be an error message.")
 
     def toggleThreeWay(self, index):
         if self.deviceState.ballValves[index+5] == 0:
@@ -141,7 +147,10 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
                 + str(index + 1)
                 + " to change to direction 2"
             )
-            devicehandler.openBallValve(index+5)
+            try:
+                devicehandler.openBallValve(index+5)
+            except:
+                QtWidgets.QMessageBox.information(self, "Error", "When I grow up, I want to be an error message.")
         elif self.deviceState.ballValves[index+5] == 1:
             ## Change to direction 1
             logger.info(
@@ -149,27 +158,42 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
                 + str(index + 1)
                 + " to change to direction 1"
             )
-            devicehandler.closeBallValve(index+5)
+            try:
+                devicehandler.closeBallValve(index+5)
+            except:
+                QtWidgets.QMessageBox.information(self, "Error", "When I grow up, I want to be an error message.")
 
     def toggleHeater(self, index):
         if self.deviceState.heatingElements[index] == 0:
             ## Turn heater on
             logger.info("User requested heater " + str(index + 1) + " to turn on")
-            devicehandler.enableHeatingElement(index)
+            try:
+                devicehandler.enableHeatingElement(index)
+            except:
+                QtWidgets.QMessageBox.information(self, "Error", "When I grow up, I want to be an error message.")
         elif self.deviceState.heatingElements[index] == 1:
             ##  Turn heater off
             logger.info("User requested heater " + str(index + 1) + " to turn off")
-            devicehandler.disableHeatingElement(index)
+            try:
+                devicehandler.disableHeatingElement(index)
+            except:
+                QtWidgets.QMessageBox.information(self, "Error", "When I grow up, I want to be an error message.")
 
     def togglePump(self, index):
         if self.deviceState.pumps[index] == 0:
             ## Turn pump on
             logger.info("User requested pump " + str(index + 1) + " to turn on")
-            devicehandler.enablePump(index)
+            try:
+                devicehandler.enablePump(index)
+            except:
+                QtWidgets.QMessageBox.information(self, "Error", "When I grow up, I want to be an error message.")
         elif self.deviceState.pumps[index] == 1:
             ## Turn pump off
             logger.info("User requested pump " + str(index + 1) + " to turn off")
-            devicehandler.disablePump(index)
+            try:
+                devicehandler.disablePump(index)
+            except:
+                QtWidgets.QMessageBox.information(self, "Error", "When I grow up, I want to be an error message.")
 
     def hideMainMenu(self):
         self.ReturnToMenuButton.setHidden(True)
