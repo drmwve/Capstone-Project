@@ -18,7 +18,6 @@ class Pins:
     pumpGPIOs = [18, 17]
     heatingElementGPIOs = [12, 13]
     heatingElementSwitchGPIO = 16
-    tempSensorGPIO = 9
     pins_initialized = False
 
     TEMP_SENSOR_IDS = [0, 1, 2]  # Get actual IDs and add here
