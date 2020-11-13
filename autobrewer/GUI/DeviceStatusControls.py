@@ -129,14 +129,14 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
             try:
                 devicehandler.openBallValve(index)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", e)
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
         elif self.deviceState.ballValves[index] == 1:
             ## Close ball valve
             logger.info("User requested ball valve " + str(index + 1) + " to close")
             try:
                 devicehandler.closeBallValve(index)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", e)
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
 
     def toggleThreeWay(self, index):
         if self.deviceState.ballValves[index+5] == 0:
@@ -149,7 +149,7 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
             try:
                 devicehandler.openBallValve(index+5)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", e)
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
         elif self.deviceState.ballValves[index+5] == 1:
             ## Change to direction 1
             logger.info(
@@ -160,7 +160,7 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
             try:
                 devicehandler.closeBallValve(index+5)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", e)
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
 
     def toggleHeater(self, index):
         if self.deviceState.heatingElements[index] == 0:
@@ -169,14 +169,14 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
             try:
                 devicehandler.enableHeatingElement(index)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", e)
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
         elif self.deviceState.heatingElements[index] == 1:
             ##  Turn heater off
             logger.info("User requested heater " + str(index + 1) + " to turn off")
             try:
                 devicehandler.disableHeatingElement(index)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", e)
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
 
     def togglePump(self, index):
         if self.deviceState.pumps[index] == 0:
@@ -185,14 +185,14 @@ class DeviceStatusControls(QtWidgets.QWidget, Ui_DeviceStatusControls):
             try:
                 devicehandler.enablePump(index)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", e)
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
         elif self.deviceState.pumps[index] == 1:
             ## Turn pump off
             logger.info("User requested pump " + str(index + 1) + " to turn off")
             try:
                 devicehandler.disablePump(index)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", e)
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
 
     def hideMainMenu(self):
         self.ReturnToMenuButton.setHidden(True)

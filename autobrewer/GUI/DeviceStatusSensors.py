@@ -3,6 +3,7 @@ from loguru import logger
 from .DeviceStatusSensorsGUI import Ui_DeviceStatusSensors
 from ..hardware.devicehandler import devicehandler
 from functools import partial
+from ..exceptions import ComponentControlError
 
 class DeviceStatusSensors(QtWidgets.QWidget, Ui_DeviceStatusSensors):
     def __init__(self):
@@ -79,48 +80,75 @@ class DeviceStatusSensors(QtWidgets.QWidget, Ui_DeviceStatusSensors):
         ## Increase heater value by 0.1
         if self.hardwarestate.heatingElements[i] < 1:
             logger.info("User requested heating element " + str(i) + " to increase PWM value by 0.1")
-            devicehandler.setHeatingElementPWM(i, self.hardwarestate.heatingElements[i]+0.1)
+            try:
+                devicehandler.setHeatingElementPWM(i, self.hardwarestate.heatingElements[i]+0.1)
+            except ComponentControlError as e:
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
 
     def decreaseHeater(self, i):
         ## Decrease heater value by 0.1
         if self.hardwarestate.heatingElements[i] > 0:
             logger.info("User requested heating element " + str(i) + " to decrease PWM value by 0.1")
-            devicehandler.setHeatingElementPWM(i, self.hardwarestate.heatingElements[i]-0.1)
+            try:
+                devicehandler.setHeatingElementPWM(i, self.hardwarestate.heatingElements[i]-0.1)
+            except ComponentControlError as e:
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
 
     def increaseHeaterTarget(self, i):
         ## Increase tank target temp by 1
         if self.hardwarestate.kettletempsetpoints[i] == 0:
             logger.info("User wants to set "+ str(devicehandler.KETTLE_NAMES_GIVEN_ID[i]) + 
             " temperature" + ", setting to 150 for further control.")
-            devicehandler.setTargetKettleTemp(i, 150)
+            try:
+                devicehandler.setTargetKettleTemp(i, 150)
+            except ComponentControlError as e:
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
         else:
             logger.info("User requested to set " + str(devicehandler.KETTLE_NAMES_GIVEN_ID[i]) + " temperature to: " + str(self.hardwarestate.kettletempsetpoints[i]+1))
-            devicehandler.setTargetKettleTemp(i, self.hardwarestate.kettletempsetpoints[i]+1)
+            try:
+                devicehandler.setTargetKettleTemp(i, self.hardwarestate.kettletempsetpoints[i]+1)
+            except ComponentControlError as e:
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
 
     def decreaseHeaterTarget(self, i):
         ## Decrease tank target temp by 1
         if self.hardwarestate.kettletempsetpoints[i] == 0:
             logger.info("User wants to set "+ str(devicehandler.KETTLE_NAMES_GIVEN_ID[i]) + 
             " temperature" + ", setting to 150 for further control.")
-            devicehandler.setTargetKettleTemp(i, 150)
+            try:
+                devicehandler.setTargetKettleTemp(i, 150)
+            except ComponentControlError as e:
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
         else:
             logger.info("User requested to set " + str(devicehandler.KETTLE_NAMES_GIVEN_ID[i]) + " temperature to: " + str(self.hardwarestate.kettletempsetpoints[i]-1))
-            devicehandler.setTargetKettleTemp(i, self.hardwarestate.kettletempsetpoints[i]-1)
+            try:
+                devicehandler.setTargetKettleTemp(i, self.hardwarestate.kettletempsetpoints[i]-1)
+            except ComponentControlError as e:
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
 
     def increaseServo(self):
         ## Increase servo angle by 5
         logger.info("User requested to increase servo angle by 5 degrees")
-        devicehandler.setHopServoPosition(self.hardwarestate.hopservoangle+5)
+        try:
+            devicehandler.setHopServoPosition(self.hardwarestate.hopservoangle+5)
+        except ComponentControlError as e:
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
 
     def decreaseServo(self):
         ## Decrease servo angle by 5
         logger.info("User requested to decrease servo angle by 5 degrees")
-        devicehandler.setHopServoPosition(self.hardwarestate.hopservoangle-5)
+        try:
+            devicehandler.setHopServoPosition(self.hardwarestate.hopservoangle-5)
+        except ComponentControlError as e:
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
 
     def setServo(self, i):
         ## Set servo to predefined position (Home or hop cup)
         logger.info("User requested to set hop servo to position " + str(i))
-        devicehandler.goToHopPosition(i)
+        try:
+            devicehandler.goToHopPosition(i)
+        except ComponentControlError as e:
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
 
     def hideMainMenu(self):
         self.ReturnToMenuButton.setHidden(True)
