@@ -26,3 +26,4 @@ class HardwareState:
         self.temperatures = [0.0, 0.0, 0.0]
         self.volumes = [0.0, 0.0, 0.0]
         self.hopservoangle = 0
+        self.HLTfilldisabled = False

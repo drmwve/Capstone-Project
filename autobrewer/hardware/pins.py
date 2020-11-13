@@ -1,4 +1,4 @@
-from gpiozero import  Device, OutputDevice, PWMOutputDevice, GPIOPinInUse
+from gpiozero import Device, OutputDevice, PWMOutputDevice, GPIOPinInUse
 
 from ..utils import IS_RASPBERRY_PI
 
@@ -11,6 +11,7 @@ from loguru import logger
 from pyax12.connection import Connection
 from loguru import logger
 
+
 class Pins:
     """Low level class which directly interfaces with the Raspberry Pi pins. This gets passed up to the Device Handler which handles higher-level component control logic."""
 
@@ -22,7 +23,7 @@ class Pins:
 
     TEMP_SENSOR_IDS = [0, 1, 2]  # Get actual IDs and add here
 
-    ADC_GAIN = 2/3
+    ADC_GAIN = 2 / 3
     ADC_VOLTAGE_SUPPLIED = 5
 
     SERVO_ID = 1
@@ -43,13 +44,13 @@ class Pins:
                 logger.info(W1ThermSensor.get_available_sensors())
                 cls.servoconnection = Connection(port="/dev/ttyAMA0", baudrate=57600)
                 cls.adc = ADS1115()
-                cls.tempsensors =  [sensor for sensor in W1ThermSensor.get_available_sensors()]
+                cls.tempsensors = [sensor for sensor in W1ThermSensor.get_available_sensors()]
                 for sensor in cls.tempsensors:
                     logger.info(f'Sensor ID: {sensor.id}')
             else:
-                adc = None
-                servoconnection = None
-                tempsensors = None
+                cls.adc = None
+                cls.servoconnection = None
+                cls.tempsensors = None
             cls.pwmPinFactory = Device.pin_factory
             if not IS_RASPBERRY_PI:
                 Device.pin_factory = MockFactory()
@@ -61,11 +62,12 @@ class Pins:
 
             cls.heatingElementSwitch = OutputDevice(Pins.heatingElementSwitchGPIO)
             cls.ballValves = [OutputDevice(n) for n in Pins.ballValveGPIOs]
-            cls.pumps = [OutputDevice(n, active_high = False, initial_value = True) for n in Pins.pumpGPIOs]
+            cls.pumps = [OutputDevice(n, active_high=False, initial_value=True) for n in Pins.pumpGPIOs]
 
             cls.GPZeroComponents = (
-                cls.ballValves + cls.heatingElements + cls.pumps
+                    cls.ballValves + cls.heatingElements + cls.pumps
             )
+
         except GPIOPinInUse:
             pass
 

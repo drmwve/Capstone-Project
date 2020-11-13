@@ -10,7 +10,6 @@ if IS_RASPBERRY_PI:
     from w1thermsensor import W1ThermSensor
 
 from .hardwarestate import HardwareState
-from ..BrewRecipe import BrewRecipePickler
 from ..exceptions import ComponentControlError
 from .pins import Pins
 
@@ -44,6 +43,7 @@ class DeviceHandler(QObject, Pins):
     BK_HEATING_ELEMENTS = [1,3]
     KETTLE_MAX_VOLUME = 8 #gallons
     HEATING_ELEMENT_MIN_VOLUME = 1 #gallons
+    INPUT_WATER_VALVE = 5
 
     hltpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 100), sample_time=None)
     mtpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 100), sample_time=None)
@@ -52,8 +52,6 @@ class DeviceHandler(QObject, Pins):
 
     signalState = Signal(HardwareState)
     hardwareState = HardwareState()
-    heatingelementdisabled = False
-    HLTfilldisabled = False
 
     def __init__(self):
         super().__init__()
@@ -62,17 +60,17 @@ class DeviceHandler(QObject, Pins):
         self.signalemit = QTimer()
         self.signalemit.timeout.connect(self._updatestate)
         self.signalemit.start(1000)
-        self.pickler = BrewRecipePickler()
-        DeviceHandler.hardwareState = self.pickler.loadHardwareState()
+        self.PIDtimer = QTimer()
+        self.PIDtimer.timeout.connect(self._updateheatingelementPID)
+        self.PIDtimer.start(10)
 
     def _createValvePaths(self):
         """Defines paths which must be open for a pump to run without forming a vacuum. The valvepaths variable is a
         dictionary of dictionaries, describing the indexes of the valves which must either be opened or closed for
         each path.
 
-        To add paths, add them in the main valvepaths variable (both open and close must be defined, even if they're
-        empty) and then add relevant path names to the pumpvalvepathmap tuple in the position of the index of the
-        relevant pump
+        To add paths, add them in the main valvepaths variable and then add relevant path names to the pumpvalvepathmap
+        tuple in the position of the index of the relevant pump
         """
         self.valvepaths = {
             "FillHLT": {"open": [0], "close": [5]},
@@ -80,7 +78,7 @@ class DeviceHandler(QObject, Pins):
             "MTRecirc": {"open": [2, 6], "close": [7]},
             "MTtoBK": {"open": [2, 3, 7], "close": [8, 9]},
             "BKWhirl": {"open": [3, 4, 8], "close": [9]},
-            "BKDrain": {"open": [4, 8, 9], "close": []},
+            "BKDrain": {"open": [4, 8, 9]},
         }
         self.pumpvalvepathmap = (
             ("FillHLT", "HLTtoMT", "MTRecirc"),
@@ -90,10 +88,12 @@ class DeviceHandler(QObject, Pins):
     ## MASTER CONTROLS ##
 
     def openValvePath(self, pathname: str):
-        for valveindex in self.valvepaths[pathname]["open"]:
-            self.openBallValve(valveindex)
-        for valveindex in self.valvepaths[pathname]["close"]:
-            self.closeBallValve(valveindex)
+        if "open" in self.valvepaths[pathname].keys():
+            for valveindex in self.valvepaths[pathname]["open"]:
+                self.openBallValve(valveindex)
+        if "close" in self.valvepaths[pathname].keys():
+            for valveindex in self.valvepaths[pathname]["close"]:
+                self.closeBallValve(valveindex)
 
     def getState(self) -> HardwareState:
         return self.hardwareState
@@ -106,8 +106,7 @@ class DeviceHandler(QObject, Pins):
     def resetFlowControl(self):
         self.disableAllPumps()
         self.closeAllTwoWayValves()
-        # this sets input water valve to closed position
-        self.closeBallValve(5)
+        self.closeBallValve(self.INPUT_WATER_VALVE)
         logger.info("Shut down all liquid flow")
 
     ## BALL VALVE CONTROLS ##
@@ -246,7 +245,7 @@ class DeviceHandler(QObject, Pins):
     ## Under the hood controls
 
     def _setBallValveState(self, index: int, state: bool):
-        if index == 0 and DeviceHandler.HLTfilldisabled and state == True:
+        if index == 0 and self.hardwareState.HLTfilldisabled and state == True:
             logger.critical("HLT is full, cannot add any more water")
             raise ComponentControlError("HLT is full, cannot add any more water")
         else:
@@ -292,22 +291,6 @@ class DeviceHandler(QObject, Pins):
                 break
         return pumphasopenpath
 
-    def _updateheatingelementPID(self):
-        self._readSensors()
-        for kettleindex, kettlename in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
-            if self.hardwareState.kettlepidenabled[kettleindex] == True:
-                if kettlename == "HLT" or kettleindex == "MT":
-                    heatingelementindex = 0
-                elif kettlename == "BK":
-                    heatingelementindex = 1
-                self._setHeatingElementValue(heatingelementindex, self.PIDS[kettleindex](self.hardwareState.temperatures[kettleindex]), calledmanually=False)
-                lowbound = self.hardwareState.kettletempsetpoints[kettleindex] * 0.8
-                if self.hardwareState.temperatures[kettleindex] < lowbound:
-                    if kettlename == "HLT":
-                        self._setHeatingElementValue(2, 1, True)
-                    elif kettlename == "BK":
-                        self._setHeatingElementValue(3, 1, True)
-
     def _setHeatingElementValue(self, index: int, value: float, calledmanually=True):
         kettleheatingdisabled = False
         if index in DeviceHandler.HLT_HEATING_ELEMENTS:
@@ -326,7 +309,8 @@ class DeviceHandler(QObject, Pins):
                     self.heatingElementSwitch.value = 0
                     self.heatingElements[DeviceHandler.HLT_HEATING_ELEMENTS.index(index)].value = value
                     self.hardwareState.heatingElements[index] = value
-                    logger.debug(f"Set heating element {index} to {value}")
+                    if calledmanually:
+                        logger.debug(f"Set heating element {index} to {value}")
                 else:
                     logger.critical("Attempted to turn on HLT heating elements while BK heating elements are on")
                     raise ComponentControlError("Attempted to turn on HLT heating elements while BK heating elements are on")
@@ -335,7 +319,8 @@ class DeviceHandler(QObject, Pins):
                     self.heatingElementSwitch.value = 1
                     self.heatingElements[DeviceHandler.BK_HEATING_ELEMENTS.index(index)].value = value
                     self.hardwareState.heatingElements[index] = value
-                    logger.debug(f"Set heating element {index} to {value}")
+                    if calledmanually:
+                        logger.debug(f"Set heating element {index} to {value}")
                 else:
                     logger.critical("Attempted to turn on BK heating elements while HLT heating elements are on")
                     raise ComponentControlError("Attempted to turn on BK heating elements while HLT heating elements are on")
@@ -349,36 +334,50 @@ class DeviceHandler(QObject, Pins):
             self.hardwareState.temperatures[i] = self.readTemperature(i)
             self.hardwareState.volumes[i] = self.readvolume(i)
 
+    def _updateheatingelementPID(self):
+        self._readSensors()
+        for kettleindex, kettlename in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
+            if self.hardwareState.kettlepidenabled[kettleindex] == True:
+                if kettlename == "HLT" or kettleindex == "MT":
+                    heatingelementindex = 0
+                elif kettlename == "BK":
+                    heatingelementindex = 1
+                self._setHeatingElementValue(heatingelementindex, self.PIDS[kettleindex](self.hardwareState.temperatures[kettleindex]), calledmanually=False)
+                lowbound = self.hardwareState.kettletempsetpoints[kettleindex] * 0.8
+                if self.hardwareState.temperatures[kettleindex] < lowbound:
+                    if kettlename == "HLT":
+                        self._setHeatingElementValue(2, 1, True)
+                    elif kettlename == "BK":
+                        self._setHeatingElementValue(3, 1, True)
+
     def _updatestate(self):
         self._readSensors()
-        self.pickler.saveHardwareState(self.hardwareState)
         self.signalState.emit(DeviceHandler.hardwareState)
-        self._updateheatingelementPID()
-        logger.info(self.hardwareState.ballValves)
 
         #check that kettle volume is high enough to cover heating elements, otherwise disable them
         for kettleindex, kettlename in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
-            if self.hardwareState.volumes[kettleindex] < DeviceHandler.HEATING_ELEMENT_MIN_VOLUME:
-                if not self.hardwareState.kettleheatingelementsdisabled[kettleindex]:
-                    logger.critical(f'Kettle {kettlename} heating elements disabled due to insufficient liquid volume')
-                self.hardwareState.kettleheatingelementsdisabled[kettleindex] = True
-            else:
-                self.hardwareState.kettleheatingelementsdisabled[kettleindex] = False
+            if kettlename in ("HLT", "BK"):
+                if self.hardwareState.volumes[kettleindex] < DeviceHandler.HEATING_ELEMENT_MIN_VOLUME:
+                    if not self.hardwareState.kettleheatingelementsdisabled[kettleindex]:
+                        logger.critical(f'Kettle {kettlename} heating elements disabled due to insufficient liquid volume')
+                    self.hardwareState.kettleheatingelementsdisabled[kettleindex] = True
+                else:
+                    self.hardwareState.kettleheatingelementsdisabled[kettleindex] = False
 
         #check that HLT isn't about to flood, otherwise disable valve that adds water
         if self.hardwareState.volumes[DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"]] > DeviceHandler.KETTLE_MAX_VOLUME:
             if self.hardwareState.ballValves[0] == True:
                 self.closeBallValve(0)
-            if not DeviceHandler.HLTfilldisabled:
+            if not self.hardwareState.HLTfilldisabled:
                 logger.critical("Fresh water flow to HLT disabled due to excess volume")
-            DeviceHandler.HLTfilldisabled = True
+            self.hardwareState.HLTfilldisabled = True
         else:
-            DeviceHandler.HLTfilldisabled = False
+            self.hardwareState.HLTfilldisabled = False
 
-        #check that pumps still have
+        #check that pumps still have valid valve paths open
         for index, pump in enumerate(self.hardwareState.pumps):
             if pump == 1 and not self._pumpHasOpenPath(index):
                 self._setPumpState(index, False)
-                logger.critical("Pump caught running without valid ball valve path")
+                logger.critical(f'Pump {index} caught running without valid ball valve path, pump disabled')
 
 devicehandler = DeviceHandler()
