@@ -3,16 +3,13 @@
 ################################################################################
 ## Form generated from reading UI file 'DeviceStatusSensors.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.15.0
+## Created by: Qt User Interface Compiler version 5.15.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import (QCoreApplication, QDate, QDateTime, QMetaObject,
-    QObject, QPoint, QRect, QSize, QTime, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
-    QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter,
-    QPixmap, QRadialGradient)
+from PySide2.QtCore import *
+from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
 
@@ -233,6 +230,12 @@ class Ui_DeviceStatusSensors(object):
 
         self.horizontalLayout_9.addWidget(self.DecreaseBK)
 
+        self.BKPIDtoggle = QPushButton(self.TemperatureGroupBox)
+        self.BKPIDtoggle.setObjectName(u"BKPIDtoggle")
+        self.BKPIDtoggle.setFont(font)
+
+        self.horizontalLayout_9.addWidget(self.BKPIDtoggle)
+
         self.IncreaseBK = QPushButton(self.TemperatureGroupBox)
         self.IncreaseBK.setObjectName(u"IncreaseBK")
         self.IncreaseBK.setMinimumSize(QSize(0, 30))
@@ -253,6 +256,12 @@ class Ui_DeviceStatusSensors(object):
         self.DecreaseHLT.setFont(font)
 
         self.horizontalLayout_10.addWidget(self.DecreaseHLT)
+
+        self.HLTPIDtoggle = QPushButton(self.TemperatureGroupBox)
+        self.HLTPIDtoggle.setObjectName(u"HLTPIDtoggle")
+        self.HLTPIDtoggle.setFont(font)
+
+        self.horizontalLayout_10.addWidget(self.HLTPIDtoggle)
 
         self.IncreaseHLT = QPushButton(self.TemperatureGroupBox)
         self.IncreaseHLT.setObjectName(u"IncreaseHLT")
@@ -292,6 +301,12 @@ class Ui_DeviceStatusSensors(object):
         self.DecreaseMT.setFont(font)
 
         self.horizontalLayout_8.addWidget(self.DecreaseMT)
+
+        self.MTPIDtoggle = QPushButton(self.TemperatureGroupBox)
+        self.MTPIDtoggle.setObjectName(u"MTPIDtoggle")
+        self.MTPIDtoggle.setFont(font)
+
+        self.horizontalLayout_8.addWidget(self.MTPIDtoggle)
 
         self.IncreaseMT = QPushButton(self.TemperatureGroupBox)
         self.IncreaseMT.setObjectName(u"IncreaseMT")
@@ -564,13 +579,16 @@ class Ui_DeviceStatusSensors(object):
         self.HLTCurrentTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Current Temperature (\u00b0F): 20", None))
         self.BKCurrentTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Current Temperature (\u00b0F): 20", None))
         self.DecreaseBK.setText(QCoreApplication.translate("DeviceStatusSensors", u"-", None))
+        self.BKPIDtoggle.setText(QCoreApplication.translate("DeviceStatusSensors", u"Enable", None))
         self.IncreaseBK.setText(QCoreApplication.translate("DeviceStatusSensors", u"+", None))
         self.DecreaseHLT.setText(QCoreApplication.translate("DeviceStatusSensors", u"-", None))
+        self.HLTPIDtoggle.setText(QCoreApplication.translate("DeviceStatusSensors", u"Enable", None))
         self.IncreaseHLT.setText(QCoreApplication.translate("DeviceStatusSensors", u"+", None))
         self.HLTTargetTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Target Temperature (\u00b0F): 20", None))
         self.MTCurrentTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Current Temperature (\u00b0F): 20", None))
         self.MTTargetTemp.setText(QCoreApplication.translate("DeviceStatusSensors", u"Target Temperature (\u00b0F): 20", None))
         self.DecreaseMT.setText(QCoreApplication.translate("DeviceStatusSensors", u"-", None))
+        self.MTPIDtoggle.setText(QCoreApplication.translate("DeviceStatusSensors", u"Enable", None))
         self.IncreaseMT.setText(QCoreApplication.translate("DeviceStatusSensors", u"+", None))
         self.BKLabel.setText(QCoreApplication.translate("DeviceStatusSensors", u"Boil Kettle", None))
         self.HLTLabel.setText(QCoreApplication.translate("DeviceStatusSensors", u"Hot Liquor Tank", None))

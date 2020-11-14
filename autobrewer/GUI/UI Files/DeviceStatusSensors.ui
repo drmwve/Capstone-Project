@@ -550,6 +550,18 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="BKPIDtoggle">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Enable</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="IncreaseBK">
             <property name="minimumSize">
              <size>
@@ -598,6 +610,18 @@
             </property>
             <property name="text">
              <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="HLTPIDtoggle">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Enable</string>
             </property>
            </widget>
           </item>
@@ -686,6 +710,18 @@
             </property>
             <property name="text">
              <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="MTPIDtoggle">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Enable</string>
             </property>
            </widget>
           </item>
