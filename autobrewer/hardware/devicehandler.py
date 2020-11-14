@@ -78,7 +78,7 @@ class DeviceHandler(QObject, Pins):
             "MTRecirc": {"open": [2, 6], "close": [7]},
             "MTtoBK": {"open": [2, 3, 7], "close": [8, 9]},
             "BKWhirl": {"open": [3, 4, 8], "close": [9]},
-            "BKDrain": {"open": [4, 8, 9]},
+            "BKDrain": {"open": [4, 8, 9], "close": []},
         }
         self.pumpvalvepathmap = (
             ("FillHLT", "HLTtoMT", "MTRecirc"),
@@ -297,7 +297,8 @@ class DeviceHandler(QObject, Pins):
             kettleheatingdisabled = self.hardwareState.kettleheatingelementsdisabled[DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"]]
         elif index in DeviceHandler.BK_HEATING_ELEMENTS:
             kettleheatingdisabled = self.hardwareState.kettleheatingelementsdisabled[DeviceHandler.KETTLE_IDS_GIVEN_NAME["BK"]]
-        if not kettleheatingdisabled:
+
+        if not kettleheatingdisabled or value == 0:
             if calledmanually:
                 if index in DeviceHandler.HLT_HEATING_ELEMENTS:
                     self.hardwareState.kettlepidenabled[DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"]] = False
@@ -305,9 +306,9 @@ class DeviceHandler(QObject, Pins):
                 elif index in DeviceHandler.BK_HEATING_ELEMENTS:
                     self.hardwareState.kettlepidenabled[DeviceHandler.KETTLE_IDS_GIVEN_NAME["BK"]] = False
             if index in DeviceHandler.HLT_HEATING_ELEMENTS:
-                if self.heatingElementSwitch.value != 1:
+                if value == False or self.heatingElementSwitch.value != 1:
                     self.heatingElementSwitch.value = 0
-                    self.heatingElements[DeviceHandler.HLT_HEATING_ELEMENTS.index(index)].value = value
+                    self.heatingElements[index].value = value
                     self.hardwareState.heatingElements[index] = value
                     if calledmanually:
                         logger.debug(f"Set heating element {index} to {value}")
@@ -315,9 +316,9 @@ class DeviceHandler(QObject, Pins):
                     logger.critical("Attempted to turn on HLT heating elements while BK heating elements are on")
                     raise ComponentControlError("Attempted to turn on HLT heating elements while BK heating elements are on")
             elif index in DeviceHandler.BK_HEATING_ELEMENTS:
-                if self.heatingElementSwitch.value != 0:
+                if self.heatingElementSwitch.value != 0 or value == 0:
                     self.heatingElementSwitch.value = 1
-                    self.heatingElements[DeviceHandler.BK_HEATING_ELEMENTS.index(index)].value = value
+                    self.heatingElements[index].value = value
                     self.hardwareState.heatingElements[index] = value
                     if calledmanually:
                         logger.debug(f"Set heating element {index} to {value}")

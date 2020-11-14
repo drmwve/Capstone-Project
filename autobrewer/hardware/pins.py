@@ -30,27 +30,29 @@ class Pins:
 
     def __init__(self):
         super().__init__()
-        if not Pins.pins_initialized:
-            self._connectPins()
-            Pins.pins_initialized = True
+        self._connectPins()
 
     @classmethod
     def _connectPins(cls):
         """Creates gpiozero objects for components based on pins specified at class level"""
+
+        logger.debug("Connecting Pins")
+        if IS_RASPBERRY_PI:
+            logger.info(W1ThermSensor.get_available_sensors())
+            cls.servoconnection = Connection(port="/dev/ttyAMA0", baudrate=57600)
+            cls.adc = ADS1115()
+            cls.tempsensors = [sensor for sensor in W1ThermSensor.get_available_sensors()]
+            for sensor in cls.tempsensors:
+                logger.info(f'Sensor ID: {sensor.id}')
+        else:
+            cls.adc = None
+            cls.servoconnection = None
+            cls.tempsensors = None
+
+        gpiooutputdevicepins = [cls.ballValveGPIOs, cls.pumpGPIOs]
         try:
             # this little bit of weirdness is a consequence of gpiozero's fake pin code being goofy
-            logger.debug("Connecting Pins")
-            if IS_RASPBERRY_PI:
-                logger.info(W1ThermSensor.get_available_sensors())
-                cls.servoconnection = Connection(port="/dev/ttyAMA0", baudrate=57600)
-                cls.adc = ADS1115()
-                cls.tempsensors = [sensor for sensor in W1ThermSensor.get_available_sensors()]
-                for sensor in cls.tempsensors:
-                    logger.info(f'Sensor ID: {sensor.id}')
-            else:
-                cls.adc = None
-                cls.servoconnection = None
-                cls.tempsensors = None
+
             cls.pwmPinFactory = Device.pin_factory
             if not IS_RASPBERRY_PI:
                 Device.pin_factory = MockFactory()
@@ -59,23 +61,25 @@ class Pins:
             cls.heatingElements = [
                 PWMOutputDevice(n, pin_factory=cls.pwmPinFactory)
                 for n in Pins.heatingElementGPIOs]
-
-            cls.heatingElementSwitch = OutputDevice(Pins.heatingElementSwitchGPIO)
             cls.ballValves = [OutputDevice(n) for n in Pins.ballValveGPIOs]
             cls.pumps = [OutputDevice(n, active_high=False, initial_value=True) for n in Pins.pumpGPIOs]
+
+            cls.heatingElementSwitch = OutputDevice(Pins.heatingElementSwitchGPIO)
 
             cls.GPZeroComponents = (
                     cls.ballValves + cls.heatingElements + cls.pumps
             )
 
-        except GPIOPinInUse:
-            pass
+        except GPIOPinInUse as e:
+            print(e)
 
     @classmethod
     def _releasePins(cls):
         try:
             for device in cls.GPZeroComponents:
                 device.close()
+
+            Pins.pins_initialized = False
         except:
             pass
 

@@ -6,8 +6,8 @@ from autobrewer.hardware.pins import Pins
 
 @pytest.fixture
 def devicehandler():
-    yield DeviceHandler()
     DeviceHandler._refreshPins()
+    yield DeviceHandler()
 
 handler = DeviceHandler()
 
@@ -47,6 +47,7 @@ class TestDeviceHandler:
     @pytest.mark.parametrize("index", [x for x in range(len(Pins.ballValveGPIOs))])
     @pytest.mark.parametrize("state", [True, False])
     def test_set_ball_valve_state(self, index, state, devicehandler):
+        devicehandler.closeAllBallValves()
         assert devicehandler.ballValves[index].value == False
         if state:
             devicehandler.openBallValve(index)
@@ -56,6 +57,8 @@ class TestDeviceHandler:
 
     def test_enable_pump_valid(self, indexpathpairs, devicehandler):
         index, pathname = indexpathpairs
+        devicehandler.disableAllPumps()
+        devicehandler.closeAllBallValves()
         assert devicehandler.pumps[index].value == False
         devicehandler.openValvePath(pathname)
         devicehandler.enablePump(index)
@@ -65,6 +68,8 @@ class TestDeviceHandler:
 
     @pytest.mark.parametrize("index", [x for x in range(len(Pins.pumpGPIOs))])
     def test_enable_pump_invalid(self, index, devicehandler):
+        devicehandler.disableAllPumps()
+        devicehandler.closeAllBallValves()
         assert devicehandler.pumps[index].value == False
         with pytest.raises(ComponentControlError):
             devicehandler.enablePump(index)
@@ -95,7 +100,6 @@ class TestDeviceHandler:
         "index", [x for x in range(len(Pins.heatingElementGPIOs))]
     )
     def test_set_heating_element_value(self, index, value, devicehandler):
-        assert devicehandler.heatingElements[index].value == 0
         if value == 0:
             devicehandler.disableHeatingElement(index)
         elif value == 1:
