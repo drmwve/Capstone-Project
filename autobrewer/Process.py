@@ -1,6 +1,8 @@
 from .steps import *
 from loguru import logger
 
+from .utils import IS_RASPBERRY_PI
+
 
 class Process(QtCore.QObject):
     """This is a string of steps which execute a particular process. This could be brewing beer, cleaning the system,
@@ -37,18 +39,15 @@ class Process(QtCore.QObject):
         logger.debug(f'Process {self} stopping')
         self.running = False
         self._disconnectStep(self.currentstep)
-        self.currentstep.stop()
+        self.currentstep.stopcommand()
 
     def pause(self):
         logger.debug(f'Process {self} pausing')
-        self.currentstep.pause()
+        self.currentstep.pausecommand()
 
     def resume(self):
         logger.debug(f'Process {self} resuming')
-        if self.currentstep.executed:
-            self.currentstep.resume()
-        else:
-            self.currentstep.execute()
+        self.currentstep.execute()
 
     def executeNextStep(self):
         self.incrementStep()
@@ -113,14 +112,17 @@ class BrewProcess(Process):
     def __init__(self, brewrecipe):
         super().__init__()
         self.brewRecipe = brewrecipe
-        self.processSteps = [FillHLT(),
-                             HeatHTL(brewrecipe.mashTunTemperature),
-                             HLTtoMT(brewrecipe.mashTunTemperature),
-                             MTRecirc(brewrecipe.mashTunTemperature),
-                             MTtoBK(),
-                             BKboiling_AddingHops(brewrecipe.hopCartridges, brewrecipe.hopTiming),
-                             BKWhirl(),
-                             Draining()]
+        if IS_RASPBERRY_PI:
+            self.processSteps = [FillHLT(),
+                                 HeatHTL(brewrecipe.mashTunTemperature),
+                                 HLTtoMT(brewrecipe.mashTunTemperature),
+                                 MTRecirc(brewrecipe.mashTunTemperature),
+                                 MTtoBK(),
+                                 BKboiling_AddingHops(brewrecipe.hopCartridges, brewrecipe.hopTiming),
+                                 BKWhirl(),
+                                 Draining()]
+        else:
+            self.processSteps = [ExampleStep(), ExampleStep()]
         self.initializeSteps()
 
 

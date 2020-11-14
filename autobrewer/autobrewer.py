@@ -7,7 +7,7 @@ from .ExecutionHandler import executionhandler
 from .GUI.Styler import WindowStyler
 from .MainWindow import MainWindow
 from .hardware.devicehandler import *
-
+from .BrewRecipe import BrewRecipePickler
 
 def main():
     app = QApplication(sys.argv)

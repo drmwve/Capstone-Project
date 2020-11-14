@@ -14,34 +14,42 @@ class Step(QObject):
         self.devicehandler = devicehandler
         self.estimatedtime = 0
         self.startingmessage = "Started base step"
-        self.executed = False
         self.running = False
+        self.savestatetimer = QtCore.QTimer()
         self.complete = False
-        self.stepcomplete.connect(self.markcomplete)
 
     def execute(self):
         logger.info(f'Executing step {self}')
         self.stepstarted.emit(self.startingmessage)
         self.running = True
+        self.savestatetimer.start(1000)
         self.run()
-        self.executed = True
 
-    def markcomplete(self):
-        self.complete = True
+    def stopcommand(self):
+        self.savestatetimer.stop()
+        self.stop()
+        self.running = False
+
+    def pausecommand(self):
+        self.savestate()
+        self.savestatetimer.stop()
+        self.stop(reset=False)
+        self.running = False
 
     #Overload and implement in inherited classes:
 
     def run(self):
         pass
 
-    def stop(self):
+    def stop(self, reset=True):
         pass
 
     def pause(self):
         self.stop()
 
-    def resume(self):
-        self.run()
+    def savestate(self):
+        pass
+
 
 class ExampleStep(Step):
 
@@ -67,7 +75,7 @@ class ExampleStep(Step):
             self.stepcomplete.emit()
             self.stop()
 
-    def stop(self):
+    def stop(self, reset=True):
         self.runtimer.stop()
         self.index = 0
 
@@ -91,12 +99,12 @@ class FillHLT(Step):
         self.runtimer.start(100)
 
     def loop(self):
-        if devicehandler.hardwareState.volume[0] == devicehandler.KETTLE_MAX_VOLUME:
+        if devicehandler.hardwareState.volumes[0] == devicehandler.KETTLE_MAX_VOLUME:
             self.devicehandler.closeBallValve(0)
             self.stop()
             self.stepcomplete.emit()
 
-    def stop(self):
+    def stop(self, reset=True):
         devicehandler.disableAll()
         self.runtimer.stop()
 
@@ -122,7 +130,7 @@ class HeatHTL(Step):
             self.runtimer.stop()
             self.stepcomplete.emit()
 
-    def stop(self):
+    def stop(self, reset=True):
         self.disableAll()
         self.runtimer.stop()
 
@@ -153,11 +161,11 @@ class HLTtoMT(Step):
         logger.debug(f'Started timer: {self.runtimer.isActive()}')
 
     def loop(self):
-        if devicehandler.hardwareState.volume[devicehandler.KETTLE_IDS_GIVEN_NAME["MT"]] >= devicehandler.KETTLE_MAX_VOLUME/2:
+        if devicehandler.hardwareState.volumes[devicehandler.KETTLE_IDS_GIVEN_NAME["MT"]] >= devicehandler.KETTLE_MAX_VOLUME/2:
             self.stop()
             self.stepcomplete.emit()
 
-    def stop(self):
+    def stop(self, reset=True):
         self.runtimer.stop()
         devicehandler.disableAll()
 
@@ -194,16 +202,17 @@ class MTRecirc(Step):
         self.stop()
         self.stepcomplete.emit()
 
-    def pause(self):
+    def stop(self, reset=True):
+        if reset:
+            self.MTRecircremainingtime = self.MTRecirctotaltime
+            devicehandler.disableAll()
+        else:
+            self.MTRecircremainingtime = self.runtimer.remainingTime()
+            devicehandler.disablePump(0)
+        self.runtimer.stop()
+
+    def savestate(self):
         self.MTRecircremainingtime = self.runtimer.remainingTime()
-        devicehandler.disablePump(0)
-        self.runtimer.stop()
-
-    def stop(self):
-        self.MTRecircremainingtime = self.MTRecirctotaltime
-        devicehandler.disableAll()
-        self.runtimer.stop()
-
 
 class MTtoBK(Step):
 
@@ -228,11 +237,11 @@ class MTtoBK(Step):
         logger.debug(f'Started timer: {self.runtimer.isActive()}')
 
     def loop(self):
-        if devicehandler.hardwareState.volume[devicehandler.KETTLE_IDS_GIVEN_NAME["BK"]] >= 6.5:
+        if devicehandler.hardwareState.volumes[devicehandler.KETTLE_IDS_GIVEN_NAME["BK"]] >= 6.5:
             self.stop()
             self.stepcomplete.emit()
 
-    def stop(self):
+    def stop(self, reset=True):
         self.runtimer.stop()
         devicehandler.disableAll()
 
@@ -261,15 +270,6 @@ class BKboiling_AddingHops(Step):
         self.runtimer2.start(self.timeHops[self.hopindex])
         self.tempcontroltimer.start(1000)
 
-    def pause(self):
-        logger.debug("boiling and adding hops step is paused")
-        self.boilTime = self.runtimer.remainingTime()
-        self.timeHops = self.runtimer2.remainingTime()
-        self.runtimer.stop()
-        self.runtimer2.stop()
-        self.tempcontroltimer.stop()
-        devicehandler.disableAllHeatingElements()
-
     def tempControl(self):
         if devicehandler.readTemperature(3) >= 212:
             self.devicehandler.disableHeatingElement(3)
@@ -296,14 +296,20 @@ class BKboiling_AddingHops(Step):
         devicehandler.goToHopPosition(devicehandler.HOP_SERVO_HOME)
         self.runtimer2.stop()
 
-    def stop(self):
-        self.hopindex = 0
-        self.boilTime = 3600000
+    def stop(self, reset=True):
         self.runtimer.stop()
         self.runtimer2.stop()
         self.tempcontroltimer.stop()
-        self.devicehandler.disableAll()
+        if reset:
+            self.hopindex = 0
+            self.boilTime = 3600000
+            self.devicehandler.disableAll()
+        else:
+            devicehandler.disableAllHeatingElements()
 
+    def savestate(self):
+        self.boilTime = self.runtimer.remainingTime()
+        self.timeHops = self.runtimer2.remainingTime()
 
 class BKWhirl(Step):
 
@@ -329,22 +335,16 @@ class BKWhirl(Step):
         self.stop()
         self.stepcomplete.emit()
 
-    def pause(self):
-        logger.debug("Boiling kettle whirl step is paused")
-        devicehandler.disablePump(1)
+    def stop(self, reset=True):
+        if reset:
+            devicehandler.disableAll()
+            self.whirlTime = 900000
+        else:
+            devicehandler.disablePump(1)
+        self.runtimer.stop()
+
+    def savestate(self):
         self.whirlTime = self.runtimer.remainingTime()
-        self.runtimer.stop()
-        self.runtimer2.stop()
-
-    def resume(self):
-        logger.debug("Boiling kettle whirl step is resumed")
-        self.next()
-
-    def stop(self):
-        devicehandler.disableAll()
-        self.whirlTime = 900000
-        self.runtimer.stop()
-        self.runtimer2.stop()
 
 
 class Draining(Step):
@@ -368,11 +368,11 @@ class Draining(Step):
         logger.debug(f'Started timer: {self.runtimer.isActive()}')
 
     def loop(self):
-        if devicehandler.hardwareState.volume[devicehandler.KETTLE_IDS_GIVEN_NAME["BK"]] == 0:
+        if devicehandler.hardwareState.volumes[devicehandler.KETTLE_IDS_GIVEN_NAME["BK"]] == 0:
             self.stop()
             self.stepcomplete.emit()
 
-    def stop(self):
+    def stop(self, reset=True):
         self.runtimer.stop()
         self.devicehandler.disableAll()  # Resetting everything to beginning state
 
