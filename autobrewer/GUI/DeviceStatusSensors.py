@@ -10,7 +10,6 @@ class DeviceStatusSensors(QtWidgets.QWidget, Ui_DeviceStatusSensors):
         super().__init__()
         self.setupUi(self)
         self.adjustUI()
-        self.connections()
 
         self.temperatureSensors = [
             self.HLTCurrentTemp, 
@@ -22,6 +21,13 @@ class DeviceStatusSensors(QtWidgets.QWidget, Ui_DeviceStatusSensors):
             self.TankVolume2State,
             self.TankVolume3State
         ]
+        self.PIDToggles = [
+            self.HLTPIDtoggle,
+            self.MTPIDtoggle,
+            self.BKPIDtoggle
+        ]
+        
+        self.connections()
 
     def connections(self):
         self.HeaterPIDDecrease1.clicked.connect(partial(self.decreaseHeater, 0))
@@ -54,6 +60,10 @@ class DeviceStatusSensors(QtWidgets.QWidget, Ui_DeviceStatusSensors):
         self.HopServo4.clicked.connect(partial(self.setServo, 3))
         self.HopServo5.clicked.connect(partial(self.setServo, 4))
 
+        self.PIDToggles[0].clicked.connect(partial(self.togglePID, 0))
+        self.PIDToggles[1].clicked.connect(partial(self.togglePID, 1))
+        self.PIDToggles[2].clicked.connect(partial(self.togglePID, 2))
+
     def adjustUI(self):
         self.ProcessStatusButton.setHidden(True)
 
@@ -73,6 +83,11 @@ class DeviceStatusSensors(QtWidgets.QWidget, Ui_DeviceStatusSensors):
         self.HeaterPID2.setText("Current PWM: " + str(self.hardwarestate.heatingElements[1]))
         self.HeaterPID3.setText("Current PWM: " + str(self.hardwarestate.heatingElements[2]))
         self.HeaterPID4.setText("Current PWM: " + str(self.hardwarestate.heatingElements[3]))
+        for i in range(0,3):
+            if self.hardwarestate.kettlepidenabled[i] == True:
+                self.PIDToggles[i].setText("Disable")
+            elif self.hardwarestate.kettlepidenabled[i] == False:
+                self.PIDToggles[i].setText("Enable")
 
 
 
@@ -148,6 +163,22 @@ class DeviceStatusSensors(QtWidgets.QWidget, Ui_DeviceStatusSensors):
         try:
             devicehandler.goToHopPosition(i)
         except ComponentControlError as e:
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+
+    def togglePID(self, i):
+        if self.hardwarestate.kettlepidenabled[i] == True:
+            ## Disable control
+            logger.info("User requested to disable PID control")
+            try:
+                devicehandler.setKettlePIDEnabled(i,False)
+            except ComponentControlError as e:
+                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+        elif self.hardwarestate.kettlepidenabled[i] == False:
+            ## ENable control
+            logger.info("User requested to enable PID control")
+            try:
+                devicehandler.setKettlePIDEnabled(i,True)
+            except ComponentControlError as e:
                 QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
 
     def hideMainMenu(self):
