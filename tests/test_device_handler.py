@@ -30,9 +30,9 @@ class TestDeviceHandler:
     def test_open_valve_path(self, path, devicehandler):
         devicehandler.openValvePath(path)
         for valveindex in devicehandler.valvepaths[path]["open"]:
-            assert devicehandler.ballValves[valveindex].value == 1
+            assert devicehandler.hardwareState.ballValves[valveindex] == 1
         for valveindex in devicehandler.valvepaths[path]["close"]:
-            assert devicehandler.ballValves[valveindex].value == 0
+            assert devicehandler.hardwareState.ballValves[valveindex] == 0
 
     @pytest.mark.parametrize("angle", [-140, 0, 90])
     def test_set_hop_servo_position_valid(self, angle, devicehandler):
@@ -48,12 +48,12 @@ class TestDeviceHandler:
     @pytest.mark.parametrize("state", [True, False])
     def test_set_ball_valve_state(self, index, state, devicehandler):
         devicehandler.closeAllBallValves()
-        assert devicehandler.ballValves[index].value == False
+        assert devicehandler.hardwareState.ballValves[index] == False
         if state:
             devicehandler.openBallValve(index)
         else:
             devicehandler.closeBallValve(index)
-        assert devicehandler.ballValves[index].value == state
+        assert devicehandler.hardwareState.ballValves[index] == state
 
     def test_enable_pump_valid(self, indexpathpairs, devicehandler):
         index, pathname = indexpathpairs

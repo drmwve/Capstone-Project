@@ -1,3 +1,4 @@
+from gpiozero import OutputDevice, GPIOPinInUse
 from simple_pid import PID
 from loguru import logger
 from PySide2.QtCore import QObject, Signal, QTimer
@@ -132,7 +133,7 @@ class DeviceHandler(QObject, Pins):
 
     def closeAllBallValves(self):
         logger.debug("Closing all ball valves")
-        for index, _ in enumerate(self.ballValves):
+        for index, _ in enumerate(self.hardwareState.ballValves):
             self.closeBallValve(index)
 
     ## PUMP CONTROLS ##
@@ -256,10 +257,18 @@ class DeviceHandler(QObject, Pins):
                     if self.hardwareState.pumps[i] == 1 and not self._pumpHasOpenPath(i):
                         self.hardwareState.ballValves[index] = tempstate
                         raise ComponentControlError(f'Cannot close valve path while pump {index} is running')
-                self.ballValves[index].value = state
+                ## the relay board the ball valves are connected to will only turn a relay off if the ouput pin is disabled entirely
+                ## and will always stay on if an output pin is enabled regardless of its state (on or off)
+                if state == True:
+                    try:
+                        self.ballValves[index] = OutputDevice(self.ballValveGPIOs[index])
+                    except GPIOPinInUse:
+                        pass
+                else:
+                    self.ballValves[index].close()
                 logger.debug(f'Set ball valve {index} to {"On" if state else "Off"}')
-            except:
-                logger.critical(f'Cannot close valve path while pump {index} is running')
+            except ComponentControlError as e:
+                logger.critical(e)
 
     def _setPumpState(self, pumpindex: int, state: bool):
         # check if a valid path is open for either pump
