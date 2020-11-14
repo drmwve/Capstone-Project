@@ -57,8 +57,7 @@ class Process(QtCore.QObject):
 
     def incrementStep(self):
         logger.debug("Process moving to next step")
-        self.currentindex += 1
-        self.setStep(self.currentindex)
+        self.setStep(self.currentindex+1)
 
     def decrementStep(self):
         logger.debug("Process reverting to previous step")
@@ -68,12 +67,11 @@ class Process(QtCore.QObject):
     def setStep(self, index: int):
         self._disconnectStep(self.currentstep)
         self.currentindex = index
-        try:
+        if self.currentindex in range(len(self.processSteps)):
             self.currentstep = self.processSteps[self.currentindex]
             logger.debug(f'Process set to step {self.currentstep}')
             self._connectStep(self.currentstep)
-
-        except IndexError:
+        else:
             logger.debug("Process complete")
             self.processfinished.emit()
             self.processcomplete = True
