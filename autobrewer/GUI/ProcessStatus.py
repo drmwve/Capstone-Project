@@ -60,8 +60,11 @@ class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
         ## This will reset the screen to the default layout.
         self.ManualControlButton.setChecked(False)
         self.ManualControlButton.setEnabled(True)
+        self.ManualControlButton.setHidden(False)
+        self.NextStepButton.setHidden(False)
         self.NextStepButton.setEnabled(False)
         self.StopProcessButton.setEnabled(True)
+        self.StopProcessButton.setText("Stop Process")
         self.updateTimer.stop()
         self.stopTimer.stop()
         self.CurrentTaskProgressBar.setValue(0)
@@ -100,17 +103,23 @@ class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
         self.CurrentTaskLabel.setText("Process Complete")
         self.ETALabel.setText("")
         self.remainingProcessTime = 0
-        self.returnUserToMenu.emit()
+        self.ManualControlButton.setHidden(True)
+        self.NextStepButton.setHidden(True)
+        self.StopProcessButton.setText("Return to Menu")
 
     def updateLabel(self, label: str):
         self.CurrentTaskLabel.setText(label)
 
-    def updateETA(self):
+    def updateremainingtime(self, time: int):
+        self.remainingProcessTime = time
+        self.updateETA(decrement=False)
+
+    def updateETA(self, decrement=True):
         if self.remainingProcessTime > 0:
-            self.remainingProcessTime -= 1
+            if decrement:
+                self.remainingProcessTime -= 1
             self.ETALabel.setText(
                 "ETA: "
                 + str(timedelta(seconds=int(self.remainingProcessTime)))
             )
             self.CurrentTaskProgressBar.setValue(-self.remainingProcessTime)
-            logger.debug("UPDATED ETA")

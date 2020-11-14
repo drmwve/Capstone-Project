@@ -83,13 +83,11 @@ class DeviceStatusSensors(QtWidgets.QWidget, Ui_DeviceStatusSensors):
         self.HeaterPID2.setText("Current PWM: " + str(self.hardwarestate.heatingElements[1]))
         self.HeaterPID3.setText("Current PWM: " + str(self.hardwarestate.heatingElements[2]))
         self.HeaterPID4.setText("Current PWM: " + str(self.hardwarestate.heatingElements[3]))
-        for i in range(0,3):
+        for i in range(len(self.hardwarestate.kettlepidenabled)):
             if self.hardwarestate.kettlepidenabled[i] == True:
                 self.PIDToggles[i].setText("Disable")
             elif self.hardwarestate.kettlepidenabled[i] == False:
                 self.PIDToggles[i].setText("Enable")
-
-
 
     def increaseHeater(self, i):
         ## Increase heater value by 0.1
