@@ -1,14 +1,12 @@
 import sys
 from functools import partial
-
 from loguru import logger
 from PySide2.QtWidgets import QApplication
 
 from .ExecutionHandler import executionhandler
-from .Process import *
 from .GUI.Styler import WindowStyler
 from .MainWindow import MainWindow
-from .utils import IS_RASPBERRY_PI
+from .hardware.devicehandler import *
 
 
 def main():
@@ -19,6 +17,7 @@ def main():
     styler = WindowStyler()
     styler.styleWindows(app)
     mainScreen = MainWindow()
+    devicehandler.signalemit.start(250)
     connections(mainScreen)
     mainScreen.show()
     logger.info("Opened main screen " + str(mainScreen))
@@ -41,6 +40,7 @@ def connections(mainscreen: MainWindow):
     executionhandler.processpaused.connect(mainscreen.menus["processStatus"].updateTimer.stop)
     executionhandler.processresumed.connect(mainscreen.menus["processStatus"].updateTimer.start)
     executionhandler.processcomplete.connect(mainscreen.menus["processStatus"].processComplete)
+    executionhandler.remainingtimesignal.connect(mainscreen.menus["processStatus"].updateremainingtime)
 
     executionhandler.processstarted.connect(mainscreen.menus["deviceStatusSensors"].hideMainMenu)
     executionhandler.processstarted.connect(mainscreen.menus["deviceStatusControls"].hideMainMenu)
@@ -51,3 +51,6 @@ def connections(mainscreen: MainWindow):
 
     mainscreen.menus["cleaningScreen"].startCleaningSignal.connect(executionhandler.startCleaningProcess)
     mainscreen.menus["cleaningScreen"].flushSystemSignal.connect(executionhandler.startFlushProcess)
+
+    devicehandler.signalState.connect(mainscreen.menus["deviceStatusControls"].updateState)
+    devicehandler.signalState.connect(mainscreen.menus["deviceStatusSensors"].updateState)

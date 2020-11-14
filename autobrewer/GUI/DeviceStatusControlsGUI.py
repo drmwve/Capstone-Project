@@ -23,21 +23,76 @@ class Ui_DeviceStatusControls(object):
         DeviceStatusControls.resize(1024, 600)
         DeviceStatusControls.setMinimumSize(QSize(1024, 600))
         DeviceStatusControls.setMaximumSize(QSize(1024, 600))
-        self.verticalLayout = QVBoxLayout(DeviceStatusControls)
-        self.verticalLayout.setSpacing(2)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(-1, 5, -1, 5)
+        self.gridLayout = QGridLayout(DeviceStatusControls)
+        self.gridLayout.setObjectName(u"gridLayout")
         self.BallValveGroupBox = QGroupBox(DeviceStatusControls)
         self.BallValveGroupBox.setObjectName(u"BallValveGroupBox")
         font = QFont()
         font.setPointSize(11)
         self.BallValveGroupBox.setFont(font)
         self.BallValveGroupBox.setStyleSheet(u"QGroupBox {border: 1px solid black}")
-        self.horizontalLayout = QHBoxLayout(self.BallValveGroupBox)
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.verticalLayout_5 = QVBoxLayout(self.BallValveGroupBox)
+        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_5.addItem(self.verticalSpacer)
+
         self.BallValveLayout = QGridLayout()
         self.BallValveLayout.setObjectName(u"BallValveLayout")
         self.BallValveLayout.setContentsMargins(-1, 2, -1, 2)
+        self.BallValve2Button = QPushButton(self.BallValveGroupBox)
+        self.BallValve2Button.setObjectName(u"BallValve2Button")
+        self.BallValve2Button.setMinimumSize(QSize(0, 30))
+        self.BallValve2Button.setMaximumSize(QSize(16777215, 30))
+        self.BallValve2Button.setFont(font)
+        self.BallValve2Button.setCheckable(False)
+
+        self.BallValveLayout.addWidget(self.BallValve2Button, 3, 1, 1, 1)
+
+        self.BallValve2Label = QLabel(self.BallValveGroupBox)
+        self.BallValve2Label.setObjectName(u"BallValve2Label")
+        self.BallValve2Label.setMaximumSize(QSize(16777215, 20))
+        self.BallValve2Label.setFont(font)
+
+        self.BallValveLayout.addWidget(self.BallValve2Label, 0, 1, 1, 1)
+
+        self.BallValve4State = QLabel(self.BallValveGroupBox)
+        self.BallValve4State.setObjectName(u"BallValve4State")
+        self.BallValve4State.setMaximumSize(QSize(16777215, 20))
+        self.BallValve4State.setFont(font)
+
+        self.BallValveLayout.addWidget(self.BallValve4State, 2, 3, 1, 1)
+
+        self.BallValve3Button = QPushButton(self.BallValveGroupBox)
+        self.BallValve3Button.setObjectName(u"BallValve3Button")
+        self.BallValve3Button.setMinimumSize(QSize(0, 30))
+        self.BallValve3Button.setMaximumSize(QSize(16777215, 30))
+        self.BallValve3Button.setFont(font)
+        self.BallValve3Button.setCheckable(False)
+
+        self.BallValveLayout.addWidget(self.BallValve3Button, 3, 2, 1, 1)
+
+        self.BallValve1State = QLabel(self.BallValveGroupBox)
+        self.BallValve1State.setObjectName(u"BallValve1State")
+        self.BallValve1State.setMaximumSize(QSize(16777215, 20))
+        self.BallValve1State.setFont(font)
+
+        self.BallValveLayout.addWidget(self.BallValve1State, 2, 0, 1, 1)
+
+        self.BallValve4Label = QLabel(self.BallValveGroupBox)
+        self.BallValve4Label.setObjectName(u"BallValve4Label")
+        self.BallValve4Label.setMaximumSize(QSize(16777215, 20))
+        self.BallValve4Label.setFont(font)
+
+        self.BallValveLayout.addWidget(self.BallValve4Label, 0, 3, 1, 1)
+
+        self.BallValve1Label = QLabel(self.BallValveGroupBox)
+        self.BallValve1Label.setObjectName(u"BallValve1Label")
+        self.BallValve1Label.setMaximumSize(QSize(16777215, 20))
+        self.BallValve1Label.setFont(font)
+
+        self.BallValveLayout.addWidget(self.BallValve1Label, 0, 0, 1, 1)
+
         self.BallValve5Button = QPushButton(self.BallValveGroupBox)
         self.BallValve5Button.setObjectName(u"BallValve5Button")
         self.BallValve5Button.setMinimumSize(QSize(0, 30))
@@ -46,6 +101,30 @@ class Ui_DeviceStatusControls(object):
         self.BallValve5Button.setCheckable(False)
 
         self.BallValveLayout.addWidget(self.BallValve5Button, 3, 4, 1, 1)
+
+        self.BallValve1Button = QPushButton(self.BallValveGroupBox)
+        self.BallValve1Button.setObjectName(u"BallValve1Button")
+        self.BallValve1Button.setMinimumSize(QSize(0, 30))
+        self.BallValve1Button.setMaximumSize(QSize(16777215, 30))
+        self.BallValve1Button.setFont(font)
+        self.BallValve1Button.setAutoFillBackground(False)
+        self.BallValve1Button.setCheckable(False)
+
+        self.BallValveLayout.addWidget(self.BallValve1Button, 3, 0, 1, 1)
+
+        self.BallValve5State = QLabel(self.BallValveGroupBox)
+        self.BallValve5State.setObjectName(u"BallValve5State")
+        self.BallValve5State.setMaximumSize(QSize(16777215, 20))
+        self.BallValve5State.setFont(font)
+
+        self.BallValveLayout.addWidget(self.BallValve5State, 2, 4, 1, 1)
+
+        self.BallValve3State = QLabel(self.BallValveGroupBox)
+        self.BallValve3State.setObjectName(u"BallValve3State")
+        self.BallValve3State.setMaximumSize(QSize(16777215, 20))
+        self.BallValve3State.setFont(font)
+
+        self.BallValveLayout.addWidget(self.BallValve3State, 2, 2, 1, 1)
 
         self.BallValve2State = QLabel(self.BallValveGroupBox)
         self.BallValve2State.setObjectName(u"BallValve2State")
@@ -68,60 +147,6 @@ class Ui_DeviceStatusControls(object):
 
         self.BallValveLayout.addWidget(self.BallValve5Label, 0, 4, 1, 1)
 
-        self.BallValve1State = QLabel(self.BallValveGroupBox)
-        self.BallValve1State.setObjectName(u"BallValve1State")
-        self.BallValve1State.setMaximumSize(QSize(16777215, 20))
-        self.BallValve1State.setFont(font)
-
-        self.BallValveLayout.addWidget(self.BallValve1State, 2, 0, 1, 1)
-
-        self.BallValve2Label = QLabel(self.BallValveGroupBox)
-        self.BallValve2Label.setObjectName(u"BallValve2Label")
-        self.BallValve2Label.setMaximumSize(QSize(16777215, 20))
-        self.BallValve2Label.setFont(font)
-
-        self.BallValveLayout.addWidget(self.BallValve2Label, 0, 1, 1, 1)
-
-        self.BallValve5State = QLabel(self.BallValveGroupBox)
-        self.BallValve5State.setObjectName(u"BallValve5State")
-        self.BallValve5State.setMaximumSize(QSize(16777215, 20))
-        self.BallValve5State.setFont(font)
-
-        self.BallValveLayout.addWidget(self.BallValve5State, 2, 4, 1, 1)
-
-        self.BallValve3Button = QPushButton(self.BallValveGroupBox)
-        self.BallValve3Button.setObjectName(u"BallValve3Button")
-        self.BallValve3Button.setMinimumSize(QSize(0, 30))
-        self.BallValve3Button.setMaximumSize(QSize(16777215, 30))
-        self.BallValve3Button.setFont(font)
-        self.BallValve3Button.setCheckable(False)
-
-        self.BallValveLayout.addWidget(self.BallValve3Button, 3, 2, 1, 1)
-
-        self.BallValve1Label = QLabel(self.BallValveGroupBox)
-        self.BallValve1Label.setObjectName(u"BallValve1Label")
-        self.BallValve1Label.setMaximumSize(QSize(16777215, 20))
-        self.BallValve1Label.setFont(font)
-
-        self.BallValveLayout.addWidget(self.BallValve1Label, 0, 0, 1, 1)
-
-        self.BallValve4Label = QLabel(self.BallValveGroupBox)
-        self.BallValve4Label.setObjectName(u"BallValve4Label")
-        self.BallValve4Label.setMaximumSize(QSize(16777215, 20))
-        self.BallValve4Label.setFont(font)
-
-        self.BallValveLayout.addWidget(self.BallValve4Label, 0, 3, 1, 1)
-
-        self.BallValve1Button = QPushButton(self.BallValveGroupBox)
-        self.BallValve1Button.setObjectName(u"BallValve1Button")
-        self.BallValve1Button.setMinimumSize(QSize(0, 30))
-        self.BallValve1Button.setMaximumSize(QSize(16777215, 30))
-        self.BallValve1Button.setFont(font)
-        self.BallValve1Button.setAutoFillBackground(False)
-        self.BallValve1Button.setCheckable(False)
-
-        self.BallValveLayout.addWidget(self.BallValve1Button, 3, 0, 1, 1)
-
         self.BallValve4Button = QPushButton(self.BallValveGroupBox)
         self.BallValve4Button.setObjectName(u"BallValve4Button")
         self.BallValve4Button.setMinimumSize(QSize(0, 30))
@@ -131,44 +156,25 @@ class Ui_DeviceStatusControls(object):
 
         self.BallValveLayout.addWidget(self.BallValve4Button, 3, 3, 1, 1)
 
-        self.BallValve4State = QLabel(self.BallValveGroupBox)
-        self.BallValve4State.setObjectName(u"BallValve4State")
-        self.BallValve4State.setMaximumSize(QSize(16777215, 20))
-        self.BallValve4State.setFont(font)
 
-        self.BallValveLayout.addWidget(self.BallValve4State, 2, 3, 1, 1)
+        self.verticalLayout_5.addLayout(self.BallValveLayout)
 
-        self.BallValve2Button = QPushButton(self.BallValveGroupBox)
-        self.BallValve2Button.setObjectName(u"BallValve2Button")
-        self.BallValve2Button.setMinimumSize(QSize(0, 30))
-        self.BallValve2Button.setMaximumSize(QSize(16777215, 30))
-        self.BallValve2Button.setFont(font)
-        self.BallValve2Button.setCheckable(False)
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.BallValveLayout.addWidget(self.BallValve2Button, 3, 1, 1, 1)
-
-        self.BallValve3State = QLabel(self.BallValveGroupBox)
-        self.BallValve3State.setObjectName(u"BallValve3State")
-        self.BallValve3State.setMaximumSize(QSize(16777215, 20))
-        self.BallValve3State.setFont(font)
-
-        self.BallValveLayout.addWidget(self.BallValve3State, 2, 2, 1, 1)
+        self.verticalLayout_5.addItem(self.verticalSpacer_2)
 
 
-        self.horizontalLayout.addLayout(self.BallValveLayout)
-
-
-        self.verticalLayout.addWidget(self.BallValveGroupBox)
-
-        self.horizontalSpacer = QSpacerItem(40, 5, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.verticalLayout.addItem(self.horizontalSpacer)
+        self.gridLayout.addWidget(self.BallValveGroupBox, 0, 0, 1, 1)
 
         self.ThreeWayGroupBox = QGroupBox(DeviceStatusControls)
         self.ThreeWayGroupBox.setObjectName(u"ThreeWayGroupBox")
         self.ThreeWayGroupBox.setFont(font)
-        self.horizontalLayout_2 = QHBoxLayout(self.ThreeWayGroupBox)
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.verticalLayout_4 = QVBoxLayout(self.ThreeWayGroupBox)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_4.addItem(self.verticalSpacer_3)
+
         self.ThreeWayLayout = QGridLayout()
         self.ThreeWayLayout.setObjectName(u"ThreeWayLayout")
         self.ThreeWayLayout.setContentsMargins(-1, 2, -1, 2)
@@ -288,20 +294,24 @@ class Ui_DeviceStatusControls(object):
         self.ThreeWayLayout.addWidget(self.ThreeWay2Button, 2, 1, 1, 1)
 
 
-        self.horizontalLayout_2.addLayout(self.ThreeWayLayout)
+        self.verticalLayout_4.addLayout(self.ThreeWayLayout)
+
+        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_4.addItem(self.verticalSpacer_4)
 
 
-        self.verticalLayout.addWidget(self.ThreeWayGroupBox)
-
-        self.horizontalSpacer_2 = QSpacerItem(40, 5, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.verticalLayout.addItem(self.horizontalSpacer_2)
+        self.gridLayout.addWidget(self.ThreeWayGroupBox, 1, 0, 1, 1)
 
         self.HeatersGroupBox = QGroupBox(DeviceStatusControls)
         self.HeatersGroupBox.setObjectName(u"HeatersGroupBox")
         self.HeatersGroupBox.setFont(font)
         self.verticalLayout_2 = QVBoxLayout(self.HeatersGroupBox)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalSpacer_5 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_2.addItem(self.verticalSpacer_5)
+
         self.HeaterLayout = QGridLayout()
         self.HeaterLayout.setObjectName(u"HeaterLayout")
         self.HeaterLayout.setContentsMargins(-1, 2, -1, 2)
@@ -400,18 +410,22 @@ class Ui_DeviceStatusControls(object):
 
         self.verticalLayout_2.addLayout(self.HeaterLayout)
 
+        self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.verticalLayout.addWidget(self.HeatersGroupBox)
+        self.verticalLayout_2.addItem(self.verticalSpacer_6)
 
-        self.horizontalSpacer_3 = QSpacerItem(40, 5, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.verticalLayout.addItem(self.horizontalSpacer_3)
+        self.gridLayout.addWidget(self.HeatersGroupBox, 2, 0, 1, 1)
 
         self.PumpsGroupBox = QGroupBox(DeviceStatusControls)
         self.PumpsGroupBox.setObjectName(u"PumpsGroupBox")
         self.PumpsGroupBox.setFont(font)
         self.verticalLayout_3 = QVBoxLayout(self.PumpsGroupBox)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalSpacer_7 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_3.addItem(self.verticalSpacer_7)
+
         self.PumpLayout = QGridLayout()
         self.PumpLayout.setObjectName(u"PumpLayout")
         self.PumpLayout.setContentsMargins(-1, 2, -1, 2)
@@ -464,14 +478,19 @@ class Ui_DeviceStatusControls(object):
 
         self.verticalLayout_3.addLayout(self.PumpLayout)
 
+        self.verticalSpacer_8 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.verticalLayout.addWidget(self.PumpsGroupBox)
+        self.verticalLayout_3.addItem(self.verticalSpacer_8)
+
+
+        self.gridLayout.addWidget(self.PumpsGroupBox, 3, 0, 1, 1)
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.GoToSensorStatusButton = QPushButton(DeviceStatusControls)
         self.GoToSensorStatusButton.setObjectName(u"GoToSensorStatusButton")
-        self.GoToSensorStatusButton.setMaximumSize(QSize(16777215, 50))
+        self.GoToSensorStatusButton.setMinimumSize(QSize(0, 30))
+        self.GoToSensorStatusButton.setMaximumSize(QSize(16777215, 30))
         font1 = QFont()
         font1.setPointSize(10)
         self.GoToSensorStatusButton.setFont(font1)
@@ -480,7 +499,8 @@ class Ui_DeviceStatusControls(object):
 
         self.ReturnToMenuButton = QPushButton(DeviceStatusControls)
         self.ReturnToMenuButton.setObjectName(u"ReturnToMenuButton")
-        self.ReturnToMenuButton.setMaximumSize(QSize(16777215, 50))
+        self.ReturnToMenuButton.setMinimumSize(QSize(0, 30))
+        self.ReturnToMenuButton.setMaximumSize(QSize(16777215, 30))
         font2 = QFont()
         font2.setPointSize(10)
         font2.setBold(False)
@@ -491,13 +511,14 @@ class Ui_DeviceStatusControls(object):
 
         self.ProcessStatusButton = QPushButton(DeviceStatusControls)
         self.ProcessStatusButton.setObjectName(u"ProcessStatusButton")
-        self.ProcessStatusButton.setMaximumSize(QSize(16777215, 50))
+        self.ProcessStatusButton.setMinimumSize(QSize(0, 30))
+        self.ProcessStatusButton.setMaximumSize(QSize(16777215, 30))
         self.ProcessStatusButton.setFont(font1)
 
         self.horizontalLayout_3.addWidget(self.ProcessStatusButton)
 
 
-        self.verticalLayout.addLayout(self.horizontalLayout_3)
+        self.gridLayout.addLayout(self.horizontalLayout_3, 4, 0, 1, 1)
 
 
         self.retranslateUi(DeviceStatusControls)
@@ -508,21 +529,21 @@ class Ui_DeviceStatusControls(object):
     def retranslateUi(self, DeviceStatusControls):
         DeviceStatusControls.setWindowTitle(QCoreApplication.translate("DeviceStatusControls", u"Form", None))
         self.BallValveGroupBox.setTitle(QCoreApplication.translate("DeviceStatusControls", u"Ball Valves", None))
+        self.BallValve2Button.setText(QCoreApplication.translate("DeviceStatusControls", u"Open", None))
+        self.BallValve2Label.setText(QCoreApplication.translate("DeviceStatusControls", u"Ball Valve: 2", None))
+        self.BallValve4State.setText(QCoreApplication.translate("DeviceStatusControls", u"State: Closed", None))
+        self.BallValve3Button.setText(QCoreApplication.translate("DeviceStatusControls", u"Open", None))
+        self.BallValve1State.setText(QCoreApplication.translate("DeviceStatusControls", u"State: Closed", None))
+        self.BallValve4Label.setText(QCoreApplication.translate("DeviceStatusControls", u"Ball Valve: 4", None))
+        self.BallValve1Label.setText(QCoreApplication.translate("DeviceStatusControls", u"Ball Valve: 1", None))
         self.BallValve5Button.setText(QCoreApplication.translate("DeviceStatusControls", u"Open", None))
+        self.BallValve1Button.setText(QCoreApplication.translate("DeviceStatusControls", u"Open", None))
+        self.BallValve5State.setText(QCoreApplication.translate("DeviceStatusControls", u"State: Closed", None))
+        self.BallValve3State.setText(QCoreApplication.translate("DeviceStatusControls", u"State: Closed", None))
         self.BallValve2State.setText(QCoreApplication.translate("DeviceStatusControls", u"State: Closed", None))
         self.BallValve3Label.setText(QCoreApplication.translate("DeviceStatusControls", u"Ball Valve: 3", None))
         self.BallValve5Label.setText(QCoreApplication.translate("DeviceStatusControls", u"Ball Valve: 5", None))
-        self.BallValve1State.setText(QCoreApplication.translate("DeviceStatusControls", u"State: Closed", None))
-        self.BallValve2Label.setText(QCoreApplication.translate("DeviceStatusControls", u"Ball Valve: 2", None))
-        self.BallValve5State.setText(QCoreApplication.translate("DeviceStatusControls", u"State: Closed", None))
-        self.BallValve3Button.setText(QCoreApplication.translate("DeviceStatusControls", u"Open", None))
-        self.BallValve1Label.setText(QCoreApplication.translate("DeviceStatusControls", u"Ball Valve: 1", None))
-        self.BallValve4Label.setText(QCoreApplication.translate("DeviceStatusControls", u"Ball Valve: 4", None))
-        self.BallValve1Button.setText(QCoreApplication.translate("DeviceStatusControls", u"Open", None))
         self.BallValve4Button.setText(QCoreApplication.translate("DeviceStatusControls", u"Open", None))
-        self.BallValve4State.setText(QCoreApplication.translate("DeviceStatusControls", u"State: Closed", None))
-        self.BallValve2Button.setText(QCoreApplication.translate("DeviceStatusControls", u"Open", None))
-        self.BallValve3State.setText(QCoreApplication.translate("DeviceStatusControls", u"State: Closed", None))
         self.ThreeWayGroupBox.setStyleSheet(QCoreApplication.translate("DeviceStatusControls", u"QGroupBox {border: 1px solid black}", None))
         self.ThreeWayGroupBox.setTitle(QCoreApplication.translate("DeviceStatusControls", u"Three Way Valves", None))
         self.ThreeWay4Label.setText(QCoreApplication.translate("DeviceStatusControls", u"Three Way Valve: 4", None))

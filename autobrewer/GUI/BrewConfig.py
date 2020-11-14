@@ -17,7 +17,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
 
     MASH_TEMPERATURE_INCREMENT = 1
     MASH_TEMPERATURE_MAXIMUM = 168
-    MASH_TEMPERATURE_MINIMUM = 130
+    MASH_TEMPERATURE_MINIMUM = 146
 
     def __init__(self):
         super().__init__()
@@ -66,6 +66,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
     def changeUI(self):
         self.QBNewButton = self.QBLoadButton
         self.QBNewButton.setText("New Quick Brew")
+        self.QBSaveButton.setEnabled(False)
 
     def connections(self):
         self.MashTempDecrease.clicked.connect(self.DecreaseMashTemp)
@@ -105,7 +106,11 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             logger.debug(
                 f"Increased {self.selectedBrewRecipe.name} mash temperature to {newtemp}"
             )
+            self.QBSaveButton.setEnabled(True)
+            if newtemp == BrewConfig.MASH_TEMPERATURE_MAXIMUM:
+                self.MashTempIncrease.setEnabled(False)
         self.MashTempEntry.setText(str(newtemp))
+        self.MashTempDecrease.setEnabled(True)
 
     def DecreaseMashTemp(self):
         newtemp = int(self.MashTempEntry.text()) - BrewConfig.MASH_TEMPERATURE_INCREMENT
@@ -118,7 +123,11 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             logger.debug(
                 f"Decreased {self.selectedBrewRecipe.name} mash temperature to {newtemp}"
             )
+            self.QBSaveButton.setEnabled(True)
+            if newtemp == BrewConfig.MASH_TEMPERATURE_MINIMUM:
+                self.MashTempDecrease.setEnabled(False)
         self.MashTempEntry.setText(str(newtemp))
+        self.MashTempIncrease.setEnabled(True)
 
     def IncreaseCartridgeSelect(self):
         hopcarts = int(self.HopCartridgeSelectEntry.text())
@@ -135,6 +144,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             self.hopEntry[hopcarts - 1].setText(
                 str(BrewRecipe().hopTiming[hopcarts - 1])
             )
+            self.QBSaveButton.setEnabled(True)
         else:
             logger.debug(
                 f"Could not increase {self.selectedBrewRecipe.name} hop cartidges above maximum {BrewConfig.HOP_CARTRIDGES_MAXIMUM}"
@@ -153,6 +163,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             self.hopDecrease[hopcarts].setHidden(True)
             self.hopLabels[hopcarts].setHidden(True)
             self.hopEntry[hopcarts].setText("-1")
+            self.QBSaveButton.setEnabled(True)
         else:
             logger.debug(
                 f"Could not decrease {self.selectedBrewRecipe.name} hop cartridges below minimum 1"
@@ -170,6 +181,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             logger.debug(
                 f"Increased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}"
             )
+            self.QBSaveButton.setEnabled(True)
         self.hopEntry[index].setText(str(hoptiming))
 
     def decreaseHop(self, index):
@@ -184,10 +196,14 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
             logger.debug(
                 f"Decreased {self.selectedBrewRecipe.name} hop timing {index+1} to {hoptiming}"
             )
+            self.QBSaveButton.setEnabled(True)
         self.hopEntry[index].setText(str(hoptiming))
 
     def StartBrewing(self):
-        ## This function should connect to Husam's brewing program
+        if self.QBSaveButton.isEnabled() == True:
+            self.unsavedReply = QtWidgets.QMessageBox.question(self, "Unsaved Changes", "Save changes to QuickBrew recipe?")
+            if self.unsavedReply == QtWidgets.QMessageBox.Yes:
+                self.saveRecipe(self.QBComboBox.currentText())
         self.selectedBrewRecipe = self.copyRecipeFromUI()
         self.startBrewSignal.emit(self.selectedBrewRecipe)
         logger.info(f"Starting brew cycle with parameters: {self.selectedBrewRecipe}")
@@ -204,6 +220,7 @@ class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
         logger.info(f"Saving recipe {recipeName}")
         self.savedBrewRecipes[recipeName] = self.copyRecipeFromUI()
         self.pickler.saveRecipes(self.savedBrewRecipes)
+        self.QBSaveButton.setEnabled(False)
 
     def enterNewRecipe(self):
         """Opens a dialog box to enter the name of a new recipe"""

@@ -1,4 +1,5 @@
 from gpiozero import OutputDevice, GPIOPinInUse
+from PySide2 import QtCore
 from simple_pid import PID
 from loguru import logger
 from PySide2.QtCore import QObject, Signal, QTimer
@@ -46,16 +47,17 @@ class DeviceHandler(QObject, Pins):
     HEATING_ELEMENT_MIN_VOLUME = 1 #gallons
     INPUT_WATER_VALVE = 5
 
-    hltpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 100), sample_time=None)
-    mtpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 100), sample_time=None)
-    bkpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 100), sample_time=None)
+    hltpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 1), sample_time=None)
+    mtpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 1), sample_time=None)
+    bkpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 1), sample_time=None)
     PIDS = [hltpid, mtpid, bkpid]
 
     signalState = Signal(HardwareState)
     hardwareState = HardwareState()
 
     def __init__(self):
-        super().__init__()
+        super().__init__()  # this calls all constructors up to Foo
+        super(QObject, self).__init__()
         self._connectPins()
         self._createValvePaths()
         self.signalemit = QTimer()
