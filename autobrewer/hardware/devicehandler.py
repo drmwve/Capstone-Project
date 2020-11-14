@@ -45,9 +45,9 @@ class DeviceHandler(QObject, Pins):
     KETTLE_MAX_VOLUME = 8 #gallons
     HEATING_ELEMENT_MIN_VOLUME = 1 #gallons
 
-    hltpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 100), sample_time=None)
-    mtpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 100), sample_time=None)
-    bkpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 100), sample_time=None)
+    hltpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 1), sample_time=None)
+    mtpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 1), sample_time=None)
+    bkpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 1), sample_time=None)
     PIDS = [hltpid, mtpid, bkpid]
 
     signalState = Signal(HardwareState)

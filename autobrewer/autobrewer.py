@@ -40,6 +40,7 @@ def connections(mainscreen: MainWindow):
     executionhandler.processpaused.connect(mainscreen.menus["processStatus"].updateTimer.stop)
     executionhandler.processresumed.connect(mainscreen.menus["processStatus"].updateTimer.start)
     executionhandler.processcomplete.connect(mainscreen.menus["processStatus"].processComplete)
+    executionhandler.remainingtimesignal.connect(mainscreen.menus["processStatus"].updateremainingtime)
 
     executionhandler.processstarted.connect(mainscreen.menus["deviceStatusSensors"].hideMainMenu)
     executionhandler.processstarted.connect(mainscreen.menus["deviceStatusControls"].hideMainMenu)

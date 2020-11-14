@@ -14,13 +14,20 @@ class Step(QObject):
         self.devicehandler = devicehandler
         self.estimatedtime = 0
         self.startingmessage = "Started base step"
+        self.executed = False
         self.running = False
+        self.complete = False
+        self.stepcomplete.connect(self.markcomplete)
 
     def execute(self):
         logger.info(f'Executing step {self}')
         self.stepstarted.emit(self.startingmessage)
         self.running = True
         self.run()
+        self.executed = True
+
+    def markcomplete(self):
+        self.complete = True
 
     #Overload and implement in inherited classes:
 
@@ -40,7 +47,8 @@ class ExampleStep(Step):
 
     def __init__(self):
         super(ExampleStep, self).__init__()
-        self.max = random.randint(2,10)
+        #self.max = random.randint(2,10)
+        self.max = 10
         self.startingmessage = f'Example counting to {self.max}'
         self.estimatedtime = self.max + 1
         self.index = 0

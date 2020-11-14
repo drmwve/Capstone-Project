@@ -4,7 +4,7 @@ from .Process import *
 
 class ExecutionHandler(QtCore.QObject):
     # I wrap the thread handling up in a neat package. The UI code creates a process and passes it to me with my startProcess(process)
-    # function and I create a new thread which this process is executed in.
+    # function.
 
     stepstarted = Signal(str)
     processstarted = Signal(int)
@@ -12,11 +12,11 @@ class ExecutionHandler(QtCore.QObject):
     processstopped = Signal()
     processresumed = Signal()
     processcomplete = Signal()
+    remainingtimesignal = Signal(int)
     processRunning = False
     processPaused = False
     process = Process()
 
-    # Starts a new process on a new thread. If a thread is already running, show an error.
     def startProcess(self, process):
         if not self.processRunning:
             self.process = process
@@ -28,6 +28,7 @@ class ExecutionHandler(QtCore.QObject):
             self.processstarted.emit(self.process.totalprocesstime)
             self.process.stepstarted.connect(self.stepstarted)
             self.process.processfinished.connect(self.finishedProcess)
+            self.process.remainingtimesignal.connect(self.remainingtimesignal)
             self.process.start()
         else:
             error = QMessageBox()
@@ -43,9 +44,6 @@ class ExecutionHandler(QtCore.QObject):
     def startFlushProcess(self):
         self.startProcess(FlushSystem())
 
-    # Stops the process. The process's stop function is called, which is connected to the thread's.
-    # This saves the trouble of figuring out what you can do before a thread exits when you call its
-    # quit() function.
     def stopProcess(self):
         if self.processRunning:
             self.process.stop()

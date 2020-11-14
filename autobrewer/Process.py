@@ -11,6 +11,7 @@ class Process(QtCore.QObject):
     stepstarted = QtCore.Signal(str)
     processstarted = QtCore.Signal(int)
     processfinished = QtCore.Signal()
+    remainingtimesignal = QtCore.Signal(int)
 
     def __init__(self):
         super(Process, self).__init__()
@@ -19,6 +20,7 @@ class Process(QtCore.QObject):
         self.totalprocesstime = 0
         self.running = False
         self.currentstep = Step()
+        self.processcomplete = False
 
     def initializeSteps(self):
         self.currentstep = self.processSteps[self.currentindex]
@@ -29,7 +31,7 @@ class Process(QtCore.QObject):
         logger.debug(f'Process {self} starting with completion time {self.totalprocesstime}')
         self.running = True
         self._connectStep(self.currentstep)
-        self.executeCurrentStep()
+        self.currentstep.execute()
 
     def stop(self):
         logger.debug(f'Process {self} stopping')
@@ -43,14 +45,15 @@ class Process(QtCore.QObject):
 
     def resume(self):
         logger.debug(f'Process {self} resuming')
-        self.currentstep.resume()
-
-    def executeCurrentStep(self):
-        self.currentstep.execute()
+        if self.currentstep.executed:
+            self.currentstep.resume()
+        else:
+            self.currentstep.execute()
 
     def executeNextStep(self):
         self.incrementStep()
-        self.executeCurrentStep()
+        if not self.processcomplete:
+            self.currentstep.execute()
 
     def incrementStep(self):
         logger.debug("Process moving to next step")
@@ -73,12 +76,21 @@ class Process(QtCore.QObject):
         except IndexError:
             logger.debug("Process complete")
             self.processfinished.emit()
+            self.processcomplete = True
+
+    def _emitremainingtime(self):
+        remainingtime = 0
+        for i in range(self.currentindex,len(self.processSteps)):
+            remainingtime += self.processSteps[i].estimatedtime
+        logger.info(f'Remaining time: {remainingtime}')
+        self.remainingtimesignal.emit(remainingtime)
 
     def _connectStep(self, step: Step):
         try:
             logger.debug(f'Connecting signals for step {self.processSteps.index(step)}')
             step.stepcomplete.connect(self.executeNextStep)
             step.stepstarted.connect(self.stepstarted)
+            step.stepstarted.connect(self._emitremainingtime)
         except ValueError:
             logger.error("Step not found")
 
@@ -87,6 +99,7 @@ class Process(QtCore.QObject):
             logger.debug(f'Disconnecting signals for step {self.processSteps.index(step)}')
             step.stepcomplete.disconnect(self.executeNextStep)
             step.stepstarted.disconnect(self.stepstarted)
+            step.stepstarted.disconnect(self._emitremainingtime)
         except ValueError:
             logger.error("Step not found")
 
