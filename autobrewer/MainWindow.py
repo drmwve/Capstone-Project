@@ -8,15 +8,20 @@ from .GUI.ProcessStatus import ProcessStatus
 from .GUI.CleaningScreen import CleaningScreen
 from .GUI.DeviceStatus import DeviceStatus
 from .GUI.MainMenu import MainMenu
-from .utils import IS_RASPBERRY_PI
 from .Process import *
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
+
+    resumeprocesssignal = QtCore.Signal()
+
+    def __init__(self, ExistingProcess = False):
         super().__init__()
         self.defineMainScreenUI()
         self.createStackedLayout()
         self.connections()
+        if ExistingProcess:
+            QtCore.QTimer.singleShot(1000, self.existingprocesspopup)
+
 
     # define size of whole screen
     def defineMainScreenUI(self):
@@ -26,6 +31,13 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.setFixedSize(1024, 600)
         self.setWindowTitle("Auto Brewer System")
+
+    def existingprocesspopup(self):
+        self.unsavedReply = QtWidgets.QMessageBox.question(self, "Process in Progress",
+                                                           "A process was in progress when the Auto Brewer program "
+                                                           "shut down. Resume?")
+        if self.unsavedReply == QtWidgets.QMessageBox.Yes:
+            self.resumeprocesssignal.emit()
 
     # create stacked layout for different pages, add them to central widget
     def createStackedLayout(self):
@@ -77,6 +89,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menus["deviceStatus"].ProcessStatusButton.clicked.connect(
             partial(self.goToMenu, self.menus["processStatus"])
         )
+
+        self.menus["processStatus"].returnUserToMenu.connect(
+            partial(self.goToMenu, self.menus["mainMenu"]))
+
         logger.debug("Menu navigation buttons connected")
 
     # this just avoids having a million "switch to menu" functions. the menu passed to this function MUST already be in the stacked layout

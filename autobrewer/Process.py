@@ -20,17 +20,20 @@ class Process(QtCore.QObject):
         self.processSteps = [Step()]
         self.currentindex = 0
         self.totalprocesstime = 0
+        self.remainingtime = 0
         self.running = False
         self.currentstep = Step()
         self.processcomplete = False
 
     def initializeSteps(self):
+        logger.debug("Initializing steps")
         self.currentstep = self.processSteps[self.currentindex]
         for step in self.processSteps:
             self.totalprocesstime += step.estimatedtime
+        self.remainingtime = self.getRemainingTime()
 
     def start(self):
-        logger.debug(f'Process {self} starting with completion time {self.totalprocesstime}')
+        logger.debug(f'Process {self} starting at step {self.currentindex} with completion time {self.totalprocesstime}')
         self.running = True
         self._connectStep(self.currentstep)
         self.currentstep.execute()
@@ -51,43 +54,53 @@ class Process(QtCore.QObject):
 
     def executeNextStep(self):
         self.incrementStep()
+        logger.debug(f'Executing step {self.currentindex}')
         if not self.processcomplete:
             self.currentstep.execute()
 
     def incrementStep(self):
         logger.debug("Process moving to next step")
-        self.setStep(self.currentindex+1)
+        nextstep = self.currentindex + 1
+        if nextstep == len(self.processSteps):
+            self._processComplete()
+        else:
+            self.setStep(nextstep)
 
     def decrementStep(self):
         logger.debug("Process reverting to previous step")
         self.currentindex -= 1
         self.setStep(self.currentindex)
 
-    def setStep(self, index: int):
-        self._disconnectStep(self.currentstep)
+    def setStep(self, index: int, disconnect=True):
+        if disconnect:
+            self._disconnectStep(self.currentstep)
         self.currentindex = index
         if self.currentindex in range(len(self.processSteps)):
             self.currentstep = self.processSteps[self.currentindex]
             logger.debug(f'Process set to step {self.currentstep}')
             self._connectStep(self.currentstep)
-        else:
-            logger.debug("Process complete")
-            self.processfinished.emit()
-            self.processcomplete = True
 
-    def _emitremainingtime(self):
+
+    def getRemainingTime(self):
         remainingtime = 0
         for i in range(self.currentindex,len(self.processSteps)):
             remainingtime += self.processSteps[i].estimatedtime
         logger.info(f'Remaining time: {remainingtime}')
         self.remainingtimesignal.emit(remainingtime)
+        return remainingtime
+
+    def _processComplete(self):
+        logger.debug("Process complete")
+        self.processcomplete = True
+        self._disconnectStep(self.currentstep)
+        self.processfinished.emit()
 
     def _connectStep(self, step: Step):
         try:
             logger.debug(f'Connecting signals for step {self.processSteps.index(step)}')
             step.stepcomplete.connect(self.executeNextStep)
             step.stepstarted.connect(self.stepstarted)
-            step.stepstarted.connect(self._emitremainingtime)
+            step.stepstarted.connect(self.getRemainingTime)
         except ValueError:
             logger.error("Step not found")
 
@@ -96,9 +109,16 @@ class Process(QtCore.QObject):
             logger.debug(f'Disconnecting signals for step {self.processSteps.index(step)}')
             step.stepcomplete.disconnect(self.executeNextStep)
             step.stepstarted.disconnect(self.stepstarted)
-            step.stepstarted.disconnect(self._emitremainingtime)
-        except ValueError:
-            logger.error("Step not found")
+            step.stepstarted.disconnect(self.getRemainingTime)
+        except:
+            logger.error("Step error")
+
+    def _getStepPersistentData(self):
+        return [step.getpersistentdata() for step in self.processSteps]
+
+    def _setStepPersistentData(self, data):
+        for index, step in enumerate(self.processSteps):
+            step.setpersistentdata(data[index])
 
 
 class ExampleProcess(Process):

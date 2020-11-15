@@ -77,13 +77,11 @@ class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
     def nextStep(self):
         logger.info("User requested to advance process to next step.")
         self.nextStepRequest.emit()
-        self.ManualControlButton.setEnabled(False)
         self.NextStepButton.setEnabled(False)
         self.StopProcessButton.setEnabled(False)
-        self.delayTimer.start(2000)
+        self.delayTimer.start(250)
 
     def delayManualControl(self):
-        self.ManualControlButton.setEnabled(True)
         self.NextStepButton.setEnabled(True)
         self.StopProcessButton.setEnabled(True)
         self.delayTimer.stop()

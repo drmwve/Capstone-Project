@@ -7,8 +7,8 @@ from .ExecutionHandler import executionhandler
 from .GUI.Styler import WindowStyler
 from .MainWindow import MainWindow
 from .hardware.devicehandler import *
-from .BrewRecipe import BrewRecipePickler
 
+@logger.catch
 def main():
     app = QApplication(sys.argv)
     logger.add(
@@ -16,7 +16,7 @@ def main():
     )
     styler = WindowStyler()
     styler.styleWindows(app)
-    mainScreen = MainWindow()
+    mainScreen = MainWindow(executionhandler.loadedprocess)
     devicehandler.signalemit.start(250)
     connections(mainScreen)
     mainScreen.show()
@@ -27,12 +27,15 @@ def main():
 
 def connections(mainscreen: MainWindow):
     mainscreen.menus["brewConfig"].startBrewSignal.connect(executionhandler.startBrewProcess)
+    mainscreen.resumeprocesssignal.connect(partial(executionhandler.startProcess, executionhandler.process))
+    mainscreen.resumeprocesssignal.connect(partial(mainscreen.goToMenu, mainscreen.menus["processStatus"]))
 
     mainscreen.menus["processStatus"].stopProcessRequest.connect(executionhandler.stopProcess)
     mainscreen.menus["processStatus"].nextStepRequest.connect(executionhandler.advanceStep)
     mainscreen.menus["processStatus"].manualOverrideRequest.connect(executionhandler.assumemanualcontrol)
 
-    mainscreen.menus["processStatus"].returnUserToMenu.connect(partial(mainscreen.goToMenu, mainscreen.menus["mainMenu"]))
+    mainscreen.menus["cleaningScreen"].startCleaningSignal.connect(executionhandler.startCleaningProcess)
+    mainscreen.menus["cleaningScreen"].flushSystemSignal.connect(executionhandler.startFlushProcess)
 
     executionhandler.stepstarted.connect(mainscreen.menus["processStatus"].updateLabel)
     executionhandler.processstarted.connect(mainscreen.menus["processStatus"].startUpdateTimer)
@@ -45,8 +48,5 @@ def connections(mainscreen: MainWindow):
     executionhandler.processstarted.connect(mainscreen.menus["deviceStatus"].hideMainMenu)
     executionhandler.processstopped.connect(mainscreen.menus["deviceStatus"].hideProcessStatus)
     executionhandler.processcomplete.connect(mainscreen.menus["deviceStatus"].hideProcessStatus)
-
-    mainscreen.menus["cleaningScreen"].startCleaningSignal.connect(executionhandler.startCleaningProcess)
-    mainscreen.menus["cleaningScreen"].flushSystemSignal.connect(executionhandler.startFlushProcess)
 
     devicehandler.signalState.connect(mainscreen.menus["deviceStatus"].updateState)

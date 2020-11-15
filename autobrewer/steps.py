@@ -15,24 +15,21 @@ class Step(QObject):
         self.estimatedtime = 0
         self.startingmessage = "Started base step"
         self.running = False
-        self.savestatetimer = QtCore.QTimer()
         self.complete = False
+        self.persistent = False
 
     def execute(self):
         logger.info(f'Executing step {self}')
         self.stepstarted.emit(self.startingmessage)
         self.running = True
-        self.savestatetimer.start(1000)
         self.run()
 
     def stopcommand(self):
-        self.savestatetimer.stop()
         self.stop()
         self.running = False
 
     def pausecommand(self):
         self.savestate()
-        self.savestatetimer.stop()
         self.stop(reset=False)
         self.running = False
 
@@ -50,6 +47,11 @@ class Step(QObject):
     def savestate(self):
         pass
 
+    def setpersistentdata(self, data):
+        pass
+
+    def getpersistentdata(self):
+        return None
 
 class ExampleStep(Step):
 
@@ -62,6 +64,7 @@ class ExampleStep(Step):
         self.index = 0
         self.runtimer = QtCore.QTimer()
         self.runtimer.timeout.connect(self.loop)
+        self.persistent = True
 
     def run(self):
         logger.debug(f'Running step {self}')
@@ -72,6 +75,7 @@ class ExampleStep(Step):
         logger.debug(f'Example step running loop index {self.index}')
         self.index += 1
         if self.index > self.max:
+            logger.debug(f'Step {self} complete')
             self.stepcomplete.emit()
             self.stop()
 
@@ -82,6 +86,11 @@ class ExampleStep(Step):
     def pause(self):
         self.runtimer.stop()
 
+    def setpersistentdata(self, data):
+        self.index = data
+
+    def getpersistentdata(self):
+        return self.index
 
 class FillHLT(Step):
 
@@ -175,6 +184,7 @@ class MTRecirc(Step):
     def __init__(self, mashtemp):
         super().__init__()
         self.startingmessage = "Recirculating wort..."
+        self.persistent = True
         self.estimatedtime = 90
         self.runtimer = QtCore.QTimer()
         self.runtimer.timeout.connect(self.mashcomplete)
@@ -214,6 +224,13 @@ class MTRecirc(Step):
     def savestate(self):
         self.MTRecircremainingtime = self.runtimer.remainingTime()
 
+    def getpersistentdata(self):
+        mtrecircremainingtime = self.runtimer.remainingTime()
+        return mtrecircremainingtime
+
+    def setpersistentdata(self, data):
+        self.MTRecircremainingtime = data
+
 class MTtoBK(Step):
 
     def __init__(self):
@@ -251,6 +268,7 @@ class BKboiling_AddingHops(Step):
     def __init__(self, numHops, timeHops):
         super().__init__()
         self.startingmessage = "Boiling wort and adding hops..."
+        self.persistent = True
         self.estimatedtime = 3600 
         self.boilTime = 3600000
         self.hopindex = 0
@@ -311,11 +329,21 @@ class BKboiling_AddingHops(Step):
         self.boilTime = self.runtimer.remainingTime()
         self.timeHops = self.runtimer2.remainingTime()
 
+    def getpersistentdata(self):
+        boiltime = self.runtimer.remainingTime()
+        timehops = self.runtimer2.remainingTime()
+        hopindex = self.hopindex
+        return [boiltime, timehops, hopindex]
+
+    def setpersistentdata(self, data):
+        self.boilTime, self.timeHops, self.hopindex = data
+
 class BKWhirl(Step):
 
     def __init__(self):
         super().__init__()
         self.startingmessage = "Whirling in the boiling kettle..."
+        self.persistent = True
         self.estimatedtime = 900
         self.whirlTime = 900000
         self.runtimer = QtCore.QTimer()
@@ -346,6 +374,12 @@ class BKWhirl(Step):
     def savestate(self):
         self.whirlTime = self.runtimer.remainingTime()
 
+    def getpersistentdata(self):
+        whirltime = self.runtimer.remainingTime()
+        return whirltime
+
+    def setpersistentdata(self, data):
+        self.whirltime = data
 
 class Draining(Step):
     def __init__(self):

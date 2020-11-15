@@ -319,7 +319,7 @@ class DeviceHandler(QObject, Pins):
             if index in DeviceHandler.HLT_HEATING_ELEMENTS:
                 if value == False or self.heatingElementSwitch.value != 1:
                     self.heatingElementSwitch.value = 0
-                    self.heatingElements[index].value = value
+                    self.heatingElements[DeviceHandler.HLT_HEATING_ELEMENTS.index(index)].value = value
                     self.hardwareState.heatingElements[index] = value
                     if calledmanually:
                         logger.debug(f"Set heating element {index} to {value}")
@@ -329,7 +329,7 @@ class DeviceHandler(QObject, Pins):
             elif index in DeviceHandler.BK_HEATING_ELEMENTS:
                 if self.heatingElementSwitch.value != 0 or value == 0:
                     self.heatingElementSwitch.value = 1
-                    self.heatingElements[index].value = value
+                    self.heatingElements[DeviceHandler.BK_HEATING_ELEMENTS.index(index)].value = value
                     self.hardwareState.heatingElements[index] = value
                     if calledmanually:
                         logger.debug(f"Set heating element {index} to {value}")
