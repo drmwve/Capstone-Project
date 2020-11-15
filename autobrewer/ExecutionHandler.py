@@ -59,8 +59,6 @@ class ExecutionHandler(QtCore.QObject):
             if os.path.exists(ExecutionHandler.PROCESS_FILE_SAVE_NAME):
                 processdata = self.processpickler._readPickleFromFile(ExecutionHandler.PROCESS_FILE_SAVE_NAME)
                 logger.debug(f'Loaded process data {processdata}')
-                logger.info(processdata)
-                logger.info(BrewProcess(None).__class__)
                 if processdata[0] == BrewProcess:
                     process = BrewProcess(processdata[2])
                     process._setStepPersistentData(processdata[3:])
@@ -77,7 +75,8 @@ class ExecutionHandler(QtCore.QObject):
                 elif processdata[0] == ExampleProcess:
                     process = ExampleProcess()
                 else:
-                    logger.warning("Could not find class of loaded process object")
+                    logger.warning("Could not find class of loaded process object, returning blank process")
+                    return Process()
                 process.remainingtime = process.getRemainingTime()
                 #process.setStep(processdata[1], disconnect=False)
                 process.currentindex = processdata[1]
@@ -94,6 +93,7 @@ class ExecutionHandler(QtCore.QObject):
     def deleteProcessFromDisk(self):
         if os.path.exists(ExecutionHandler.PROCESS_FILE_SAVE_NAME):
             os.remove(ExecutionHandler.PROCESS_FILE_SAVE_NAME)
+            logger.debug("Deleted process file from disk")
         else:
             logger.warning("Could not find process pickle file")
 

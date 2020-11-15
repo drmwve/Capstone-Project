@@ -43,6 +43,7 @@ class DeviceHandler(QObject, Pins):
     KETTLE_IDS_GIVEN_NAME = {"HLT": 0, "MT": 1, "BK": 2}
     HLT_HEATING_ELEMENTS = [0,2]
     BK_HEATING_ELEMENTS = [1,3]
+    HEATING_ELEMENTS = [HLT_HEATING_ELEMENTS,[None], BK_HEATING_ELEMENTS]
     KETTLE_MAX_VOLUME = 8 #gallons
     HEATING_ELEMENT_MIN_VOLUME = 1 #gallons
     INPUT_WATER_VALVE = 5
@@ -58,7 +59,6 @@ class DeviceHandler(QObject, Pins):
     def __init__(self):
         super().__init__()  # this calls all constructors up to Foo
         super(QObject, self).__init__()
-        self._connectPins()
         self._createValvePaths()
         self.signalemit = QTimer()
         self.signalemit.timeout.connect(self._updatestate)
@@ -205,7 +205,7 @@ class DeviceHandler(QObject, Pins):
             raise ComponentControlError(f'Could not find hop servo position {index}')
 
     def setHopServoPosition(self, angle: int):
-        if angle in range(-150,150):
+        if angle in range(-150,151):
             if IS_RASPBERRY_PI:
                 self.servoconnection.goto(self.SERVO_ID, angle, speed=512, degrees=True)
             self.hardwareState.hopservoangle = angle
@@ -283,9 +283,11 @@ class DeviceHandler(QObject, Pins):
             logger.debug(f'Set pump {pumpindex} to {"On" if state else "Off"}')
         # raise an error otherwise
         else:
-            raise ComponentControlError(
+            error = ComponentControlError(
                 f"Cannot turn pump {pumpindex} on. There is no suitable ball valve path open"
             )
+            logger.exception(error)
+            raise error
 
     def _pumpHasOpenPath(self, pumpindex: int) -> bool:
         pumphasopenpath = False
@@ -316,29 +318,32 @@ class DeviceHandler(QObject, Pins):
                     self.hardwareState.kettlepidenabled[DeviceHandler.KETTLE_IDS_GIVEN_NAME["MT"]] = False
                 elif index in DeviceHandler.BK_HEATING_ELEMENTS:
                     self.hardwareState.kettlepidenabled[DeviceHandler.KETTLE_IDS_GIVEN_NAME["BK"]] = False
-            if index in DeviceHandler.HLT_HEATING_ELEMENTS:
-                if value == False or self.heatingElementSwitch.value != 1:
-                    self.heatingElementSwitch.value = 0
-                    self.heatingElements[DeviceHandler.HLT_HEATING_ELEMENTS.index(index)].value = value
-                    self.hardwareState.heatingElements[index] = value
-                    if calledmanually:
-                        logger.debug(f"Set heating element {index} to {value}")
-                else:
-                    logger.critical("Attempted to turn on HLT heating elements while BK heating elements are on")
-                    raise ComponentControlError("Attempted to turn on HLT heating elements while BK heating elements are on")
-            elif index in DeviceHandler.BK_HEATING_ELEMENTS:
-                if self.heatingElementSwitch.value != 0 or value == 0:
-                    self.heatingElementSwitch.value = 1
-                    self.heatingElements[DeviceHandler.BK_HEATING_ELEMENTS.index(index)].value = value
-                    self.hardwareState.heatingElements[index] = value
-                    if calledmanually:
-                        logger.debug(f"Set heating element {index} to {value}")
-                else:
-                    logger.critical("Attempted to turn on BK heating elements while HLT heating elements are on")
-                    raise ComponentControlError("Attempted to turn on BK heating elements while HLT heating elements are on")
-        elif value != 0:
-                logger.critical(f'Program is attempting to enable heating element {index} without sufficient liquid level')
-                raise ComponentControlError(f'Program is attempting to enable heating element {index} without sufficient liquid level')
+            for kettleindex, elementpair in enumerate(DeviceHandler.HEATING_ELEMENTS):
+                if index in elementpair:
+                    otherkettleon = False
+                    if kettleindex == DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"]:
+                        otherheatingelements = DeviceHandler.BK_HEATING_ELEMENTS
+                    else:
+                        otherheatingelements = DeviceHandler.HLT_HEATING_ELEMENTS
+                    if value != 0:
+                        for he in otherheatingelements:
+                            if self.hardwareState.heatingElements[he] != 0:
+                                otherkettleon = True
+                                break
+                    if not otherkettleon:
+                        self.heatingElementSwitch.value = 0
+                        self.heatingElements[elementpair.index(index)].value = value
+                        self.hardwareState.heatingElements[index] = value
+                        if calledmanually:
+                            logger.debug(f"Set heating element {index} to {value}")
+                    else:
+                        error = ComponentControlError(f'Attempted to turn on {DeviceHandler.KETTLE_NAMES_GIVEN_ID[kettleindex]} heating elements while other kettle heating elements are on')
+                        logger.critical(error)
+                        raise error
+                    break
+        else:
+            logger.critical(f'Program is attempting to enable heating element {index} without sufficient liquid level')
+            raise ComponentControlError(f'Program is attempting to enable heating element {index} without sufficient liquid level')
 
     def _readSensors(self):
         # read the sensors and save the values here

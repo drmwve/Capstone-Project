@@ -11,7 +11,6 @@ class Process(QtCore.QObject):
     resume it.
     """
     stepstarted = QtCore.Signal(str)
-    processstarted = QtCore.Signal(int)
     processfinished = QtCore.Signal()
     remainingtimesignal = QtCore.Signal(int)
 

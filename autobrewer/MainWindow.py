@@ -12,7 +12,7 @@ from .Process import *
 
 class MainWindow(QtWidgets.QMainWindow):
 
-    resumeprocesssignal = QtCore.Signal()
+    resumeprocesssignal = QtCore.Signal(bool)
 
     def __init__(self, ExistingProcess = False):
         super().__init__()
@@ -21,7 +21,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.connections()
         if ExistingProcess:
             QtCore.QTimer.singleShot(1000, self.existingprocesspopup)
-
 
     # define size of whole screen
     def defineMainScreenUI(self):
@@ -35,9 +34,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def existingprocesspopup(self):
         self.unsavedReply = QtWidgets.QMessageBox.question(self, "Process in Progress",
                                                            "A process was in progress when the Auto Brewer program "
-                                                           "shut down. Resume?")
-        if self.unsavedReply == QtWidgets.QMessageBox.Yes:
-            self.resumeprocesssignal.emit()
+                                                           "shut down. Resume? (Pressing 'No' will reset the process)")
+
+        self.resumeprocesssignal.emit(self.unsavedReply == QtWidgets.QMessageBox.Yes)
 
     # create stacked layout for different pages, add them to central widget
     def createStackedLayout(self):
@@ -99,3 +98,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def goToMenu(self, menu):
         logger.info("Switched to screen " + str(menu))
         self.centralWidget().setCurrentWidget(menu)
+
+
+mainwindow = None
