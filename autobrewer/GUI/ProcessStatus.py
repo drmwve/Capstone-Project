@@ -1,3 +1,5 @@
+from functools import partial
+
 from PySide2 import QtCore, QtGui, QtWidgets
 from loguru import logger
 from .ProcessStatusGUI import Ui_ProcessStatus
@@ -17,7 +19,6 @@ class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
         self.setupUi(self)
         self.adjustUI()
         self.connections()
-        
 
     def connections(self):
         # add any connections that are internal to the functioning of this widget only
@@ -38,12 +39,14 @@ class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
     def stopProcess(self):
         ## This function should stop the machine, return it to a neutral state with no liquid.
         ## Then take the user back to the main menu when finished.
-        self.CurrentTaskLabel.setText("Stopping Process . . .")
-        self.ManualControlButton.setEnabled(False)
-        self.StopProcessButton.setEnabled(False)
         logger.info("User requested to stop the current process.")
         self.stopProcessRequest.emit()
-        self.stopTimer.start(self.remainingProcessTime)
+        self.updateTimer.stop()
+        self.stopTimer.stop()
+        self.ETALabel.setText("Return to main menu to start a new process.")
+        self.CurrentTaskLabel.setText("Process Stopped")
+        self.CurrentTaskProgressBar.setHidden(True)
+        self.processScreenEnd(True)
 
     def manualOverride(self):
         if self.ManualControlButton.isChecked():
@@ -60,11 +63,10 @@ class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
         ## This will reset the screen to the default layout.
         self.ManualControlButton.setChecked(False)
         self.ManualControlButton.setEnabled(True)
-        self.ManualControlButton.setHidden(False)
-        self.NextStepButton.setHidden(False)
         self.NextStepButton.setEnabled(False)
         self.StopProcessButton.setEnabled(True)
-        self.StopProcessButton.setText("Stop Process")
+        self.processScreenEnd(False)
+        self.CurrentTaskProgressBar.setHidden(False)
         self.updateTimer.stop()
         self.stopTimer.stop()
         self.CurrentTaskProgressBar.setValue(0)
@@ -101,9 +103,28 @@ class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
         self.CurrentTaskLabel.setText("Process Complete")
         self.ETALabel.setText("")
         self.remainingProcessTime = 0
-        self.ManualControlButton.setHidden(True)
-        self.NextStepButton.setHidden(True)
-        self.StopProcessButton.setText("Return to Menu")
+        self.processScreenEnd(True)
+
+    # sets the screen to allow the user to return to main menu after a process is stopped or completes
+    def processScreenEnd(self, state: bool):
+        if state:
+            self.ManualControlButton.setHidden(True)
+            self.NextStepButton.setHidden(True)
+            self.StopProcessButton.setText("Main Menu")
+            try:
+                self.StopProcessButton.clicked.disconnect(self.stopProcess)
+            except:
+                pass
+            self.StopProcessButton.clicked.connect(self.returnUserToMenu)
+        else:
+            self.ManualControlButton.setHidden(False)
+            self.NextStepButton.setHidden(False)
+            self.StopProcessButton.setText("Stop Process")
+            self.StopProcessButton.clicked.connect(self.stopProcess)
+            try:
+                self.StopProcessButton.clicked.disconnect(self.returnUserToMenu)
+            except:
+                pass
 
     def updateLabel(self, label: str):
         self.CurrentTaskLabel.setText(label)
