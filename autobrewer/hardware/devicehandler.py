@@ -244,6 +244,7 @@ class DeviceHandler(QObject, Pins):
                 pressurevoltage = self.adc.raw_to_v(self.adc.read(channel1=index))
             except:
                 pressurevoltage = 0
+            return pressurevoltage
             pressurevalue = (pressurevoltage / self.ADC_VOLTAGE_SUPPLIED - 0.053) / 0.1533
             liquidheight = pressurevalue * 1000 / (LIQUID_DENSITY * GRAVITY)
             volume = PI * (KETTLE_DIAMETER/2)**2 * liquidheight #cubic meters
@@ -289,7 +290,7 @@ class DeviceHandler(QObject, Pins):
         # check if a valid path is open for either pump
         if (state == False) or (state and self._pumpHasOpenPath(pumpindex)):
             if state == True:
-                self.pumps[pumpindex].on()
+                self.pumps[pumpindex].value = DeviceHandler.PUMP_PWM_VALUE
             else:
                 self.pumps[pumpindex].off()
             self.hardwareState.pumps[pumpindex] = state
