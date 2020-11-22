@@ -38,7 +38,7 @@ class DeviceHandler(QObject, Pins):
 
 
     HOP_SERVO_HOME = -1
-    HOP_SERVO_POSITIONS = {-1: -150, 0: -90, 1: -30, 2: 30, 3: 90, 4: 150}
+    HOP_SERVO_POSITIONS = {-1: -150, 0: -78, 1: -8, 2: 52, 3: 112, 4: 150}
     KETTLE_NAMES_GIVEN_ID = {0: "HLT", 1: "MT", 2: "BK"}
     KETTLE_IDS_GIVEN_NAME = {"HLT": 0, "MT": 1, "BK": 2}
     HLT_HEATING_ELEMENTS = [0,2]
@@ -47,6 +47,7 @@ class DeviceHandler(QObject, Pins):
     KETTLE_MAX_VOLUME = 8 #gallons
     HEATING_ELEMENT_MIN_VOLUME = 1 #gallons
     INPUT_WATER_VALVE = 5
+    PUMP_PWM_VALUE = 1
 
     hltpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 1), sample_time=None)
     mtpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 1), sample_time=None)
@@ -65,7 +66,8 @@ class DeviceHandler(QObject, Pins):
         self.signalemit.start(1000)
         self.PIDtimer = QTimer()
         self.PIDtimer.timeout.connect(self._updateheatingelementPID)
-        self.PIDtimer.start(10)
+        self.airPump = OutputDevice(Pins.airPumpGPIO)
+        self.sensorindex = 0
 
     def _createValvePaths(self):
         """Defines paths which must be open for a pump to run without forming a vacuum. The valvepaths variable is a
@@ -190,6 +192,9 @@ class DeviceHandler(QObject, Pins):
             self.hardwareState.kettlepidenabled[index] = value
             if not value:
                 self._setHeatingElementValue(index, 0)
+                self.PIDtimer.start(30)
+        else:
+                self.PIDtimer.stop()
         else:
             raise ComponentControlError("Could not find given kettle")
 
@@ -207,7 +212,9 @@ class DeviceHandler(QObject, Pins):
     def setHopServoPosition(self, angle: int):
         if angle in range(-150,151):
             if IS_RASPBERRY_PI:
-                self.servoconnection.goto(self.SERVO_ID, angle, speed=512, degrees=True)
+                logger.debug("Setting servo angle")
+                self.servo.moveSpeed(1, angle,64)
+            logger.debug("Set servo angle")
             self.hardwareState.hopservoangle = angle
         else:
             raise ComponentControlError("Invalid servo angle selected")
@@ -234,7 +241,7 @@ class DeviceHandler(QObject, Pins):
             PI = 3.142
             # pressure is in kPa
             try:
-                pressurevoltage = self.adc.read(channel1=index)
+                pressurevoltage = self.adc.raw_to_v(self.adc.read(channel1=index))
             except:
                 pressurevoltage = 0
             pressurevalue = (pressurevoltage / self.ADC_VOLTAGE_SUPPLIED - 0.053) / 0.1533
@@ -262,12 +269,18 @@ class DeviceHandler(QObject, Pins):
                 ## the relay board the ball valves are connected to will only turn a relay off if the ouput pin is disabled entirely
                 ## and will always stay on if an output pin is enabled regardless of its state (on or off)
                 if state == True:
+                    if (index >= 5):
                     try:
                         self.ballValves[index] = OutputDevice(self.ballValveGPIOs[index])
                     except GPIOPinInUse:
                         pass
                 else:
+                        self.ballValves[index].on()
+                else:
+                    if (index>=5):
                     self.ballValves[index].close()
+                    else:
+                        self.ballValves[index].off()
                 logger.debug(f'Set ball valve {index} to {"On" if state else "Off"}')
             except ComponentControlError as e:
                 logger.critical(e)
@@ -331,11 +344,11 @@ class DeviceHandler(QObject, Pins):
                                 otherkettleon = True
                                 break
                     if not otherkettleon:
-                        self.heatingElementSwitch.value = 0
+                        self.heatingElementSwitch.value = index in DeviceHandler.BK_HEATING_ELEMENTS
                         self.heatingElements[elementpair.index(index)].value = value
                         self.hardwareState.heatingElements[index] = value
                         if calledmanually:
-                            logger.debug(f"Set heating element {index} to {value}")
+                            logger.debug(f"Set heating element {index} to {value}, switch {self.heatingElementSwitch.value}")
                     else:
                         error = ComponentControlError(f'Attempted to turn on {DeviceHandler.KETTLE_NAMES_GIVEN_ID[kettleindex]} heating elements while other kettle heating elements are on')
                         logger.critical(error)
@@ -352,13 +365,15 @@ class DeviceHandler(QObject, Pins):
             self.hardwareState.volumes[i] = self.readvolume(i)
 
     def _updateheatingelementPID(self):
-        self._readSensors()
         for kettleindex, kettlename in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
             if self.hardwareState.kettlepidenabled[kettleindex] == True:
                 if kettlename == "HLT" or kettleindex == "MT":
                     heatingelementindex = 0
+                    self.readTemperature(DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"])
                 elif kettlename == "BK":
                     heatingelementindex = 1
+                
+                self.readTemperature(kettleindex)
                 self._setHeatingElementValue(heatingelementindex, self.PIDS[kettleindex](self.hardwareState.temperatures[kettleindex]), calledmanually=False)
                 lowbound = self.hardwareState.kettletempsetpoints[kettleindex] * 0.8
                 if self.hardwareState.temperatures[kettleindex] < lowbound:

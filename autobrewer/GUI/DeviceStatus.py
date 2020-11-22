@@ -410,7 +410,7 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
     def increaseServo(self):
         logger.info("User requested to increase servo angle by 5 degrees")
         try:
-            devicehandler.setHopServoPosition(self.deviceState.hopservoangle+5)
+            devicehandler.setHopServoPosition(self.deviceState.hopservoangle+1)
         except ComponentControlError as e:
                 QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
 
@@ -418,7 +418,7 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
     def decreaseServo(self):
         logger.info("User requested to decrease servo angle by 5 degrees")
         try:
-            devicehandler.setHopServoPosition(self.deviceState.hopservoangle-5)
+            devicehandler.setHopServoPosition(self.deviceState.hopservoangle-1)
         except ComponentControlError as e:
                 QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
 

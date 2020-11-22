@@ -9,6 +9,7 @@ http://savageelectronics.blogspot.it/2011/01/arduino-y-dynamixel-ax-12.html
 from time import sleep
 from serial import Serial
 import RPi.GPIO as GPIO
+from loguru import logger
 
 class Ax12:
     # important AX-12 constants
@@ -134,7 +135,6 @@ class Ax12:
     # static variables
     port = None
     gpioSet = False
-
     def __init__(self):
         if(Ax12.port == None):
             Ax12.port = Serial("/dev/serial0", baudrate=1000000, timeout=0.001)
@@ -170,18 +170,26 @@ class Ax12:
     
 
     def move(self, id, position):
-        old_value = position
-        old_min = -150
-        old_max = 150
-        new_min = 0
-        new_max = 1023
-        new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
-
-        p = [position&0xff, position>>8]
+ 
+        new_value = (int) ((position + 150) * 1023/300)
+        logger.debug(f'Sending position angle {position} and value {new_value}')
+        p = [new_value&0xff, new_value>>8]
         checksum = (~(id + Ax12.AX_GOAL_LENGTH + Ax12.AX_WRITE_DATA + Ax12.AX_GOAL_POSITION_L + p[0] + p[1]))&0xff
         outData=[Ax12.AX_START, Ax12.AX_START, id, Ax12.AX_GOAL_LENGTH, Ax12.AX_WRITE_DATA, Ax12.AX_GOAL_POSITION_L, p[0],p[1],checksum]
         
         Ax12.port.write(outData)
         sleep(Ax12.TX_DELAY_TIME)
 
-    
+    def moveSpeed(self, id, position, speed):
+        new_value = (int) ((position + 150) * 1023/300)
+        p = [new_value&0xff, new_value>>8]
+        s = [speed&0xff, speed>>8]
+        logger.debug(f'Sending position angle {position} and value {new_value}')
+
+        checksum = (~(id + Ax12.AX_GOAL_SP_LENGTH + Ax12.AX_WRITE_DATA + Ax12.AX_GOAL_POSITION_L + p[0] + p[1] + s[0] + s[1]))&0xff
+
+        outdata = [Ax12.AX_START, Ax12.AX_START, id, Ax12.AX_GOAL_SP_LENGTH, Ax12.AX_WRITE_DATA, Ax12.AX_GOAL_POSITION_L, p[0], p[1], s[0], s[1],checksum]
+
+
+        Ax12.port.write(outdata)
+        sleep(Ax12.TX_DELAY_TIME)

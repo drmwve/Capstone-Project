@@ -1,6 +1,7 @@
 from gpiozero import Device, OutputDevice, PWMOutputDevice, GPIOPinInUse
 
 from ..utils import IS_RASPBERRY_PI
+from .ax import Ax12
 
 if IS_RASPBERRY_PI:
     from ..ads1x15.ads1x15 import ADS1115
@@ -8,20 +9,20 @@ if IS_RASPBERRY_PI:
 else:
     from gpiozero.pins.mock import MockFactory, MockPWMPin
 from loguru import logger
-from pyax12.connection import Connection
 from loguru import logger
 
 
 class Pins:
     """Low level class which directly interfaces with the Raspberry Pi pins. This gets passed up to the Device Handler which handles higher-level component control logic."""
 
-    ballValveGPIOs = [5, 27, 22, 19, 26, 23, 24, 25, 20, 21]
-    pumpGPIOs = [18, 17]
-    heatingElementGPIOs = [12, 13]
-    heatingElementSwitchGPIO = 16
+    ballValveGPIOs = [24,5,6,16,12,26,27,20,13,21]
+    pumpGPIOs = [22,23]
+    heatingElementGPIOs = [25,17]
+    heatingElementSwitchGPIO = 7
+    airPumpGPIO = 19
     pins_initialized = False
 
-    TEMP_SENSOR_IDS = [0, 1, 2]  # Get actual IDs and add here
+    TEMP_SENSOR_IDS = ["3c01d607c246",  "3c01d607933f", "3c01d607e8f2"]  # Get actual IDs and add here
 
     ADC_GAIN = 2 / 3
     ADC_VOLTAGE_SUPPLIED = 5
@@ -30,7 +31,7 @@ class Pins:
 
     def __init__(self):
         super().__init__()
-        self._connectPins()
+        self._refreshPins()
 
     @classmethod
     def _connectPins(cls):
@@ -39,17 +40,17 @@ class Pins:
             logger.debug("Connecting Pins")
             if IS_RASPBERRY_PI:
                 logger.info(W1ThermSensor.get_available_sensors())
-                cls.servoconnection = Connection(port="/dev/ttyAMA0", baudrate=57600)
                 cls.adc = ADS1115()
-                cls.tempsensors = [sensor for sensor in W1ThermSensor.get_available_sensors()]
+  
+                cls.tempsensors = [W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, id) for id in Pins.TEMP_SENSOR_IDS]
                 for sensor in cls.tempsensors:
                     logger.info(f'Sensor ID: {sensor.id}')
+                cls.servo = Ax12()
             else:
                 cls.adc = None
                 cls.servoconnection = None
                 cls.tempsensors = None
 
-            gpiooutputdevicepins = [cls.ballValveGPIOs, cls.pumpGPIOs]
             try:
                 # this little bit of weirdness is a consequence of gpiozero's fake pin code being goofy
 
@@ -62,8 +63,16 @@ class Pins:
                     PWMOutputDevice(n, pin_factory=cls.pwmPinFactory)
                     for n in Pins.heatingElementGPIOs]
                 cls.ballValves = [OutputDevice(n) for n in Pins.ballValveGPIOs]
-                cls.pumps = [OutputDevice(n, active_high=False, initial_value=True) for n in Pins.pumpGPIOs]
-
+                for index, valve in enumerate(cls.ballValves):
+                    if (index >4):
+                        valve.close()
+                cls.airPump = OutputDevice(Pins.airPumpGPIO)
+                cls.airPump.close()
+                cls.pumps = [PWMOutputDevice(n, pin_factory=cls.pwmPinFactory)
+                    for n in Pins.pumpGPIOs]
+                for pump in cls.pumps:
+                    pump.toggle()
+                logger.debug(f'Pump states: {[x.value for x in cls.pumps]}')
                 cls.heatingElementSwitch = OutputDevice(Pins.heatingElementSwitchGPIO)
 
                 cls.GPZeroComponents = (

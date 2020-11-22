@@ -156,9 +156,9 @@ class FlushSystem(Process):
     def __init__(self):
         super(FlushSystem, self).__init__()
         self.processSteps = [Draining(),
-                             MTtoBK(-1),
+                             MTtoBK(),
                              Draining(),
-                             HLTtoMT(),
+                             HLTtoMT(-1),
                              MTtoBK(),
                              Draining()]
         self.initializeSteps()
