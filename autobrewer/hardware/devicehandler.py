@@ -190,10 +190,12 @@ class DeviceHandler(QObject, Pins):
         if index in DeviceHandler.KETTLE_NAMES_GIVEN_ID.keys():
             self.hardwareState.kettlepidenabled[index] = value
             if not value:
-                self._setHeatingElementValue(index, 0)
-                self.PIDtimer.start(30)
-        else:
                 self.PIDtimer.stop()
+                self._setHeatingElementValue(index, 0)
+              
+            else:
+                self.PIDtimer.start(30)
+
         else:
             raise ComponentControlError("Could not find given kettle")
 
@@ -270,15 +272,15 @@ class DeviceHandler(QObject, Pins):
                 ## and will always stay on if an output pin is enabled regardless of its state (on or off)
                 if state == True:
                     if (index >= 5):
-                    try:
-                        self.ballValves[index] = OutputDevice(self.ballValveGPIOs[index])
-                    except GPIOPinInUse:
-                        pass
-                else:
-                        self.ballValves[index].on()
+                        try:
+                            self.ballValves[index] = OutputDevice(self.ballValveGPIOs[index])
+                        except GPIOPinInUse:
+                            pass
+                    else:
+                            self.ballValves[index].on()
                 else:
                     if (index>=5):
-                    self.ballValves[index].close()
+                        self.ballValves[index].close()
                     else:
                         self.ballValves[index].off()
                 logger.debug(f'Set ball valve {index} to {"On" if state else "Off"}')
