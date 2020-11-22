@@ -1,13 +1,13 @@
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import Signal
+from PySide2.QtWidgets import QWidget
 from loguru import logger
 from .CleaningScreenGUI import Ui_CleaningScreen
-from datetime import timedelta
 
 
-class CleaningScreen(QtWidgets.QWidget, Ui_CleaningScreen):
+class CleaningScreen(QWidget, Ui_CleaningScreen):
 
-    startCleaningSignal = QtCore.Signal()
-    flushSystemSignal = QtCore.Signal()
+    startCleaningSignal = Signal()
+    flushSystemSignal = Signal()
 
     def __init__(self):
         super().__init__()

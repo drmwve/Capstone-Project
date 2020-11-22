@@ -1,5 +1,4 @@
 from gpiozero import OutputDevice, GPIOPinInUse
-from PySide2 import QtCore
 from simple_pid import PID
 from loguru import logger
 from PySide2.QtCore import QObject, Signal, QTimer
