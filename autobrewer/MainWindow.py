@@ -13,6 +13,7 @@ from .Process import *
 class MainWindow(QtWidgets.QMainWindow):
 
     resumeprocesssignal = QtCore.Signal(bool)
+    switchedscreensignal = QtCore.Signal(str)
 
     def __init__(self, ExistingProcess = False):
         super().__init__()
@@ -97,6 +98,10 @@ class MainWindow(QtWidgets.QMainWindow):
     # this just avoids having a million "switch to menu" functions. the menu passed to this function MUST already be in the stacked layout
     def goToMenu(self, menu):
         logger.info("Switched to screen " + str(menu))
+        for menuname in self.menus.keys():
+            if self.menus[menuname] == menu:
+                self.switchedscreensignal.emit(menuname)
+                break
         self.centralWidget().setCurrentWidget(menu)
 
 

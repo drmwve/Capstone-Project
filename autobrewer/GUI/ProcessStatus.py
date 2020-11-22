@@ -1,18 +1,16 @@
-from functools import partial
-
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import Signal, QTimer
+from PySide2.QtWidgets import QWidget
 from loguru import logger
 from .ProcessStatusGUI import Ui_ProcessStatus
-from ..ExecutionHandler import executionhandler
 from datetime import timedelta
 
 
-class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
+class ProcessStatus(QWidget, Ui_ProcessStatus):
 
-    nextStepRequest = QtCore.Signal()
-    stopProcessRequest = QtCore.Signal()
-    manualOverrideRequest = QtCore.Signal()
-    returnUserToMenu = QtCore.Signal()
+    nextStepRequest = Signal()
+    stopProcessRequest = Signal()
+    manualOverrideRequest = Signal()
+    returnUserToMenu = Signal()
 
     def __init__(self):
         super().__init__()
@@ -32,9 +30,9 @@ class ProcessStatus(QtWidgets.QWidget, Ui_ProcessStatus):
     def adjustUI(self):
         self.ManualControlButton.setCheckable(True)
         self.NextStepButton.setEnabled(False)
-        self.stopTimer=QtCore.QTimer()
-        self.delayTimer=QtCore.QTimer()
-        self.updateTimer=QtCore.QTimer()
+        self.stopTimer=QTimer()
+        self.delayTimer=QTimer()
+        self.updateTimer=QTimer()
         
     def stopProcess(self):
         ## This function should stop the machine, return it to a neutral state with no liquid.

@@ -1,11 +1,11 @@
-from PySide2 import QtWidgets
+from PySide2.QtWidgets import QWidget, QMessageBox
 from loguru import logger
 from .DeviceStatusGUI import Ui_DeviceStatus
 from ..hardware.devicehandler import devicehandler
 from ..exceptions import ComponentControlError
 from functools import partial
 
-class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
+class DeviceStatus(QWidget, Ui_DeviceStatus):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -268,14 +268,14 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
             try:
                 devicehandler.openBallValve(index)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
         elif self.deviceState.ballValves[index] == 1:
             ## Close ball valve
             logger.info("User requested ball valve " + str(index + 1) + " to close")
             try:
                 devicehandler.closeBallValve(index)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
 
     ## Toggle 3 way ball valves
     def toggleThreeWay(self, index):
@@ -289,7 +289,7 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
             try:
                 devicehandler.openBallValve(index+5)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
         elif self.deviceState.ballValves[index+5] == 1:
             ## Change to direction 1
             logger.info(
@@ -300,7 +300,7 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
             try:
                 devicehandler.closeBallValve(index+5)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
 
     ## HEATER CONTROLS ##
     ## Simple heater toggle, either on/off.
@@ -311,14 +311,14 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
             try:
                 devicehandler.enableHeatingElement(index)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
         elif self.deviceState.heatingElements[index] == 1:
             ##  Turn heater off
             logger.info("User requested heater " + str(index + 1) + " to turn off")
             try:
                 devicehandler.disableHeatingElement(index)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
 
     ## Toggle PID control for setting a target temperature.
     def togglePID(self, i):
@@ -328,14 +328,14 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
             try:
                 devicehandler.setKettlePIDEnabled(i,False)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
         elif self.deviceState.kettlepidenabled[i] == False:
             ## ENable control
             logger.info("User requested to enable PID control")
             try:
                 devicehandler.setKettlePIDEnabled(i,True)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
 
     ## Increase heater PWM value by 0.1
     def increaseHeater(self, i):
@@ -344,7 +344,7 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
             try:
                 devicehandler.setHeatingElementPWM(i, self.deviceState.heatingElements[i]+0.1)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
 
     ## Decrease heater PWM value by 0.1
     def decreaseHeater(self, i):
@@ -353,7 +353,7 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
             try:
                 devicehandler.setHeatingElementPWM(i, self.deviceState.heatingElements[i]-0.1)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
 
     ## Increase tank target temp by 1 degree
     def increaseHeaterTarget(self, i):
@@ -363,13 +363,13 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
             try:
                 devicehandler.setTargetKettleTemp(i, 150)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
         else:
             logger.info("User requested to set " + str(devicehandler.KETTLE_NAMES_GIVEN_ID[i]) + " temperature to: " + str(self.hardwarestate.kettletempsetpoints[i]+1))
             try:
                 devicehandler.setTargetKettleTemp(i, self.deviceState.kettletempsetpoints[i]+1)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
 
     ## Decrease tank target temp by 1 degree
     def decreaseHeaterTarget(self, i):
@@ -379,31 +379,31 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
             try:
                 devicehandler.setTargetKettleTemp(i, 150)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
         else:
             logger.info("User requested to set " + str(devicehandler.KETTLE_NAMES_GIVEN_ID[i]) + " temperature to: " + str(self.deviceState.kettletempsetpoints[i]-1))
             try:
                 devicehandler.setTargetKettleTemp(i, self.deviceState.kettletempsetpoints[i]-1)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
 
     ## PUMP CONTROLS ##
     ## Toggle pumps
     def togglePump(self, index):
         if self.deviceState.pumps[index] == 0:
             ## Turn pump on
-            logger.info("User requested pump " + str(index + 1) + " to turn on")
+            logger.info("User requested pump " + str(index) + " to turn on")
             try:
                 devicehandler.enablePump(index)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
         elif self.deviceState.pumps[index] == 1:
             ## Turn pump off
-            logger.info("User requested pump " + str(index + 1) + " to turn off")
+            logger.info("User requested pump " + str(index) + " to turn off")
             try:
                 devicehandler.disablePump(index)
             except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
 
     ## SERVO MOTOR CONTROLS ##
     ## Increase servo angle by 5 degrees
@@ -412,7 +412,7 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
         try:
             devicehandler.setHopServoPosition(self.deviceState.hopservoangle+5)
         except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
 
     ## Decrease servo angle by 5 degrees
     def decreaseServo(self):
@@ -420,7 +420,7 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
         try:
             devicehandler.setHopServoPosition(self.deviceState.hopservoangle-5)
         except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))
 
     ## Set servo to predefined position (Home or hop cup)
     def setServo(self, i):
@@ -428,4 +428,4 @@ class DeviceStatus(QtWidgets.QWidget, Ui_DeviceStatus):
         try:
             devicehandler.goToHopPosition(i)
         except ComponentControlError as e:
-                QtWidgets.QMessageBox.information(self, "Component Control Error", str(e))
+                QMessageBox.information(self, "Component Control Error", str(e))

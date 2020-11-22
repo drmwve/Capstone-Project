@@ -1,15 +1,16 @@
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import Signal
+from PySide2.QtWidgets import QWidget, QMessageBox, QInputDialog
 from loguru import logger
 from ..BrewRecipe import BrewRecipe, BrewRecipePickler
 from .BrewConfigGUI import Ui_BrewConfigWindow
 from functools import partial
 
 
-class BrewConfig(QtWidgets.QWidget, Ui_BrewConfigWindow):
+class BrewConfig(QWidget, Ui_BrewConfigWindow):
     """The configuration screen from which the user sets the desired brew parameters and starts the brew process. Brew recipes
     can be saved and loaded from the file system. When a brew is started, this screen is replaced by a 'Brew Progress' screen that
     gives feedback to the user on what the brew system is doing."""
-    startBrewSignal = QtCore.Signal(BrewRecipe)
+    startBrewSignal = Signal(BrewRecipe)
     HOP_TIMING_INCREMENT = 5
     HOP_TIMING_MINIMUM = 0
     HOP_TIMING_MAXIMUM = 60
