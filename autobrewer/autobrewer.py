@@ -60,9 +60,12 @@ def connections():
 def switchedscreen(menu: str):
     if menu == "deviceStatus":
         logger.debug("Connecting status screen update")
+
+        devicehandler.temptimer.start(10000)
         devicehandler.signalState.connect(mainwindow.menus["deviceStatus"].updateState)
     else:
         try:
+            devicehandler.temptimer.stop()
             devicehandler.signalState.disconnect(mainwindow.menus["deviceStatus"].updateState)
             logger.debug("Disconnecting status screen update")
         except:

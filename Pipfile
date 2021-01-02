@@ -11,7 +11,7 @@ matplotlib = "*"
 
 [packages]
 pyside2 = "*"
-w1thermsensor = "*"
+w1thermsensor = {git = "https://github.com/timofurrer/w1thermsensor"}
 loguru = "*"
 gpiozero = "*"
 pytest = "*"

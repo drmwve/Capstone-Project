@@ -5,7 +5,7 @@ from .ax import Ax12
 
 if IS_RASPBERRY_PI:
     from ..ads1x15.ads1x15 import ADS1115
-    from w1thermsensor import *
+    from w1thermsensor import W1ThermSensor, Unit, Sensor
 else:
     from gpiozero.pins.mock import MockFactory, MockPWMPin
 from loguru import logger
@@ -39,10 +39,9 @@ class Pins:
         if not Pins.pins_initialized:
             logger.debug("Connecting Pins")
             if IS_RASPBERRY_PI:
-                logger.info(W1ThermSensor.get_available_sensors())
                 cls.adc = ADS1115()
   
-                cls.tempsensors = [W1ThermSensor(W1ThermSensor.THERM_SENSOR_DS18B20, id) for id in Pins.TEMP_SENSOR_IDS]
+                cls.tempsensors = [W1ThermSensor(Sensor.DS18B20, id) for id in Pins.TEMP_SENSOR_IDS]
                 for sensor in cls.tempsensors:
                     logger.info(f'Sensor ID: {sensor.id}')
                 cls.servo = Ax12()
@@ -68,10 +67,9 @@ class Pins:
                         valve.close()
                 cls.airPump = OutputDevice(Pins.airPumpGPIO)
                 cls.airPump.close()
-                cls.pumps = [PWMOutputDevice(n, pin_factory=cls.pwmPinFactory)
+                cls.pumps = [OutputDevice(n, active_high=False)
                     for n in Pins.pumpGPIOs]
-                for pump in cls.pumps:
-                    pump.toggle()
+
                 logger.debug(f'Pump states: {[x.value for x in cls.pumps]}')
                 cls.heatingElementSwitch = OutputDevice(Pins.heatingElementSwitchGPIO)
 

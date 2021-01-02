@@ -4,6 +4,7 @@ from .DeviceStatusGUI import Ui_DeviceStatus
 from ..hardware.devicehandler import devicehandler
 from ..exceptions import ComponentControlError
 from functools import partial
+from ..utils import truncate
 
 class DeviceStatus(QWidget, Ui_DeviceStatus):
     def __init__(self):
@@ -224,10 +225,9 @@ class DeviceStatus(QWidget, Ui_DeviceStatus):
                 self.pumpButton[i].setText("Turn On")
                 self.pumpState[i].setText("State: Off")
         for i in range(0,3):
-            self.tankVolumes[i].setText("Volume (gal): " + str(self.deviceState.volumes[i]))
-            self.tankVolumes[i].setText("Volume (gal): " + str(self.deviceState.volumes[i]))
-            self.tankVolumes[i].setText("Volume (gal): " + str(self.deviceState.volumes[i]))
-
+            self.tankVolumes[i].setText("Volume (gal): " + truncate(self.deviceState.volumes[i], 2))
+            self.tankVolumes[i].setText("Volume (gal): " + truncate(self.deviceState.volumes[i], 2))
+            self.tankVolumes[i].setText("Volume (gal): " + truncate(self.deviceState.volumes[i], 2))
         ## Heaters and temperatures
         for i in range(0,4):
             if self.deviceState.heatingElements[i] == True:

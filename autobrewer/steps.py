@@ -108,7 +108,7 @@ class FillHLT(Step):
         self.runtimer.start(100)
 
     def loop(self):
-        if devicehandler.hardwareState.volumes[0] == devicehandler.KETTLE_MAX_VOLUME:
+        if devicehandler.hardwareState.volumes[devicehandler.KETTLE_IDS_GIVEN_NAME["HLT"]]>= devicehandler.KETTLE_MAX_VOLUME:
             self.devicehandler.closeBallValve(0)
             self.stop()
             self.stepcomplete.emit()

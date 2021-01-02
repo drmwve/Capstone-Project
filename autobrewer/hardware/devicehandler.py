@@ -2,6 +2,8 @@ from gpiozero import OutputDevice, GPIOPinInUse
 from simple_pid import PID
 from loguru import logger
 from PySide2.QtCore import QObject, Signal, QTimer
+from w1thermsensor import Unit
+from ..utils import truncate
 try:
     import matplotlib.pyplot as plot
 except:
@@ -43,14 +45,14 @@ class DeviceHandler(QObject, Pins):
     HLT_HEATING_ELEMENTS = [0,2]
     BK_HEATING_ELEMENTS = [1,3]
     HEATING_ELEMENTS = [HLT_HEATING_ELEMENTS,[None], BK_HEATING_ELEMENTS]
-    KETTLE_MAX_VOLUME = 8 #gallons
+    KETTLE_MAX_VOLUME = 7.5 #gallons
     HEATING_ELEMENT_MIN_VOLUME = 1 #gallons
     INPUT_WATER_VALVE = 5
     PUMP_PWM_VALUE = 1
 
-    hltpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 1), sample_time=None)
-    mtpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 1), sample_time=None)
-    bkpid = PID(5, 0.01, 0.1, setpoint=155, output_limits=(0, 1), sample_time=None)
+    hltpid = PID(40/100, 1/100, 3/100, setpoint=200, output_limits=(0, 1), sample_time=None)
+    mtpid = PID(40/100, 1/100, 3/100, setpoint=155, output_limits=(0, 1), sample_time=None)
+    bkpid = PID(40/100, 1/100, 3/100, setpoint=155, output_limits=(0, 1), sample_time=None)
     PIDS = [hltpid, mtpid, bkpid]
 
     signalState = Signal(HardwareState)
@@ -62,11 +64,15 @@ class DeviceHandler(QObject, Pins):
         self._createValvePaths()
         self.signalemit = QTimer()
         self.signalemit.timeout.connect(self._updatestate)
-        self.signalemit.start(1000)
+        self.signalemit.start(500)
+        self.temptimer = QTimer()
+        self.temptimer.timeout.connect(self._readAllTemps)
         self.PIDtimer = QTimer()
         self.PIDtimer.timeout.connect(self._updateheatingelementPID)
         self.airPump = OutputDevice(Pins.airPumpGPIO)
         self.sensorindex = 0
+        self._readAllTemps()
+        self.volumeaverages = [[],[],[]]
 
     def _createValvePaths(self):
         """Defines paths which must be open for a pump to run without forming a vacuum. The valvepaths variable is a
@@ -224,10 +230,8 @@ class DeviceHandler(QObject, Pins):
 
     def readTemperature(self, index: int):
         if IS_RASPBERRY_PI:
-            try:
-                temperature = self.tempsensors[index].get_temperature(W1ThermSensor.DEGREES_F)
-            except:
-                temperature = 0
+            temperature = self.tempsensors[index].get_temperature(Unit.DEGREES_F)
+ 
         else:
             temperature = 70
         return temperature
@@ -236,20 +240,26 @@ class DeviceHandler(QObject, Pins):
         """Reads the ADC for a particular kettle's pressure sensor and converts the pressure value into a volume
         in gallons"""
         if IS_RASPBERRY_PI:
-            KETTLE_DIAMETER = 0.320675 # meters
-            LIQUID_DENSITY = 997 # kg/m3
-            GRAVITY = 9.81 #m/s^2
-            PI = 3.142
+            if DeviceHandler.KETTLE_NAMES_GIVEN_ID[index] == "MT":
+                offset = .3
+            elif DeviceHandler.KETTLE_NAMES_GIVEN_ID[index] == "HLT":
+                offset = .3
+            elif DeviceHandler.KETTLE_NAMES_GIVEN_ID[index] == "BK":
+                offset = .3
+            scale = 15/5
             # pressure is in kPa
             try:
                 pressurevoltage = self.adc.raw_to_v(self.adc.read(channel1=index))
             except:
                 pressurevoltage = 0
-            return pressurevoltage
-            pressurevalue = (pressurevoltage / self.ADC_VOLTAGE_SUPPLIED - 0.053) / 0.1533
-            liquidheight = pressurevalue * 1000 / (LIQUID_DENSITY * GRAVITY)
-            volume = PI * (KETTLE_DIAMETER/2)**2 * liquidheight #cubic meters
-            volume *= 264.172 # gallons
+            #return pressurevoltage
+
+            volume = (pressurevoltage - offset) * scale
+            self.volumeaverages[index].append(volume)
+            self.volumeaverages[index][-0:]
+            return volume
+            #return sum(self.volumeaverages[index])/len(self.volumeaverages[index])
+
         else:
             volume = 5
         return volume
@@ -277,7 +287,7 @@ class DeviceHandler(QObject, Pins):
                         except GPIOPinInUse:
                             pass
                     else:
-                            self.ballValves[index].on()
+                        self.ballValves[index].on()
                 else:
                     if (index>=5):
                         self.ballValves[index].close()
@@ -291,12 +301,12 @@ class DeviceHandler(QObject, Pins):
         # check if a valid path is open for either pump
         if (state == False) or (state and self._pumpHasOpenPath(pumpindex)):
             if state == True:
-                self.pumps[pumpindex].value = DeviceHandler.PUMP_PWM_VALUE
+                self.pumps[pumpindex].on()
             else:
                 self.pumps[pumpindex].off()
             self.hardwareState.pumps[pumpindex] = state
             logger.debug(f'Set pump {pumpindex} to {"On" if state else "Off"}')
-        # raise an error otherwise
+            # raise an error otherwise
         else:
             error = ComponentControlError(
                 f"Cannot turn pump {pumpindex} on. There is no suitable ball valve path open"
@@ -360,15 +370,19 @@ class DeviceHandler(QObject, Pins):
             logger.critical(f'Program is attempting to enable heating element {index} without sufficient liquid level')
             raise ComponentControlError(f'Program is attempting to enable heating element {index} without sufficient liquid level')
 
-    def _readSensors(self):
+    def _readAllVolumes(self):
         # read the sensors and save the values here
+        for i, _ in enumerate(self.hardwareState.volumes):
+            self.hardwareState.volumes[i] = self.readvolume(i)
+
+    def _readAllTemps(self):
         for i, _ in enumerate(self.hardwareState.temperatures):
             self.hardwareState.temperatures[i] = self.readTemperature(i)
-            self.hardwareState.volumes[i] = self.readvolume(i)
 
     def _updateheatingelementPID(self):
         for kettleindex, kettlename in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
             if self.hardwareState.kettlepidenabled[kettleindex] == True:
+                logger.debug(f'Kettle name: {kettlename}')
                 if kettlename == "HLT" or kettleindex == "MT":
                     heatingelementindex = 0
                     self.readTemperature(DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"])
@@ -385,18 +399,18 @@ class DeviceHandler(QObject, Pins):
                         self._setHeatingElementValue(3, 1, True)
 
     def _updatestate(self):
-        self._readSensors()
+        self._readAllVolumes()
         self.signalState.emit(DeviceHandler.hardwareState)
 
         #check that kettle volume is high enough to cover heating elements, otherwise disable them
-        for kettleindex, kettlename in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
-            if kettlename in ("HLT", "BK"):
-                if self.hardwareState.volumes[kettleindex] < DeviceHandler.HEATING_ELEMENT_MIN_VOLUME:
-                    if not self.hardwareState.kettleheatingelementsdisabled[kettleindex]:
-                        logger.critical(f'Kettle {kettlename} heating elements disabled due to insufficient liquid volume')
-                    self.hardwareState.kettleheatingelementsdisabled[kettleindex] = True
-                else:
-                    self.hardwareState.kettleheatingelementsdisabled[kettleindex] = False
+     #   for kettleindex, kettlename in DeviceHandler.KETTLE_NAMES_GIVEN_ID.items():
+       #     if kettlename in ("HLT", "BK"):
+        #        if self.hardwareState.volumes[kettleindex] < DeviceHandler.HEATING_ELEMENT_MIN_VOLUME:
+        #            if not self.hardwareState.kettleheatingelementsdisabled[kettleindex]:
+         #               logger.critical(f'Kettle {kettlename} heating elements disabled due to insufficient liquid volume')
+         #           self.hardwareState.kettleheatingelementsdisabled[kettleindex] = True
+       #         else:
+       #             self.hardwareState.kettleheatingelementsdisabled[kettleindex] = False
 
         #check that HLT isn't about to flood, otherwise disable valve that adds water
         if self.hardwareState.volumes[DeviceHandler.KETTLE_IDS_GIVEN_NAME["HLT"]] > DeviceHandler.KETTLE_MAX_VOLUME:
